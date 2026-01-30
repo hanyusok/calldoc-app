@@ -92,7 +92,11 @@ model Doctor {
   specialty   String
   hospital    String
   rating      Float    @default(5.0)
+  patients    Int      @default(0)
   imageUrl    String?
+  bio         String?
+  gender      String?  // 'male' | 'female'
+  address     String?
   isAvailable Boolean  @default(true)
   appointments Appointment[]
 }

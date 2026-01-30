@@ -19,7 +19,7 @@ const ServiceGrid = () => {
             <div className="grid grid-cols-4 gap-4">
                 {services.map((service, index) => (
                     <Link
-                        href={`/services/${service.name.toLowerCase().replace(/\s+/g, '-')}`}
+                        href={`/consult?category=${service.name.toLowerCase().replace(/\s+/g, '-')}`}
                         key={index}
                         className="flex flex-col items-center gap-2 group cursor-pointer"
                     >
