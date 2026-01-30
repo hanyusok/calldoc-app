@@ -1,10 +1,7 @@
-import { auth } from "@/auth"
+import NextAuth from "next-auth"
+import { authConfig } from "./auth.config"
 
-// Currently just allowing everything, but establishing the structure.
-// In a real app, you can redirect if !req.auth 
-export default auth((req) => {
-    // console.log(req.auth) // User session
-})
+export default NextAuth(authConfig).auth
 
 // Optionally, don't invoke Middleware on some paths
 // Read more: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher

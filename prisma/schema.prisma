@@ -18,6 +18,32 @@ model User {
   appointments  Appointment[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  age           Int?
+  gender        String?
+  phoneNumber   String?
+  residentNumber String?
+  insurance     Insurance?
+  familyMembers FamilyMember[]
+}
+
+model Insurance {
+  id           String   @id @default(cuid())
+  provider     String
+  policyNumber String
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FamilyMember {
+  id       String  @id @default(cuid())
+  name     String
+  relation String
+  age      Int
+  gender   String
+  residentNumber String?
+  phoneNumber    String?
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {

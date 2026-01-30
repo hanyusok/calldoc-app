@@ -1,30 +1,22 @@
 import NextAuth from "next-auth"
-import Kakao from "next-auth/providers/kakao"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/app/lib/prisma"
+import { authConfig } from "./auth.config"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(prisma),
-    providers: [
-        Kakao({
-            clientId: process.env.KAKAO_CLIENT_ID,
-            clientSecret: process.env.KAKAO_CLIENT_SECRET,
-        }),
-    ],
-    pages: {
-        signIn: '/login',
-    },
+    session: { strategy: "jwt" }, // Middleware auth often works better with JWT or we keep database but separate the middleware config.
+    // Actually, for Edge compatibility, middleware should use authConfig.
+    // auth.ts uses the adapter.
+    ...authConfig,
     callbacks: {
-        async signIn({ user, account, profile }) {
-            console.log("Sign in attempt:", user.email);
-            if (user) {
-                return true;
-            }
-            return false;
-        },
-        async session({ session, user }) {
-            if (session.user) {
-                session.user.id = user.id;
+        ...authConfig.callbacks,
+        // Override session to include user ID from database if strategy is "database" (default with adapter)
+        // But if we use Middleware, we might be forced to JWT or use database strategy only in non-edge.
+        // Let's stick to the default strategy (database) for auth.ts and see if we can just re-use.
+        async session({ session, token }) {
+            if (session.user && token.sub) {
+                session.user.id = token.sub;
             }
             return session;
         }
