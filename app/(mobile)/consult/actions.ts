@@ -2,6 +2,7 @@
 
 import { prisma } from "@/app/lib/prisma";
 import type { Doctor } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 export async function getDoctors({
     query,
@@ -84,4 +85,37 @@ export async function getDoctorById(id: string) {
     return await prisma.doctor.findUnique({
         where: { id },
     });
+}
+
+export async function createAppointment(formData: FormData) {
+    'use server';
+
+    const userId = formData.get('userId') as string;
+    const doctorId = formData.get('doctorId') as string;
+    const dateStr = formData.get('date') as string;
+    const timeStr = formData.get('time') as string;
+
+    if (!userId || !doctorId || !dateStr || !timeStr) {
+        throw new Error("Missing required fields");
+    }
+
+    // Combine date and time into a single DateTime object
+    // Assuming dateStr is ISO string "2026-02-15T..."
+    // and timeStr is "14:30"
+    const date = new Date(dateStr);
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    date.setHours(hours, minutes, 0, 0);
+
+    const appointment = await prisma.appointment.create({
+        data: {
+            userId,
+            doctorId,
+            date: date,
+            status: "PENDING", // Wait for doctor to set price
+            // price is optionally null by default
+        },
+    });
+
+    // Redirect to success page
+    redirect(`/doctor/${doctorId}/book/success?appointmentId=${appointment.id}`);
 }

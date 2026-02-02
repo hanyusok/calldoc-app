@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDoctorById } from '@/app/consult/actions';
+import { getDoctorById } from '@/app/(mobile)/consult/actions';
 import { notFound } from 'next/navigation';
 import { Star, MapPin, Clock, ChevronLeft, Calendar, Shield } from 'lucide-react';
 import Link from 'next/link';
@@ -97,9 +97,12 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
                     <span className="text-xs text-gray-400">Consultation Fee</span>
                     <span className="text-lg font-bold text-primary-600">$50.00</span>
                 </div>
-                <button className="flex-1 bg-primary-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-primary-600/30 hover:bg-primary-700 transition-all active:scale-95">
+                <Link
+                    href={`/doctor/${id}/book`}
+                    className="flex-1 bg-primary-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-primary-600/30 hover:bg-primary-700 transition-all active:scale-95 text-center"
+                >
                     Book Appointment
-                </button>
+                </Link>
             </div>
         </div>
     );

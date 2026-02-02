@@ -106,7 +106,8 @@ model Appointment {
   userId    String
   doctorId  String
   date      DateTime
-  status    String   @default("PENDING") // PENDING, CONFIRMED, COMPLETED, CANCELLED
+  status    String   @default("PENDING") // PENDING, AWAITING_PAYMENT, CONFIRMED, COMPLETED, CANCELLED
+  price     Float?
   user      User     @relation(fields: [userId], references: [id])
   doctor    Doctor   @relation(fields: [doctorId], references: [id])
   createdAt DateTime @default(now())
