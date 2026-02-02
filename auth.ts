@@ -1,4 +1,5 @@
 import NextAuth from "next-auth"
+import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/app/lib/prisma"
 import { authConfig } from "./auth.config"
@@ -9,6 +10,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // Actually, for Edge compatibility, middleware should use authConfig.
     // auth.ts uses the adapter.
     ...authConfig,
+    providers: [
+        ...authConfig.providers,
+        Credentials({
+            name: "Guest",
+            credentials: {
+                action: { label: "Action", type: "text" }
+            },
+            async authorize(credentials) {
+                if (credentials?.action === "guest") {
+                    const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+                    const email = `guest-${uniqueSuffix}@calldoc.com`;
+
+                    // Create Unique Guest User
+                    const user = await prisma.user.create({
+                        data: {
+                            email,
+                            name: `Guest User ${uniqueSuffix.slice(-4)}`,
+                            emailVerified: new Date(),
+                            phoneNumber: "000-0000-0000",
+                            residentNumber: "000000-0000000",
+                        }
+                    });
+                    return user;
+                }
+                return null;
+            }
+        })
+    ],
     trustHost: true,
     callbacks: {
         ...authConfig.callbacks,

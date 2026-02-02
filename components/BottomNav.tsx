@@ -31,9 +31,9 @@ const BottomNav = () => {
                     <Stethoscope size={24} />
                     <span className="text-[10px] font-medium">Consult</span>
                 </Link>
-                <Link href="/history" className={getLinkClass('/history')}>
+                <Link href="/dashboard" className={getLinkClass('/dashboard')}>
                     <ClipboardList size={24} />
-                    <span className="text-[10px] font-medium">History</span>
+                    <span className="text-[10px] font-medium">Dashboard</span>
                 </Link>
                 <Link href="/profile" className={getLinkClass('/profile')}>
                     <User size={24} />
