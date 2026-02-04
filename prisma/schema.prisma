@@ -111,4 +111,18 @@ model Appointment {
   user      User     @relation(fields: [userId], references: [id])
   doctor    Doctor   @relation(fields: [doctorId], references: [id])
   createdAt DateTime @default(now())
+  payment   Payment?
+}
+
+model Payment {
+  id            String      @id @default(cuid())
+  paymentKey    String?     @unique // DAOUTRX or AUTHNO
+  amount        Int
+  method        String?     // CARD, etc.
+  status        String      @default("PENDING") // PENDING, COMPLETED, CANCELLED, FAILED
+  requestedAt   DateTime    @default(now())
+  approvedAt    DateTime?
+  receiptUrl    String?
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
 }

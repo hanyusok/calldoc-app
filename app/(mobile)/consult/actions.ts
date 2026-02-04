@@ -3,6 +3,7 @@
 import { prisma } from "@/app/lib/prisma";
 import type { Doctor } from "@prisma/client";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function getDoctors({
     query,
@@ -115,6 +116,8 @@ export async function createAppointment(formData: FormData) {
             // price is optionally null by default
         },
     });
+
+    revalidatePath('/admin/dashboard');
 
     // Redirect to success page
     redirect(`/doctor/${doctorId}/book/success?appointmentId=${appointment.id}`);

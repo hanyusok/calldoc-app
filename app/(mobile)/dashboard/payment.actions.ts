@@ -27,9 +27,23 @@ export async function getPaymentLink(appointmentId: string) {
     const amount = appointment.price.toString();
     const timestamp = Math.floor(Date.now() / 1000).toString();
 
-    // 2. Mock Hash (Hypothetical formula for simulation)
-    const rawData = MERCHANT_ID + orderNo + amount + timestamp + SECRET_KEY;
-    const hash = crypto.createHash('sha256').update(rawData).digest('hex');
+    // 2. Get Payment Signature
+    const { getKiwoomHash } = await import("@/app/lib/kiwoom");
+
+    const hashResult = await getKiwoomHash({
+        CPID: MERCHANT_ID,
+        ORDERNO: orderNo,
+        AMOUNT: amount,
+        PAYMETHOD: 'TOTAL',
+        TYPE: 'M',
+        VALID_TIME: '1800'
+    });
+
+    if (!hashResult.success || !hashResult.KIWOOM_ENC) {
+        throw new Error(hashResult.error || "Failed to generate payment signature");
+    }
+
+    const hash = hashResult.KIWOOM_ENC;
 
     // 3. Construct URL
     const baseUrl = process.env.NEXT_PUBLIC_KIWOOM_PAY_ACTION_URL!;
@@ -42,6 +56,8 @@ export async function getPaymentLink(appointmentId: string) {
         BUYER_EMAIL: session.user.email || "",
         TIMESTAMP: timestamp,
         SIGNATURE: hash,
+        PAYMETHOD: 'TOTAL', // Must match the hash param
+        VALID_TIME: '1800',  // Must match the hash param
         // Using localhost for callback/return URLs for this demo
         RETURN_URL: `http://localhost:3000/api/payment/callback`
     });
