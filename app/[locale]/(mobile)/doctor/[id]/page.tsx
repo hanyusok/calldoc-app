@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDoctorById } from '@/app/(mobile)/consult/actions';
+import { getDoctorById } from '@/app/[locale]/(mobile)/consult/actions';
 import { notFound } from 'next/navigation';
 import { Star, MapPin, Clock, ChevronLeft, Calendar, Shield } from 'lucide-react';
 import Link from 'next/link';

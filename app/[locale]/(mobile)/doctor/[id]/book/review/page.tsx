@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDoctorById, createAppointment } from '@/app/(mobile)/consult/actions';
+import { getDoctorById, createAppointment } from '@/app/[locale]/(mobile)/consult/actions';
 import { auth } from "@/auth";
 import { redirect } from 'next/navigation';
 import { ChevronLeft, Calendar, User, Clock, CheckCircle } from 'lucide-react';
