@@ -1,0 +1,55 @@
+{
+    "HomePage": {
+        "title": "콜닥터",
+        "welcome": "콜닥터에 오신 것을 환영합니다",
+        "welcome_user": "{name}님, 환영합니다!"
+    },
+    "Navigation": {
+        "home": "홈",
+        "consult": "진료받기",
+        "dashboard": "대시보드",
+        "profile": "마이페이지"
+    },
+    "Header": {
+        "search_placeholder": "증상, 병원, 약국 검색..."
+    },
+    "ServiceGrid": {
+        "telemedicine": "비대면 진료",
+        "hospital": "병원 찾기",
+        "pharmacy": "약국 찾기",
+        "symptoms": "증상 검색",
+        "health_check": "건강 검진",
+        "supplements": "영양제 추천",
+        "lab_test": "검사 신청",
+        "events": "이벤트"
+    },
+    "HealthFeed": {
+        "title": "추천 콘텐츠",
+        "view_all": "전체 보기",
+        "health_tip": "건강 팁",
+        "article_title": "환절기 독감, 효과적으로 예방하는 방법은?",
+        "read_time": "3분 분량"
+    },
+    "LocaleSwitcher": {
+        "label": "언어",
+        "en": "영어",
+        "ko": "한국어"
+    },
+    "ConsultPage": {
+        "title_default": "의사 찾기",
+        "search_placeholder": "의사, 병원 검색...",
+        "no_results": "조건에 맞는 의사를 찾을 수 없습니다.",
+        "clear_filters": "필터 초기화"
+    },
+    "FilterBar": {
+        "nearest": "가까운 순",
+        "top_rated": "별점 높은 순",
+        "available_now": "진료 가능",
+        "female_doctor": "여의사",
+        "price": "가격순"
+    },
+    "DoctorCard": {
+        "avail": "진료가능",
+        "available_in_10_min": "10분 내 진료 가능"
+    }
+}

@@ -7,10 +7,14 @@ import { getDoctors } from "./actions";
 import Link from "next/link";
 import { ChevronLeft, Search } from 'lucide-react';
 
+import { getTranslations } from "next-intl/server";
+
 export default async function ConsultPage(props: {
     searchParams: Promise<{ query?: string; category?: string; filter?: string }>
 }) {
     const params = await props.searchParams;
+    const t = await getTranslations('ConsultPage');
+    const tService = await getTranslations('ServiceGrid');
 
     const doctors = await getDoctors({
         query: params.query,
@@ -18,9 +22,28 @@ export default async function ConsultPage(props: {
         filter: params.filter
     });
 
-    const title = params.category
-        ? params.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-        : 'Find a Doctor';
+    // Map category ID to translated name if it exists, otherwise use ID
+    // Note: This logic assumes category params match keys in ServiceGrid if possible, or we need a mapping.
+    // However, params.category comes from URL which was set from ServiceGrid previously.
+    // Let's try to map it back or just use the parameter for now if dynamic.
+    // Actually, in ServiceGrid we used `service.name.toLowerCase()...` which is English.
+    // If we change ServiceGrid to use IDs, we should update the URL generation there too.
+    // For now, let's just translate the default title.
+
+    let title = t('title_default');
+    if (params.category) {
+        // Ideally we map category slug back to translation key
+        // For simple Verify, let's keep it simple or try to find a match
+        // The category param is like "lab-test", "telemedicine"
+        const catKey = params.category.replace(/-/g, '_'); // lab-test -> lab_test
+        // We can try to get translation, if strictly types allows it.
+        // For now, just display the param or default
+        try {
+            title = tService(catKey as any);
+        } catch (e) {
+            title = params.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+    }
 
     return (
         <div className="bg-gray-50 min-h-screen pb-24">
@@ -46,7 +69,7 @@ export default async function ConsultPage(props: {
                             defaultValue={params.query}
                             type="text"
                             className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm bg-gray-50 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400 transition-all"
-                            placeholder="Search doctor, hospital, etc..."
+                            placeholder={t('search_placeholder')}
                         />
                     </form>
                 </div>
@@ -57,9 +80,9 @@ export default async function ConsultPage(props: {
             <div className="px-4 py-4 space-y-4">
                 {doctors.length === 0 ? (
                     <div className="text-center py-10 text-gray-500">
-                        <p>No doctors found matching your criteria.</p>
+                        <p>{t('no_results')}</p>
                         <Link href="/consult" className="text-primary-500 text-sm mt-2 inline-block">
-                            Clear all filters
+                            {t('clear_filters')}
                         </Link>
                     </div>
                 ) : (

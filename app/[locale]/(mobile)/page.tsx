@@ -6,8 +6,11 @@ import BottomNav from "@/components/BottomNav";
 import { auth } from "@/auth";
 import { prisma } from "@/app/lib/prisma";
 
+import { getTranslations } from "next-intl/server";
+
 export default async function Home() {
     const session = await auth();
+    const t = await getTranslations('HomePage');
     let userProfile = null;
 
     if (session?.user?.email) {
@@ -22,7 +25,7 @@ export default async function Home() {
             <Header />
             {session?.user && (
                 <div className="bg-green-100 p-4 text-center text-green-800">
-                    Welcome back, {session.user.name || "User"}!
+                    {t('welcome_user', { name: session.user.name || "User" })}
                     {userProfile ? " (Profile Verified)" : " (Profile Pending)"}
                 </div>
             )}

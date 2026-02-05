@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Edit2, Check, X, LogOut } from 'lucide-react';
-import { logout } from '@/app/(mobile)/profile/actions';
+import { logout } from '@/app/[locale]/(mobile)/profile/actions';
 
 interface ProfileHeaderProps {
     user: {

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Search, MapPin, Bell } from 'lucide-react';
 
+import { useTranslations } from 'next-intl';
+
 const Header = () => {
+    const t = useTranslations('Header');
     return (
         <header className="sticky top-0 z-50 bg-white px-4 py-3 shadow-sm">
             <div className="flex items-center justify-between mb-3">
@@ -27,7 +30,7 @@ const Header = () => {
                         name="query"
                         type="text"
                         className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400 sm:text-sm transition-all shadow-sm"
-                        placeholder="Search symptoms, hospitals, drugs..."
+                        placeholder={t('search_placeholder')}
                     />
                 </form>
             </div>

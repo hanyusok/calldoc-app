@@ -1,0 +1,55 @@
+{
+    "HomePage": {
+        "title": "Call Doctor",
+        "welcome": "Welcome to Call Doctor",
+        "welcome_user": "Welcome back, {name}!"
+    },
+    "Navigation": {
+        "home": "Home",
+        "consult": "Consult",
+        "dashboard": "Dashboard",
+        "profile": "My Page"
+    },
+    "Header": {
+        "search_placeholder": "Search symptoms, hospitals, drugs..."
+    },
+    "ServiceGrid": {
+        "telemedicine": "Telemedicine",
+        "hospital": "Hospital",
+        "pharmacy": "Pharmacy",
+        "symptoms": "Symptoms",
+        "health_check": "Health Check",
+        "supplements": "Supplements",
+        "lab_test": "Lab Test",
+        "events": "Events"
+    },
+    "HealthFeed": {
+        "title": "For You",
+        "view_all": "View All",
+        "health_tip": "HEALTH TIP",
+        "article_title": "How to prevent seasonal flu effectively?",
+        "read_time": "Read in 3 mins"
+    },
+    "LocaleSwitcher": {
+        "label": "Language",
+        "en": "English",
+        "ko": "Korean"
+    },
+    "ConsultPage": {
+        "title_default": "Find a Doctor",
+        "search_placeholder": "Search doctor, hospital, etc...",
+        "no_results": "No doctors found matching your criteria.",
+        "clear_filters": "Clear all filters"
+    },
+    "FilterBar": {
+        "nearest": "Nearest",
+        "top_rated": "Top Rated",
+        "available_now": "Available Now",
+        "female_doctor": "Female Doctor",
+        "price": "Price"
+    },
+    "DoctorCard": {
+        "avail": "Avail",
+        "available_in_10_min": "Available in 10 min"
+    }
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { checkNewConfirmations } from '@/app/(mobile)/dashboard/actions';
+import { checkNewConfirmations } from '@/app/[locale]/(mobile)/dashboard/actions';
 import { useRouter } from 'next/navigation';
 import { Bell } from 'lucide-react';
 

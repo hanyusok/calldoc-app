@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { getPaymentLink } from '@/app/(mobile)/dashboard/payment.actions';
+import { getPaymentLink } from '@/app/[locale]/(mobile)/dashboard/payment.actions';
 import { ArrowRight, CreditCard, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 

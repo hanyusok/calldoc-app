@@ -12,6 +12,8 @@ interface DoctorCardProps {
     distance?: string;
 }
 
+import { useTranslations } from 'next-intl';
+
 const DoctorCard: React.FC<DoctorCardProps> = ({
     name,
     specialty,
@@ -21,6 +23,8 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
     isAvailable = false,
     distance
 }) => {
+    const t = useTranslations('DoctorCard');
+
     return (
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex gap-4 mb-3 transition-all hover:shadow-md cursor-pointer">
             <div className="relative">
@@ -29,7 +33,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
                 </div>
                 {isAvailable && (
                     <span className="absolute -bottom-2 -right-2 bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full border-2 border-white font-bold">
-                        Avail
+                        {t('avail')}
                     </span>
                 )}
             </div>
@@ -55,7 +59,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
                     </div>
                     <div className="flex items-center gap-1 text-xs text-green-600 font-medium bg-green-50 w-fit px-2 py-0.5 rounded-md">
                         <Clock size={12} />
-                        <span>Available in 10 min</span>
+                        <span>{t('available_in_10_min')}</span>
                     </div>
                 </div>
             </div>
