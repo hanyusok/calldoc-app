@@ -194,5 +194,93 @@
         "continue_to_patient_details": "다음: 환자 정보 입력",
         "available_time": "진료 가능 시간",
         "select_date_prompt": "위 달력에서 날짜를 선택해주세요"
+    },
+    "Admin": {
+        "nav": {
+            "dashboard": "대시보드",
+            "appointments": "예약 관리",
+            "pharmacies": "약국 관리",
+            "settings": "설정",
+            "logout": "로그아웃",
+            "patients": "환자 관리"
+        },
+        "dashboard": {
+            "title": "관리자 대시보드",
+            "welcome": "{name}님 환영합니다",
+            "search_placeholder": "환자, 의사 검색...",
+            "new_appointment": "새 예약 생성",
+            "all_status": "전체 상태",
+            "empty_state": "예약이 없습니다.",
+            "table": {
+                "patient": "환자",
+                "date": "날짜",
+                "doctor": "의사",
+                "status": "상태",
+                "price": "가격",
+                "actions": "관리"
+            },
+            "manage_appointment": "예약 관리",
+            "additional_actions": "예약 확정 후 추가 기능을 사용할 수 있습니다.",
+            "patient_fallback": "환자"
+        },
+        "status": {
+            "PENDING": "대기중",
+            "AWAITING_PAYMENT": "결제 대기",
+            "CONFIRMED": "확정됨",
+            "COMPLETED": "완료됨",
+            "CANCELLED": "취소됨"
+        },
+        "pharmacy": {
+            "title": "약국 관리",
+            "add_new": "새 약국 추가",
+            "name": "약국명",
+            "fax": "팩스",
+            "phone": "전화번호",
+            "address": "주소",
+            "actions": "관리",
+            "edit": "수정",
+            "delete": "삭제",
+            "set_default": "기본 설정",
+            "is_default": "기본"
+        },
+        "meet": {
+            "title": "화상 진료",
+            "generate_link": "구글 미트 링크 생성",
+            "link_created": "미팅 링크 생성 완료!",
+            "error_create": "미팅 생성 오류"
+        },
+        "prescription_manager": {
+            "select_pharmacy": "약국 선택",
+            "upload_rx": "처방전 업로드",
+            "issue_ready": "발급 및 팩스 준비",
+            "send_fax": "팩스 전송",
+            "send_via_barobill": "바로빌로 팩스 전송",
+            "pharmacy_label": "약국"
+        },
+        "patients": {
+            "title": "환자 관리",
+            "search_placeholder": "이름 또는 이메일 검색...",
+            "table": {
+                "name": "이름",
+                "email": "이메일",
+                "joined_at": "가입일",
+                "appointments": "예약 수",
+                "actions": "관리"
+            },
+            "confirm_delete": "정말 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+            "delete_success": "사용자가 삭제되었습니다",
+            "delete_error": "사용자 삭제 실패",
+            "delete": "삭제"
+        },
+        "settings": {
+            "title": "설정",
+            "general": "일반 설정",
+            "site_name": "사이트 이름",
+            "maintenance_mode": "점검 모드",
+            "maintenance_desc": "사용자에게 점검 중 페이지를 표시합니다",
+            "save_changes": "변경사항 저장",
+            "saved_success": "설정이 저장되었습니다",
+            "saved_error": "설정 저장 실패"
+        }
     }
 }

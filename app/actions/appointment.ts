@@ -25,6 +25,7 @@ export async function getAppointments(search?: string, status?: string) {
                 user: true,
                 doctor: true,
                 payment: true,
+                prescription: true,
             },
             orderBy: {
                 date: 'desc',

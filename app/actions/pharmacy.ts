@@ -1,0 +1,115 @@
+"use server";
+
+import { prisma } from "@/app/lib/prisma";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const pharmacySchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    fax: z.string().optional(),
+    phone: z.string().optional(),
+    address: z.string().optional(),
+});
+
+export async function getPharmacies(page: number = 1, limit: number = 10, query: string = "") {
+    // No auth check for listing in this demo/context, or add if needed
+
+    const skip = (page - 1) * limit;
+
+    const where = query ? {
+        OR: [
+            { name: { contains: query, mode: 'insensitive' as const } },
+            { address: { contains: query, mode: 'insensitive' as const } },
+        ]
+    } : {};
+
+    const [pharmacies, total] = await Promise.all([
+        prisma.pharmacy.findMany({
+            where,
+            orderBy: [
+                { isDefault: 'desc' },
+                { createdAt: 'desc' }
+            ],
+            skip,
+            take: limit,
+        }),
+        prisma.pharmacy.count({ where })
+    ]);
+
+    return {
+        pharmacies,
+        total,
+        totalPages: Math.ceil(total / limit)
+    };
+}
+
+export async function createPharmacy(data: z.infer<typeof pharmacySchema>) {
+    // TODO: Add Auth check (Admin only)
+    const validated = pharmacySchema.safeParse(data);
+    if (!validated.success) return { error: "Invalid data" };
+
+    try {
+        const pharmacy = await prisma.pharmacy.create({
+            data: validated.data
+        });
+        revalidatePath('/admin');
+        return { success: true, pharmacy };
+    } catch (error) {
+        console.error(error);
+        return { error: "Failed to create pharmacy" };
+    }
+}
+
+export async function updatePharmacy(id: string, data: z.infer<typeof pharmacySchema>) {
+    // TODO: Auth check
+    const validated = pharmacySchema.safeParse(data);
+    if (!validated.success) return { error: "Invalid data" };
+
+    try {
+        await prisma.pharmacy.update({
+            where: { id },
+            data: validated.data
+        });
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (error) {
+        console.error(error);
+        return { error: "Failed to update pharmacy" };
+    }
+}
+
+export async function deletePharmacy(id: string) {
+    // TODO: Auth check
+    try {
+        await prisma.pharmacy.delete({
+            where: { id }
+        });
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (error) {
+        console.error(error);
+        return { error: "Failed to delete pharmacy" };
+    }
+}
+
+export async function setPharmacyDefault(pharmacyId: string) {
+    // TODO: Add Auth check (Admin only)
+    try {
+        await prisma.$transaction([
+            prisma.pharmacy.updateMany({
+                where: { isDefault: true },
+                data: { isDefault: false }
+            }),
+            prisma.pharmacy.update({
+                where: { id: pharmacyId },
+                data: { isDefault: true }
+            })
+        ]);
+
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to set default pharmacy", error);
+        return { error: "Failed to set default pharmacy" };
+    }
+}

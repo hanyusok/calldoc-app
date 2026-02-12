@@ -60,7 +60,7 @@ const handleCallback = async (req: NextRequest) => {
                 payment = await prisma.payment.findUnique({ where: { id: ORDERNO }, include: { appointment: true } });
             }
             if (!payment && DAOUTRX) {
-                payment = await prisma.payment.findFirst({ where: { paymentKey: DAOUTRX }, include: { appointment: true } });
+                payment = await prisma.payment.findUnique({ where: { paymentKey: DAOUTRX }, include: { appointment: true } });
             }
 
             if (payment) {

@@ -13,6 +13,7 @@ export async function getUserAppointments() {
         },
         include: {
             doctor: true,
+            prescription: true,
         },
         orderBy: {
             date: 'desc', // Most recent first

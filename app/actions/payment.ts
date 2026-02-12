@@ -8,6 +8,52 @@ import { revalidatePath } from "next/cache";
 // import { createNotification } from "@/app/lib/notifications";
 // import { getTranslations } from "next-intl/server";
 
+export async function initiatePayment(appointmentId: string) {
+    // 1. Fetch Appointment to get price and user details
+    const appointment = await prisma.appointment.findUnique({
+        where: { id: appointmentId },
+        include: {
+            user: true, // Patient details
+            doctor: true
+        }
+    });
+
+    if (!appointment) return { success: false, error: "Appointment not found" };
+    if (!appointment.price) return { success: false, error: "Price not set" };
+
+    // 2. Check if Payment already exists
+    let payment = await prisma.payment.findUnique({
+        where: { appointmentId: appointmentId }
+    });
+
+    if (!payment) {
+        // Create new Payment record
+        payment = await prisma.payment.create({
+            data: {
+                appointmentId: appointmentId,
+                amount: Math.round(appointment.price), // Ensure integer
+                status: 'PENDING',
+                method: 'KIWOOM' // Default initial method
+            }
+        });
+    } else {
+        // Update existing if needed (e.g. if price changed? For now assume fixed)
+        // Check if already paid
+        if (payment.status === 'COMPLETED') {
+            return { success: false, error: "Payment already completed" };
+        }
+    }
+
+    return {
+        success: true,
+        paymentId: payment.id,
+        amount: payment.amount,
+        customerName: appointment.user.name || "Guest",
+        customerEmail: appointment.user.email,
+        productName: `Medical Consultation: ${appointment.doctor.name}`
+    };
+}
+
 export async function confirmPayment(paymentKey: string, orderId: string, amount: number) {
     console.log("Processing Kiwoom payment:", { orderId, amount, paymentKey });
 

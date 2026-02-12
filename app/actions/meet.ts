@@ -1,0 +1,67 @@
+"use server";
+
+import { google } from 'googleapis';
+import { format } from 'date-fns';
+
+const SCOPES = ['https://www.googleapis.com/auth/calendar.events'];
+
+export async function createMeeting({
+    appointmentId,
+    startDateTime,
+    endDateTime,
+    summary,
+    patientName
+}: {
+    appointmentId: string;
+    startDateTime: Date;
+    endDateTime: Date;
+    summary?: string;
+    patientName?: string;
+}) {
+    // 1. Check for Credentials
+    const keyData = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+    const calendarId = process.env.GOOGLE_CALENDAR_ID;
+
+    if (!keyData || !calendarId) {
+        console.warn("Missing Google Calendar credentials. Using mock meeting link.");
+        // Return a mock link for development/testing
+        return "https://meet.google.com/test-link-mock";
+    }
+
+    try {
+        // 2. Auth
+        const auth = new google.auth.GoogleAuth({
+            credentials: JSON.parse(keyData),
+            scopes: SCOPES,
+        });
+
+        const calendar = google.calendar({ version: 'v3', auth });
+
+        // 3. Create Event with Conference Data
+        const event = {
+            summary: summary || (patientName
+                ? `CallDoc: ${patientName} ${format(startDateTime, 'HH:mm')}~`
+                : `CallDoc: ${appointmentId.slice(-6)}`),
+            description: `CallDoc Appointment ${appointmentId}`,
+            start: { dateTime: startDateTime.toISOString() },
+            end: { dateTime: endDateTime.toISOString() },
+            conferenceData: {
+                createRequest: {
+                    requestId: `${appointmentId}-${Date.now()}`,
+                },
+            },
+        };
+
+        const response = await calendar.events.insert({
+            calendarId: calendarId,
+            requestBody: event,
+            conferenceDataVersion: 1, // Critical for generating the link
+        });
+
+        return response.data.hangoutLink;
+
+    } catch (error) {
+        console.error("Failed to create Google Meet:", error);
+        return null; // Fail gracefully so payment isn't affected
+    }
+}

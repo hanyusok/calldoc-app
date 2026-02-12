@@ -194,5 +194,93 @@
         "continue_to_patient_details": "Continue to Patient Details",
         "available_time": "Available Time",
         "select_date_prompt": "Please select a date above to see available times"
+    },
+    "Admin": {
+        "nav": {
+            "dashboard": "Dashboard",
+            "appointments": "Appointments",
+            "pharmacies": "Pharmacies",
+            "settings": "Settings",
+            "logout": "Logout",
+            "patients": "Patients"
+        },
+        "dashboard": {
+            "title": "Admin Dashboard",
+            "welcome": "Welcome, {name}",
+            "search_placeholder": "Search patients, doctors...",
+            "new_appointment": "New Appointment",
+            "all_status": "All Status",
+            "empty_state": "No appointments found.",
+            "table": {
+                "patient": "Patient",
+                "date": "Date",
+                "doctor": "Doctor",
+                "status": "Status",
+                "price": "Price",
+                "actions": "Actions"
+            },
+            "manage_appointment": "Manage Appointment",
+            "additional_actions": "Additional actions available after confirmation.",
+            "patient_fallback": "Patient"
+        },
+        "status": {
+            "PENDING": "Pending",
+            "AWAITING_PAYMENT": "Awaiting Payment",
+            "CONFIRMED": "Confirmed",
+            "COMPLETED": "Completed",
+            "CANCELLED": "Cancelled"
+        },
+        "pharmacy": {
+            "title": "Pharmacy Management",
+            "add_new": "Add New Pharmacy",
+            "name": "Name",
+            "fax": "Fax",
+            "phone": "Phone",
+            "address": "Address",
+            "actions": "Actions",
+            "edit": "Edit",
+            "delete": "Delete",
+            "set_default": "Set Default",
+            "is_default": "Default"
+        },
+        "meet": {
+            "title": "Video Consultation",
+            "generate_link": "Generate Google Meet Link",
+            "link_created": "Meeting created!",
+            "error_create": "Error creating meeting"
+        },
+        "prescription_manager": {
+            "select_pharmacy": "Select Pharmacy",
+            "upload_rx": "Upload Prescription",
+            "issue_ready": "Issue & Ready to Fax",
+            "send_fax": "Send Fax",
+            "send_via_barobill": "Send Fax via BaroBill",
+            "pharmacy_label": "Pharmacy"
+        },
+        "patients": {
+            "title": "Patient Management",
+            "search_placeholder": "Search by name or email...",
+            "table": {
+                "name": "Name",
+                "email": "Email",
+                "joined_at": "Joined At",
+                "appointments": "Appointments",
+                "actions": "Actions"
+            },
+            "confirm_delete": "Are you sure you want to delete this user? This action cannot be undone.",
+            "delete_success": "User deleted successfully",
+            "delete_error": "Failed to delete user",
+            "delete": "Delete"
+        },
+        "settings": {
+            "title": "Settings",
+            "general": "General Settings",
+            "site_name": "Site Name",
+            "maintenance_mode": "Maintenance Mode",
+            "maintenance_desc": "Enable to show maintenance page to users",
+            "save_changes": "Save Changes",
+            "saved_success": "Settings saved successfully",
+            "saved_error": "Failed to save settings"
+        }
     }
 }

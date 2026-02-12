@@ -157,13 +157,41 @@ export default async function DashboardPage() {
                                         </div>
                                     </div>
                                     <div className="flex gap-2 mt-3">
-                                        <button className="flex-1 py-2 rounded-lg bg-green-50 text-green-700 text-xs font-bold hover:bg-green-100 transition-colors">
-                                            {t('card.enter_room')}
-                                        </button>
+                                        {apt.meetingLink ? (
+                                            <a
+                                                href={apt.meetingLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex-1 py-2 rounded-lg bg-green-50 text-green-700 text-xs font-bold hover:bg-green-100 transition-colors flex items-center justify-center gap-2"
+                                            >
+                                                {t('card.enter_room')} <ArrowRight size={14} />
+                                            </a>
+                                        ) : (
+                                            <button disabled className="flex-1 py-2 rounded-lg bg-gray-50 text-gray-400 text-xs font-bold cursor-not-allowed">
+                                                {t('card.enter_room')} (Not Ready)
+                                            </button>
+                                        )}
+
                                         <button className="px-3 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-bold hover:bg-gray-100 transition-colors">
                                             {t('card.details')}
                                         </button>
                                     </div>
+                                    {(apt as any).prescription && (
+                                        <div className="mt-2 pt-2 border-t border-gray-100 text-xs">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-gray-500">Prescription:</span>
+                                                <span className={`font-bold ${(apt as any).prescription.status === 'ISSUED' ? 'text-green-600' : 'text-amber-500'
+                                                    }`}>
+                                                    {(apt as any).prescription.status}
+                                                </span>
+                                            </div>
+                                            {(apt as any).prescription.pharmacyName && (
+                                                <div className="text-gray-400 mt-1">
+                                                    Sent to: {(apt as any).prescription.pharmacyName}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
