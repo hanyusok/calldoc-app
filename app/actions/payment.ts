@@ -197,6 +197,13 @@ export async function cancelPayment(paymentId: string, reason: string) {
         return { success: false, error: "NO_PAYMENT_KEY" }
     }
 
+    // Bypass Kiwoom API for simulated test transactions
+    if (payment.paymentKey.startsWith("TX_SIM_")) {
+        console.log("Simulated payment cancellation - bypassing gateway");
+        await processCancellationSuccess(paymentId, payment.paymentKey);
+        return { success: true };
+    }
+
     try {
         const payload = {
             CPID: KIWOOM_MID,

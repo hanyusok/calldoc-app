@@ -214,6 +214,7 @@
             "pharmacies": "Pharmacies",
             "vaccinations": "Vaccinations",
             "posts": "Posts",
+            "payments": "Payments",
             "settings": "Settings",
             "logout": "Logout"
         },
@@ -374,6 +375,33 @@
             "cancel": "Cancel",
             "save_error": "Failed to save vaccination",
             "back_to_list": "Back to List"
+        },
+        "payments": {
+            "title": "Payment Management",
+            "search_placeholder": "Search payments...",
+            "table": {
+                "date": "Date",
+                "patient": "Patient",
+                "doctor": "Doctor",
+                "transaction": "Transaction ID",
+                "amount": "Amount",
+                "method": "Method",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "status": {
+                "PENDING": "Pending",
+                "COMPLETED": "Completed",
+                "CANCELLED": "Cancelled"
+            },
+            "empty": "No payments found.",
+            "actions": {
+                "cancel": "Cancel",
+                "cancelConfirm": "Are you sure you want to cancel this payment? This will refund the amount.",
+                "cancelSuccess": "Payment cancelled successfully.",
+                "cancelFailed": "Cancellation failed: ",
+                "error": "An error occurred."
+            }
         }
     }
 }

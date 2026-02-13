@@ -214,6 +214,7 @@
             "pharmacies": "약국 관리",
             "vaccinations": "예방접종 관리",
             "posts": "게시글 관리",
+            "payments": "결제 관리",
             "settings": "설정",
             "logout": "로그아웃"
         },
@@ -374,6 +375,33 @@
             "cancel": "취소",
             "save_error": "저장 실패",
             "back_to_list": "목록으로 돌아가기"
+        },
+        "payments": {
+            "title": "결제 관리",
+            "search_placeholder": "결제 내역 검색...",
+            "table": {
+                "date": "날짜",
+                "patient": "환자",
+                "doctor": "의사",
+                "transaction": "거래번호",
+                "amount": "금액",
+                "method": "결제수단",
+                "status": "상태",
+                "actions": "관리"
+            },
+            "status": {
+                "PENDING": "대기중",
+                "COMPLETED": "결제완료",
+                "CANCELLED": "취소됨"
+            },
+            "empty": "결제 내역이 없습니다.",
+            "actions": {
+                "cancel": "결제 취소",
+                "cancelConfirm": "정말 이 결제를 취소하시겠습니까? 결제 금액이 환불됩니다.",
+                "cancelSuccess": "결제가 성공적으로 취소되었습니다.",
+                "cancelFailed": "취소 실패: ",
+                "error": "오류가 발생했습니다."
+            }
         }
     }
 }
