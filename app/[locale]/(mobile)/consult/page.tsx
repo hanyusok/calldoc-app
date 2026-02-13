@@ -2,8 +2,9 @@ import React from 'react';
 import Header from "@/components/Header"; // We might need to refactor Header to allow passing search params or handle search internally better
 import BottomNav from "@/components/BottomNav";
 import DoctorCard from "@/components/consult/DoctorCard";
+import PharmacyCard from "@/components/consult/PharmacyCard";
 import FilterBar from "@/components/consult/FilterBar";
-import { getDoctors } from "./actions";
+import { getDoctors, getPharmacies } from "./actions";
 import Link from "next/link";
 import { ChevronLeft, Search } from 'lucide-react';
 
@@ -16,11 +17,18 @@ export default async function ConsultPage(props: {
     const t = await getTranslations('ConsultPage');
     const tService = await getTranslations('ServiceGrid');
 
-    const doctors = await getDoctors({
+    const category = params.category;
+    const isPharmacy = category === 'pharmacy';
+
+    const doctors = !isPharmacy ? await getDoctors({
         query: params.query,
         category: params.category,
         filter: params.filter
-    });
+    }) : [];
+
+    const pharmacies = isPharmacy ? await getPharmacies({
+        query: params.query
+    }) : [];
 
     // Map category ID to translated name if it exists, otherwise use ID
     // Note: This logic assumes category params match keys in ServiceGrid if possible, or we need a mapping.
@@ -63,7 +71,7 @@ export default async function ConsultPage(props: {
                     </div>
                     {/* Client component for search input behavior would be better, but simple form works for SSR */}
                     <form action="/consult" method="GET">
-                        {/* Preserve existing params as hidden inputs if needed, or just clear them on new search */}
+                        {params.category && <input type="hidden" name="category" value={params.category} />}
                         <input
                             name="query"
                             defaultValue={params.query}
@@ -78,17 +86,21 @@ export default async function ConsultPage(props: {
             </div>
 
             <div className="px-4 py-4 space-y-4">
-                {doctors.length === 0 ? (
+                {(isPharmacy ? pharmacies : doctors).length === 0 ? (
                     <div className="text-center py-10 text-gray-500">
                         <p>{t('no_results')}</p>
-                        <Link href="/consult" className="text-primary-500 text-sm mt-2 inline-block">
+                        <Link href={`/consult${category ? `?category=${category}` : ''}`} className="text-primary-500 text-sm mt-2 inline-block">
                             {t('clear_filters')}
                         </Link>
                     </div>
                 ) : (
-                    doctors.map(doc => (
-                        <DoctorCard key={doc.id} doctor={doc} />
-                    ))
+                    isPharmacy
+                        ? (pharmacies).map(pharmacy => (
+                            <PharmacyCard key={pharmacy.id} pharmacy={pharmacy} />
+                        ))
+                        : (doctors).map(doc => (
+                            <DoctorCard key={doc.id} doctor={doc} />
+                        ))
                 )}
             </div>
 

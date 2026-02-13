@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { registerUser } from '@/app/lib/auth-actions';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -11,10 +11,11 @@ export default function SignupPage() {
     const [state, action, isPending] = useActionState(registerUser, undefined);
     const router = useRouter();
 
-    if (state?.success) {
-        // Redirect or show success
-        router.push('/login?message=Registration successful. Please log in.');
-    }
+    useEffect(() => {
+        if (state?.success) {
+            router.push('/login?message=Registration successful. Please log in.');
+        }
+    }, [state, router]);
 
     return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">

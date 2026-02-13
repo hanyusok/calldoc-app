@@ -5,14 +5,13 @@ import { redirect } from '@/i18n/routing';
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import PersonalInfoForm from "@/components/profile/PersonalInfoForm";
-import InsuranceCard from "@/components/profile/InsuranceCard";
 import FamilyMemberList from "@/components/profile/FamilyMemberList";
 import ProfileHeader from "@/components/profile/ProfileHeader";
+import PharmacySelector from "@/components/profile/PharmacySelector";
 import {
     updateProfile,
     updateName,
-    updateInsurance,
-    deleteInsurance,
+    updatePharmacy,
     addFamilyMember,
     removeFamilyMember
 } from "./actions";
@@ -24,18 +23,16 @@ export default async function ProfilePage({
 }) {
     const { locale } = await params;
     const session = await auth();
-    console.log('ProfilePage Session:', JSON.stringify(session, null, 2)); // DEBUG
     const userEmail = session?.user?.email;
 
     if (!userEmail) {
-        console.log('ProfilePage: No user email, redirecting to login'); // DEBUG
         redirect({ href: '/login', locale });
     }
 
     const user = await prisma.user.findUnique({
         where: { email: userEmail as string },
         include: {
-            insurance: true,
+            pharmacy: true, // Include pharmacy
             familyMembers: true,
         },
     });
@@ -59,10 +56,9 @@ export default async function ProfilePage({
                     onUpdate={updateProfile}
                 />
 
-                <InsuranceCard
-                    insurance={user.insurance}
-                    onUpdate={updateInsurance}
-                    onDelete={deleteInsurance}
+                <PharmacySelector
+                    selectedPharmacy={user.pharmacy} // user.pharmacy is the relation
+                    onSelect={updatePharmacy}
                 />
 
                 <FamilyMemberList

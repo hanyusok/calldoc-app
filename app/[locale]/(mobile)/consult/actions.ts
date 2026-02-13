@@ -82,6 +82,26 @@ export async function getDoctors({
     return doctors;
 }
 
+export async function getPharmacies({
+    query,
+}: {
+    query?: string;
+}) {
+    const where: any = {};
+
+    if (query) {
+        where.OR = [
+            { name: { contains: query, mode: 'insensitive' } },
+            { address: { contains: query, mode: 'insensitive' } },
+        ];
+    }
+
+    return await prisma.pharmacy.findMany({
+        where,
+        orderBy: { isDefault: 'desc' }, // Default ones first, then others
+    });
+}
+
 export async function getDoctorById(id: string) {
     return await prisma.doctor.findUnique({
         where: { id },
