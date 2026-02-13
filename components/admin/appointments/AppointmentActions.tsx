@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Edit2, DollarSign } from 'lucide-react';
 import { Appointment } from '@prisma/client';
-import AppointmentModal from '@/components/admin/AppointmentModal';
+import AppointmentModal from '@/components/admin/appointments/AppointmentModal';
 import { useTranslations } from 'next-intl';
 
 interface AppointmentActionsProps {

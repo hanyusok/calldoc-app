@@ -43,7 +43,7 @@ export async function requestPrescription(
         });
 
         revalidatePath(`/dashboard`);
-        revalidatePath(`/admin/appointments`);
+        revalidatePath(`/admin/dashboard/appointments`);
         return { success: true };
     } catch (error) {
         console.error("Failed to request prescription", error);
@@ -65,7 +65,7 @@ export async function issuePrescription(
             }
         });
 
-        revalidatePath('/admin/appointments');
+        revalidatePath('/admin/dashboard/appointments');
         revalidatePath('/dashboard');
         return { success: true };
     } catch (error) {

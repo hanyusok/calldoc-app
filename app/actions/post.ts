@@ -51,7 +51,7 @@ export async function createPost(formData: FormData) {
         }
     });
 
-    revalidatePath('/admin/posts');
+    revalidatePath('/admin/dashboard/posts');
     revalidatePath('/'); // Update homepage
 }
 
@@ -75,12 +75,12 @@ export async function updatePost(id: string, formData: FormData) {
         }
     });
 
-    revalidatePath('/admin/posts');
+    revalidatePath('/admin/dashboard/posts');
     revalidatePath('/');
 }
 
 export async function deletePost(id: string) {
     await prisma.post.delete({ where: { id } });
-    revalidatePath('/admin/posts');
+    revalidatePath('/admin/dashboard/posts');
     revalidatePath('/');
 }

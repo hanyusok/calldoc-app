@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { LayoutDashboard, Calendar, Building2, Settings, LogOut, Users, FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Calendar, Building2, Settings, LogOut, Users, FileText, ChevronLeft, ChevronRight, Syringe } from "lucide-react";
 
 interface AdminSidebarProps {
     isCollapsed: boolean;
@@ -18,12 +18,13 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar }: AdminSideba
 
     const navItems = [
         { href: "/admin/dashboard", label: t('dashboard'), icon: LayoutDashboard },
-        { href: "/admin/users", label: t('users'), icon: Users },
-        { href: "/admin/appointments", label: t('appointments'), icon: Calendar },
-        { href: "/admin/patients", label: t('patients'), icon: Users },
-        { href: "/admin/pharmacies", label: t('pharmacies'), icon: Building2 },
-        { href: "/admin/posts", label: t('posts'), icon: FileText },
-        { href: "/admin/settings", label: t('settings'), icon: Settings },
+        { href: "/admin/dashboard/users", label: t('users'), icon: Users },
+        { href: "/admin/dashboard/patients", label: t('patients'), icon: Users },
+        { href: "/admin/dashboard/appointments", label: t('appointments'), icon: Calendar },
+        { href: "/admin/dashboard/pharmacies", label: t('pharmacies'), icon: Building2 },
+        { href: "/admin/dashboard/vaccinations", label: t('vaccinations'), icon: Syringe },
+        { href: "/admin/dashboard/posts", label: t('posts'), icon: FileText },
+        { href: "/admin/dashboard/settings", label: t('settings'), icon: Settings },
     ];
 
     return (
@@ -61,8 +62,8 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar }: AdminSideba
                             href={item.href}
                             title={isCollapsed ? item.label : undefined}
                             className={`flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors ${active
-                                    ? "bg-blue-50 text-blue-700"
-                                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                                ? "bg-blue-50 text-blue-700"
+                                : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                                 } ${isCollapsed ? "justify-center" : ""}`}
                         >
                             <Icon className={`h-5 w-5 ${active ? "text-blue-700" : "text-gray-400"} ${isCollapsed ? "" : "mr-3"}`} />

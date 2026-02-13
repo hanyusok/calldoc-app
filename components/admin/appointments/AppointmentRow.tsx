@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import AppointmentActions from './AppointmentActions';
-import MeetManager from '@/components/admin/MeetManager';
-import PrescriptionManager from '@/components/admin/PrescriptionManager';
+import MeetManager from '@/components/admin/appointments/MeetManager';
+import PrescriptionManager from '@/components/admin/appointments/PrescriptionManager';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 

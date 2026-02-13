@@ -79,8 +79,8 @@ export async function createUser(data: any) {
             }
         });
 
-        revalidatePath('/admin/users');
-        revalidatePath('/admin/patients');
+        revalidatePath('/admin/dashboard/users');
+        revalidatePath('/admin/dashboard/patients');
         return { success: true };
     } catch (error) {
         console.error("Error creating user:", error);
@@ -108,8 +108,8 @@ export async function updateUser(userId: string, data: any) {
             data: updateData
         });
 
-        revalidatePath('/admin/users');
-        revalidatePath('/admin/patients');
+        revalidatePath('/admin/dashboard/users');
+        revalidatePath('/admin/dashboard/patients');
         return { success: true };
     } catch (error) {
         console.error("Error updating user:", error);
@@ -125,8 +125,8 @@ export async function deleteUser(userId: string) {
             where: { id: userId }
         });
 
-        revalidatePath('/admin/users');
-        revalidatePath('/admin/patients');
+        revalidatePath('/admin/dashboard/users');
+        revalidatePath('/admin/dashboard/patients');
         return { success: true };
     } catch (error) {
         console.error("Error deleting user:", error);

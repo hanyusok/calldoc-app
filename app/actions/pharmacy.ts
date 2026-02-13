@@ -52,7 +52,7 @@ export async function createPharmacy(data: z.infer<typeof pharmacySchema>) {
         const pharmacy = await prisma.pharmacy.create({
             data: validated.data
         });
-        revalidatePath('/admin');
+        revalidatePath('/admin/dashboard/pharmacies');
         return { success: true, pharmacy };
     } catch (error) {
         console.error(error);
@@ -70,7 +70,7 @@ export async function updatePharmacy(id: string, data: z.infer<typeof pharmacySc
             where: { id },
             data: validated.data
         });
-        revalidatePath('/admin');
+        revalidatePath('/admin/dashboard/pharmacies');
         return { success: true };
     } catch (error) {
         console.error(error);
@@ -84,7 +84,7 @@ export async function deletePharmacy(id: string) {
         await prisma.pharmacy.delete({
             where: { id }
         });
-        revalidatePath('/admin');
+        revalidatePath('/admin/dashboard/pharmacies');
         return { success: true };
     } catch (error) {
         console.error(error);
@@ -106,7 +106,7 @@ export async function setPharmacyDefault(pharmacyId: string) {
             })
         ]);
 
-        revalidatePath('/admin');
+        revalidatePath('/admin/dashboard/pharmacies');
         return { success: true };
     } catch (error) {
         console.error("Failed to set default pharmacy", error);

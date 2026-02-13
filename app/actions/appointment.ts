@@ -67,7 +67,7 @@ export async function createAppointment(data: {
                 price: data.price,
             },
         });
-        revalidatePath('/admin/dashboard');
+        revalidatePath('/admin/dashboard/appointments');
         return appointment;
     } catch (error) {
         console.error("Error creating appointment:", error);
@@ -85,7 +85,7 @@ export async function updateAppointment(id: string, data: {
             where: { id },
             data,
         });
-        revalidatePath('/admin/dashboard');
+        revalidatePath('/admin/dashboard/appointments');
         return appointment;
     } catch (error) {
         console.error("Error updating appointment:", error);
@@ -98,7 +98,7 @@ export async function deleteAppointment(id: string) {
         await prisma.appointment.delete({
             where: { id },
         });
-        revalidatePath('/admin/dashboard');
+        revalidatePath('/admin/dashboard/appointments');
         return { success: true };
     } catch (error) {
         console.error("Error deleting appointment:", error);

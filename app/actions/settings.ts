@@ -49,7 +49,7 @@ export async function updateSettings(data: { siteName: string; maintenanceMode: 
             }
         });
 
-        revalidatePath('/admin');
+        revalidatePath('/admin/dashboard/settings');
         return { success: true };
     } catch (error) {
         console.error("Failed to update settings:", error);

@@ -28,7 +28,7 @@ export async function getPaymentLink(appointmentId: string) {
     const timestamp = Math.floor(Date.now() / 1000).toString();
 
     // 2. Get Payment Signature
-    const { getKiwoomHash } = await import("@/app/lib/kiwoom");
+    const { getKiwoomHash } = await import("@/app/actions/kiwoom");
 
     const hashResult = await getKiwoomHash({
         CPID: MERCHANT_ID,

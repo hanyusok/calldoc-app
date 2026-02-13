@@ -202,6 +202,7 @@
             "appointments": "예약 관리",
             "patients": "환자 관리",
             "pharmacies": "약국 관리",
+            "vaccinations": "예방접종 관리",
             "posts": "게시글 관리",
             "settings": "설정",
             "logout": "로그아웃"
@@ -222,6 +223,21 @@
                 "actions": "관리"
             },
             "manage_appointment": "예약 관리",
+            "users": "회원 관리",
+            "vaccinations": "예방접종 관리",
+            "pharmacies": "약국 관리",
+            "posts": "건강 정보 관리",
+            "desc_appointments": "전체 예약 현황 확인 및 관리",
+            "desc_users": "환자 및 관리자 계정 관리",
+            "patients": "환자 기록",
+            "desc_patients": "상세 환자 프로필 조회 및 관리",
+            "desc_vaccinations": "백신 재고 및 가격 관리",
+            "desc_pharmacies": "제휴 약국 네트워크 관리",
+            "desc_posts": "건강 정보 및 팁 게시",
+            "quick_access": "빠른 실행",
+            "today_visits": "오늘의 방문",
+            "upcoming": "예정된 방문",
+            "pending": "대기 중인 요청",
             "additional_actions": "예약 확정 후 추가 기능을 사용할 수 있습니다.",
             "patient_fallback": "환자",
             "edit": "수정"
@@ -322,6 +338,32 @@
             "save_changes": "변경사항 저장",
             "saved_success": "설정이 저장되었습니다",
             "saved_error": "설정 저장 실패"
+        },
+        "vaccinations": {
+            "title": "예방접종 관리",
+            "search_placeholder": "백신 검색...",
+            "add_new": "백신 추가",
+            "no_vaccinations": "등록된 백신이 없습니다",
+            "no_vaccinations_desc": "새로운 백신을 추가해보세요.",
+            "confirm_delete": "정말 이 백신을 삭제하시겠습니까?",
+            "delete_error": "백신 삭제 실패",
+            "create_vaccination": "백신 등록",
+            "edit_vaccination": "백신 수정",
+            "name": "백신명",
+            "price": "가격",
+            "category": "카테고리",
+            "description": "설명",
+            "manufacturer": "제조사",
+            "target_disease": "대상 질병",
+            "visit_time": "권장 방문 시간",
+            "location": "접종 장소",
+            "min_age": "최소 연령 (세)",
+            "max_age": "최대 연령 (세)",
+            "save": "저장",
+            "saving": "저장 중...",
+            "cancel": "취소",
+            "save_error": "저장 실패",
+            "back_to_list": "목록으로 돌아가기"
         }
     }
 }

@@ -1,5 +1,3 @@
-
-"use delete";
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -14,6 +12,7 @@ interface Post {
     category: string | null;
     author: string | null;
     published: boolean;
+    imageUrl: string | null;
     createdAt: Date;
 }
 

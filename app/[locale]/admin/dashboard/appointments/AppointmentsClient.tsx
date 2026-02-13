@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
-import AppointmentModal from '@/components/admin/AppointmentModal';
+import AppointmentModal from '@/components/admin/appointments/AppointmentModal';
 import AppointmentRow from '@/components/admin/appointments/AppointmentRow';
 import { useTranslations, useFormatter } from 'next-intl';
 
