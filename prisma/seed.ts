@@ -189,96 +189,153 @@ async function main() {
     console.log('Start seeding ...')
 
     // 1. Seed Test User (Patient)
-    const email = 'test@calldoc.co.kr';
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (!existingUser) {
-        const hashedPassword = await bcrypt.hash('password', 10);
-        await prisma.user.create({
-            data: {
-                email,
-                name: 'Test User',
-                password: hashedPassword,
-                role: Role.PATIENT,
-                phoneNumber: '010-1234-5678',
-                residentNumber: '900101-1234567',
-                age: 30,
-                gender: 'male',
-                emailVerified: new Date(),
-            }
-        });
-        console.log(`Created test user: ${email}`);
-    }
+    const email = 'test@test.com';
+    const hashedPassword = await bcrypt.hash('password', 10);
+
+    await prisma.user.upsert({
+        where: { email },
+        update: {
+            name: 'Test User',
+            password: hashedPassword,
+            role: Role.PATIENT,
+            phoneNumber: '010-1234-5678',
+            residentNumber: '900101-1234567',
+            age: 30,
+            gender: 'male',
+            emailVerified: new Date(),
+        },
+        create: {
+            email,
+            name: 'Test User',
+            password: hashedPassword,
+            role: Role.PATIENT,
+            phoneNumber: '010-1234-5678',
+            residentNumber: '900101-1234567',
+            age: 30,
+            gender: 'male',
+            emailVerified: new Date(),
+        }
+    });
+    console.log(`Upserted test user: ${email}`);
 
     // 2. Seed Admin User
-    const adminEmail = 'admin@calldoc.co.kr';
-    const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
-    if (!existingAdmin) {
-        const hashedAdminPassword = await bcrypt.hash('admin123', 10);
-        await prisma.user.create({
-            data: {
-                email: adminEmail,
-                name: 'System Admin',
-                password: hashedAdminPassword,
-                role: Role.ADMIN,
-                phoneNumber: '010-0000-0000',
-                emailVerified: new Date(),
-            }
-        });
-        console.log(`Created admin user: ${adminEmail}`);
-    }
+    const adminEmail = 'admin@test.com';
+    const hashedAdminPassword = await bcrypt.hash('password', 10);
+
+    await prisma.user.upsert({
+        where: { email: adminEmail },
+        update: {
+            name: 'System Admin',
+            password: hashedAdminPassword,
+            role: Role.ADMIN,
+            phoneNumber: '010-0000-0000',
+            emailVerified: new Date(),
+        },
+        create: {
+            email: adminEmail,
+            name: 'System Admin',
+            password: hashedAdminPassword,
+            role: Role.ADMIN,
+            phoneNumber: '010-0000-0000',
+            emailVerified: new Date(),
+        }
+    });
+    console.log(`Upserted admin user: ${adminEmail}`);
 
     // 3. Seed Doctors
-    await prisma.doctor.deleteMany({});
     for (const doc of doctors) {
-        await prisma.doctor.create({ data: doc });
+        const existingDoctor = await prisma.doctor.findFirst({
+            where: { name: doc.name }
+        });
+
+        if (existingDoctor) {
+            await prisma.doctor.update({
+                where: { id: existingDoctor.id },
+                data: doc
+            });
+        } else {
+            await prisma.doctor.create({ data: doc });
+        }
     }
-    console.log('Doctors seeded.');
+    console.log('Doctors seeded/renewed.');
 
     // 4. Seed Pharmacies
-    await prisma.pharmacy.deleteMany({});
     for (let i = 0; i < 10; i++) {
-        await prisma.pharmacy.create({
-            data: {
-                name: PHARMACY_NAMES[i],
-                address: ADDRESSES[i],
-                phone: `02-${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
-                fax: `02-${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
-                isDefault: i === 0
-            }
+        const name = PHARMACY_NAMES[i];
+        const pharmacyData = {
+            name,
+            address: ADDRESSES[i],
+            phone: `02-${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
+            fax: `02-${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
+            isDefault: i === 0
+        };
+
+        const existingPharmacy = await prisma.pharmacy.findFirst({
+            where: { name }
         });
+
+        if (existingPharmacy) {
+            await prisma.pharmacy.update({
+                where: { id: existingPharmacy.id },
+                data: pharmacyData
+            });
+        } else {
+            await prisma.pharmacy.create({ data: pharmacyData });
+        }
     }
-    console.log('Pharmacies seeded.');
+    console.log('Pharmacies seeded/renewed.');
 
     // 5. Seed Posts
-    await prisma.post.deleteMany({});
     for (let i = 0; i < 10; i++) {
         const title = POST_TITLES[i];
         const category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
         const seed = `post-${i + 1}`;
-        await prisma.post.create({
-            data: {
-                title,
-                content: `This is the content for ${title}. It contains valuable health information and tips for users.`,
-                category,
-                author: "Dr. Smith",
-                imageUrl: `https://picsum.photos/seed/${seed}/300/300`,
-                published: true,
-            }
+
+        const postData = {
+            title,
+            content: `This is the content for ${title}. It contains valuable health information and tips for users.`,
+            category,
+            author: "Dr. Smith",
+            imageUrl: `https://picsum.photos/seed/${seed}/300/300`,
+            published: true,
+        };
+
+        const existingPost = await prisma.post.findFirst({
+            where: { title }
         });
+
+        if (existingPost) {
+            await prisma.post.update({
+                where: { id: existingPost.id },
+                data: postData
+            });
+        } else {
+            await prisma.post.create({ data: postData });
+        }
     }
-    console.log('Posts seeded.');
+    console.log('Posts seeded/renewed.');
 
     // 6. Seed Vaccinations
-    await prisma.vaccination.deleteMany({});
     for (const v of VACCINATIONS) {
-        await prisma.vaccination.create({
-            data: {
-                ...v,
-                description: `Protects against ${v.category}. Recommended for all ages.`
-            }
+        const vaccinationData = {
+            ...v,
+            description: `Protects against ${v.category}. Recommended for all ages.`
+        };
+
+        const existingVaccination = await prisma.vaccination.findFirst({
+            where: { name: v.name }
         });
+
+        if (existingVaccination) {
+            await prisma.vaccination.update({
+                where: { id: existingVaccination.id },
+                data: vaccinationData as any // Use as any if needed, but strict types should be fine given schema
+            });
+        } else {
+            await prisma.vaccination.create({ data: vaccinationData });
+        }
     }
-    console.log('Vaccinations seeded.');
+    console.log('Vaccinations seeded/renewed.');
 
     console.log('Seeding finished.')
 }

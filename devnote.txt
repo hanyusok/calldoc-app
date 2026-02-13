@@ -1,0 +1,2 @@
+test-user: test@test.com / password
+admin-user: admin@test.com / password
