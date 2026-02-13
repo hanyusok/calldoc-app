@@ -1,6 +1,7 @@
 import React from 'react';
 import { getDoctorById, createAppointment } from '@/app/[locale]/(mobile)/consult/actions';
 import { auth } from "@/auth";
+import { prisma } from "@/app/lib/prisma";
 import { redirect } from 'next/navigation';
 import { ChevronLeft, Calendar, User, Clock, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -17,8 +18,16 @@ export default async function BookingReviewPage({
     const doctor = await getDoctorById(id);
     const session = await auth();
 
-    if (!doctor || !date || !time || !patientId || !session?.user?.id) {
+    if (!doctor || !date || !time || !patientId || !session?.user?.email) {
         redirect(`/doctor/${id}/book`); // Redirect back if missing data
+    }
+
+    const dbUser = await prisma.user.findUnique({
+        where: { email: session.user.email }
+    });
+
+    if (!dbUser) {
+        redirect('/login');
     }
 
     const formattedDate = new Date(date).toLocaleDateString('en-US', {
@@ -116,7 +125,8 @@ export default async function BookingReviewPage({
             <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4 border-t border-gray-100 bg-white z-20">
                 <form action={createAppointment}>
                     <input type="hidden" name="doctorId" value={id} />
-                    <input type="hidden" name="userId" value={session.user.id} />
+                    <input type="hidden" name="userId" value={dbUser.id} />
+                    <input type="hidden" name="patientId" value={patientId} />
                     <input type="hidden" name="date" value={date} />
                     <input type="hidden" name="time" value={time} />
                     {/* Note: Schema might need a datetime, we'll combine them in the action */}

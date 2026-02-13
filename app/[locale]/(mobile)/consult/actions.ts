@@ -111,8 +111,9 @@ export async function getDoctorById(id: string) {
 export async function createAppointment(formData: FormData) {
     'use server';
 
-    const userId = formData.get('userId') as string;
+    const userId = formData.get('userId') as string; // Main User ID (Requester)
     const doctorId = formData.get('doctorId') as string;
+    const patientId = formData.get('patientId') as string; // Can be userId or familyMemberId
     const dateStr = formData.get('date') as string;
     const timeStr = formData.get('time') as string;
 
@@ -127,17 +128,27 @@ export async function createAppointment(formData: FormData) {
     const [hours, minutes] = timeStr.split(':').map(Number);
     date.setHours(hours, minutes, 0, 0);
 
+    // Determine if booking is for a family member
+    const familyMemberId = patientId !== userId ? patientId : null;
+
+    // Essential check for doctor existence
+    const doctor = await prisma.doctor.findUnique({ where: { id: doctorId } });
+    if (!doctor) {
+        console.error("DEBUG: DOCTOR NOT FOUND IN DB:", doctorId);
+        throw new Error(`Doctor with ID ${doctorId} not found`);
+    }
+
     const appointment = await prisma.appointment.create({
         data: {
             userId,
             doctorId,
+            familyMemberId,
             date: date,
             status: "PENDING", // Wait for doctor to set price
-            // price is optionally null by default
         },
     });
 
-    revalidatePath('/admin/dashboard');
+    revalidatePath('/myappointment');
 
     // Redirect to success page
     redirect(`/doctor/${doctorId}/book/success?appointmentId=${appointment.id}`);

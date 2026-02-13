@@ -35,6 +35,7 @@ model User {
   familyMembers FamilyMember[]
   pharmacyId    String?
   pharmacy      Pharmacy?       @relation(fields: [pharmacyId], references: [id])
+  vaccinationReservations VaccinationReservation[]
 }
 
 model Insurance {
@@ -55,6 +56,7 @@ model FamilyMember {
   phoneNumber    String?
   userId   String
   user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
 }
 
 model Account {
@@ -116,6 +118,7 @@ model Appointment {
   id            String   @id @default(cuid())
   userId        String
   doctorId      String
+  familyMemberId String?
   date          DateTime
   status        String   @default("PENDING") // PENDING, AWAITING_PAYMENT, CONFIRMED, COMPLETED, CANCELLED
   price         Float?
@@ -123,6 +126,7 @@ model Appointment {
   symptoms      String?
   user          User     @relation(fields: [userId], references: [id])
   doctor        Doctor   @relation(fields: [doctorId], references: [id])
+  familyMember  FamilyMember? @relation(fields: [familyMemberId], references: [id])
   createdAt     DateTime @default(now())
   payment       Payment?
   prescription  Prescription?
@@ -209,4 +213,17 @@ model Vaccination {
   maxAge      Int? // Maximum age in years
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  reservations VaccinationReservation[]
+}
+
+model VaccinationReservation {
+  id            String      @id @default(cuid())
+  userId        String
+  vaccinationId String
+  date          DateTime?
+  status        String      @default("PENDING") // PENDING, CONFIRMED, COMPLETED, CANCELLED
+  user          User        @relation(fields: [userId], references: [id])
+  vaccination   Vaccination @relation(fields: [vaccinationId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }

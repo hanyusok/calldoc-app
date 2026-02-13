@@ -13,6 +13,7 @@
     },
     "Navigation": {
         "home": "Home",
+        "myappointment": "My Appointment",
         "consult": "Consult",
         "dashboard": "Dashboard",
         "profile": "My Page"
@@ -44,9 +45,37 @@
     },
     "ConsultPage": {
         "title_default": "Find a Doctor",
-        "search_placeholder": "Search doctor, hospital, etc...",
+        "search_placeholder": "Search doctors, hospitals...",
         "no_results": "No doctors found matching your criteria.",
         "clear_filters": "Clear all filters"
+    },
+    "MyAppointmentPage": {
+        "title": "Appointments",
+        "action_required": "Action Required",
+        "pending": "Pending Requests",
+        "upcoming": "Upcoming Schedules",
+        "past": "Past Appointments",
+        "status": {
+            "requested": "Requested",
+            "payment_required": "Payment Required",
+            "confirmed": "Confirmed",
+            "completed": "Completed"
+        },
+        "empty": {
+            "title": "No Appointments Yet",
+            "desc": "Find a specialist and book your first consultation today.",
+            "button": "Find a Doctor"
+        },
+        "card": {
+            "consultation_fee": "Consultation Fee",
+            "video_consult": "Video Consultation",
+            "enter_room": "Enter Room",
+            "details": "Details",
+            "waiting_price": "Waiting for doctor to confirm price...",
+            "pay_now": "Pay Now",
+            "price_confirmed_msg": "{doctor} has confirmed the price (${price}).",
+            "vaccination_subtitle": "Vaccination Reservation"
+        }
     },
     "FilterBar": {
         "all": "All",
@@ -119,30 +148,11 @@
     },
     "Dashboard": {
         "title": "Dashboard",
-        "action_required": "Action Required",
-        "pending": "Pending Requests",
-        "upcoming": "Upcoming Schedules",
-        "past": "Past Appointments",
-        "status": {
-            "requested": "Requested",
-            "payment_required": "Payment Required",
-            "confirmed": "Confirmed",
-            "completed": "Completed"
-        },
-        "empty": {
-            "title": "No Appointments Yet",
-            "desc": "Find a specialist and book your first consultation today.",
-            "button": "Find a Doctor"
-        },
-        "card": {
-            "consultation_fee": "Consultation Fee",
-            "video_consult": "Video Consultation",
-            "enter_room": "Enter Room",
-            "details": "Details",
-            "waiting_price": "Waiting for doctor to confirm price...",
-            "pay_now": "Pay Now",
-            "price_confirmed_msg": "{doctor} has confirmed the price (${price})."
-        }
+        "notifications": "Notifications",
+        "activity": "Activity History",
+        "preferences": "User Preferences",
+        "no_notifications": "No new notifications",
+        "view_all": "View All"
     },
     "LoginPage": {
         "title": "CallDoc",

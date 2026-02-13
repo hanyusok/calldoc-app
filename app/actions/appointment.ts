@@ -81,11 +81,17 @@ export async function updateAppointment(id: string, data: {
     price?: number;
 }) {
     try {
+        // If price is being set and status is PENDING, auto-promote to AWAITING_PAYMENT
+        if (data.price && data.price > 0 && data.status === 'PENDING') {
+            data.status = 'AWAITING_PAYMENT';
+        }
+
         const appointment = await prisma.appointment.update({
             where: { id },
             data,
         });
         revalidatePath('/admin/dashboard/appointments');
+        revalidatePath('/myappointment');
         return appointment;
     } catch (error) {
         console.error("Error updating appointment:", error);

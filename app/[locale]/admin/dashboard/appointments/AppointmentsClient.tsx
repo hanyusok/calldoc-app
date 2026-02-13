@@ -2,32 +2,46 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Plus, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Search, Filter, ChevronLeft, ChevronRight, Stethoscope, Syringe } from 'lucide-react';
 import AppointmentModal from '@/components/admin/appointments/AppointmentModal';
 import AppointmentRow from '@/components/admin/appointments/AppointmentRow';
+import VaccinationReservationRow from '@/components/admin/appointments/VaccinationReservationRow';
 import { useTranslations, useFormatter } from 'next-intl';
 
 interface AppointmentsClientProps {
     initialAppointments: any[];
     initialTotal: number;
+    initialVacReservations: any[];
+    initialVacTotal: number;
     initialPage: number;
     search?: string;
     status?: string;
+    initialTab?: string;
 }
 
-export default function AppointmentsClient({ initialAppointments, initialTotal, initialPage, search, status }: AppointmentsClientProps) {
+export default function AppointmentsClient({
+    initialAppointments,
+    initialTotal,
+    initialVacReservations,
+    initialVacTotal,
+    initialPage,
+    search,
+    status,
+    initialTab = 'consultations'
+}: AppointmentsClientProps) {
     const t = useTranslations('Admin.nav');
     const tDash = useTranslations('Admin.dashboard');
     const tStatus = useTranslations('Admin.status');
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // Check if initialAppointments is undefined or null, and default to empty array
-    const appointments = initialAppointments || [];
-
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState(search || '');
     const [statusFilter, setStatusFilter] = useState(status || 'ALL');
+    const [activeTab, setActiveTab] = useState(initialTab);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    // Aliases for compatibility with existing code
+    const appointments = initialAppointments || [];
 
     // Debounce search/filter updates
     useEffect(() => {
@@ -35,9 +49,10 @@ export default function AppointmentsClient({ initialAppointments, initialTotal, 
             const params = new URLSearchParams(searchParams.toString());
             const currentQ = params.get('q') || '';
             const currentStatus = params.get('status') || 'ALL';
+            const currentTab = params.get('tab') || 'consultations';
 
             // Only update if values actually changed
-            if (currentQ !== searchTerm || currentStatus !== statusFilter) {
+            if (currentQ !== searchTerm || currentStatus !== statusFilter || currentTab !== activeTab) {
                 if (searchTerm) {
                     params.set('q', searchTerm);
                 } else {
@@ -50,14 +65,16 @@ export default function AppointmentsClient({ initialAppointments, initialTotal, 
                     params.delete('status');
                 }
 
-                // Reset to page 1 on new search/filter
+                params.set('tab', activeTab);
+
+                // Reset to page 1 on new search/filter/tab
                 params.set('page', '1');
 
                 router.push(`?${params.toString()}`);
             }
         }, 300);
         return () => clearTimeout(timeoutId);
-    }, [searchTerm, statusFilter]); // Removed router, searchParams to avoid loop
+    }, [searchTerm, statusFilter, activeTab]);
 
     const handlePageChange = (newPage: number) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -65,12 +82,49 @@ export default function AppointmentsClient({ initialAppointments, initialTotal, 
         router.push(`?${params.toString()}`);
     };
 
-    const totalPages = Math.ceil(initialTotal / 10);
+    const totalPages = activeTab === 'consultations'
+        ? Math.ceil(initialTotal / 10)
+        : Math.ceil(initialVacTotal / 10);
+
+    const isConsultations = activeTab === 'consultations';
 
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">{t('appointments')}</h1>
+                {isConsultations && (
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
+                    >
+                        <Plus size={20} />
+                        {tDash('new_appointment')}
+                    </button>
+                )}
+            </div>
+
+            {/* Tab Switcher */}
+            <div className="flex border-b border-gray-200">
+                <button
+                    onClick={() => setActiveTab('consultations')}
+                    className={`px-6 py-3 text-sm font-bold flex items-center gap-2 transition-colors border-b-2 ${isConsultations
+                            ? 'border-blue-600 text-blue-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
+                >
+                    <Stethoscope size={18} />
+                    Consultations
+                </button>
+                <button
+                    onClick={() => setActiveTab('vaccinations')}
+                    className={`px-6 py-3 text-sm font-bold flex items-center gap-2 transition-colors border-b-2 ${!isConsultations
+                            ? 'border-blue-600 text-blue-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
+                >
+                    <Syringe size={18} />
+                    Vaccinations
+                </button>
             </div>
 
             <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-center">
@@ -94,20 +148,14 @@ export default function AppointmentsClient({ initialAppointments, initialTotal, 
                         >
                             <option value="ALL">{tDash('all_status')}</option>
                             <option value="PENDING">{tStatus('PENDING')}</option>
-                            <option value="AWAITING_PAYMENT">{tStatus('AWAITING_PAYMENT')}</option>
-                            <option value="CONFIRMED">{tStatus('CONFIRMED')}</option>
+                            {!isConsultations && <option value="CONFIRMED">{tStatus('CONFIRMED')}</option>}
+                            {isConsultations && <option value="AWAITING_PAYMENT">{tStatus('AWAITING_PAYMENT')}</option>}
+                            {isConsultations && <option value="CONFIRMED">{tStatus('CONFIRMED')}</option>}
                             <option value="COMPLETED">{tStatus('COMPLETED')}</option>
                             <option value="CANCELLED">{tStatus('CANCELLED')}</option>
                         </select>
                     </div>
                 </div>
-                <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="w-full md:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 font-medium"
-                >
-                    <Plus size={20} />
-                    {tDash('new_appointment')}
-                </button>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -117,23 +165,37 @@ export default function AppointmentsClient({ initialAppointments, initialTotal, 
                             <tr>
                                 <th className="p-4">{tDash('table.patient')}</th>
                                 <th className="p-4">{tDash('table.date')}</th>
-                                <th className="p-4">{tDash('table.doctor')}</th>
-                                <th className="p-4">{tDash('table.status')}</th>
+                                <th className="p-4">{isConsultations ? tDash('table.doctor') : 'Vaccine'}</th>
+                                <th className="p-4 text-center">{tDash('table.status')}</th>
                                 <th className="p-4 text-right">{tDash('table.price')}</th>
                                 <th className="p-4 text-center">{tDash('table.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {appointments.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="p-8 text-center text-gray-400">
-                                        {tDash('empty_state')}
-                                    </td>
-                                </tr>
+                            {isConsultations ? (
+                                initialAppointments.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="p-8 text-center text-gray-400">
+                                            {tDash('empty_state')}
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    initialAppointments.map((apt: any) => (
+                                        <AppointmentRow key={apt.id} appointment={apt} />
+                                    ))
+                                )
                             ) : (
-                                appointments.map((apt: any) => (
-                                    <AppointmentRow key={apt.id} appointment={apt} />
-                                ))
+                                initialVacReservations.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="p-8 text-center text-gray-400">
+                                            {tDash('empty_state')}
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    initialVacReservations.map((vac: any) => (
+                                        <VaccinationReservationRow key={vac.id} reservation={vac} />
+                                    ))
+                                )
                             )}
                         </tbody>
                     </table>

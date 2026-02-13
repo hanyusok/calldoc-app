@@ -75,7 +75,7 @@ export async function createVaccination(formData: FormData) {
     });
 
     revalidatePath('/admin/dashboard/vaccinations');
-    revalidatePath('/consult');
+    revalidatePath('/myappointment');
 }
 
 export async function updateVaccination(id: string, formData: FormData) {
@@ -111,7 +111,7 @@ export async function updateVaccination(id: string, formData: FormData) {
     });
 
     revalidatePath('/admin/dashboard/vaccinations');
-    revalidatePath('/consult');
+    revalidatePath('/myappointment');
 }
 
 export async function deleteVaccination(id: string) {

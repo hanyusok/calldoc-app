@@ -16,7 +16,7 @@ export async function getUserAppointments() {
             prescription: true,
         },
         orderBy: {
-            date: 'desc', // Most recent first
+            date: 'desc',
         },
     });
 }
@@ -39,4 +39,15 @@ export async function checkNewConfirmations(knownIds: string[]) {
     });
 
     return newConfirmations;
+}
+
+export async function getMyVaccinationReservations() {
+    const session = await auth();
+    if (!session?.user?.id) return [];
+
+    return prisma.vaccinationReservation.findMany({
+        where: { userId: session.user.id },
+        include: { vaccination: true },
+        orderBy: { createdAt: 'desc' }
+    });
 }

@@ -181,7 +181,14 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
                                 step="0.01"
                                 className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                 value={formData.price || 0}
-                                onChange={e => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                                onChange={e => {
+                                    const val = parseFloat(e.target.value);
+                                    let newStatus = formData.status;
+                                    if (val > 0 && formData.status === 'PENDING') {
+                                        newStatus = 'AWAITING_PAYMENT';
+                                    }
+                                    setFormData({ ...formData, price: val, status: newStatus });
+                                }}
                             />
                         </div>
                     </div>

@@ -25,7 +25,7 @@ export default function FilterBar() {
         } else {
             params.set('filter', filterId);
         }
-        router.push(`/consult?${params.toString()}`);
+        router.push(`/myappointment?${params.toString()}`);
     };
 
     return (

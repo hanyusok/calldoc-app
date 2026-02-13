@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Link, usePathname } from '@/i18n/routing';
-import { Home, ClipboardList, User, Stethoscope } from 'lucide-react';
+import { Home, ClipboardList, User, Stethoscope, LayoutDashboard } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 const BottomNav = () => {
@@ -29,12 +29,12 @@ const BottomNav = () => {
                     <Home size={24} />
                     <span className="text-[10px] font-medium">{t('home')}</span>
                 </Link>
-                <Link href="/consult" className={getLinkClass('/consult')}>
+                <Link href="/myappointment" className={getLinkClass('/myappointment')}>
                     <Stethoscope size={24} />
-                    <span className="text-[10px] font-medium">{t('consult')}</span>
+                    <span className="text-[10px] font-medium">{t('myappointment')}</span>
                 </Link>
                 <Link href="/dashboard" className={getLinkClass('/dashboard')}>
-                    <ClipboardList size={24} />
+                    <LayoutDashboard size={24} />
                     <span className="text-[10px] font-medium">{t('dashboard')}</span>
                 </Link>
                 <Link href="/profile" className={getLinkClass('/profile')}>

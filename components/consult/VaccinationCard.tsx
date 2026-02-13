@@ -1,6 +1,10 @@
 
-import React from 'react';
-import { Syringe, MapPin, Clock } from 'lucide-react';
+"use client";
+
+import React, { useState } from 'react';
+import { Syringe, MapPin, Clock, Check } from 'lucide-react';
+import { reserveVaccination } from '@/app/actions/vaccination-booking';
+import { useRouter } from 'next/navigation';
 
 interface Vaccination {
     id: string;
@@ -17,6 +21,30 @@ interface Vaccination {
 }
 
 const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
+    const [isReserving, setIsReserving] = useState(false);
+    const [isReserved, setIsReserved] = useState(false);
+    const router = useRouter();
+
+    const handleReserve = async () => {
+        setIsReserving(true);
+        try {
+            const result = await reserveVaccination(vaccination.id);
+            if (result.success) {
+                setIsReserved(true);
+                // Redirect to dashboard after success
+                setTimeout(() => {
+                    router.push('/dashboard');
+                }, 1500);
+            } else {
+                alert(result.error);
+            }
+        } catch (error) {
+            alert("An error occurred while reserving.");
+        } finally {
+            setIsReserving(false);
+        }
+    };
+
     return (
         <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-2">
             <div className="flex justify-between items-start">
@@ -66,8 +94,22 @@ const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
                 <span className="font-bold text-blue-600">
                     {vaccination.price === 0 ? "Free" : `₩${vaccination.price.toLocaleString()}`}
                 </span>
-                <button className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700">
-                    Reserve
+                <button
+                    onClick={handleReserve}
+                    disabled={isReserving || isReserved}
+                    className={`text-xs px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 ${isReserved
+                            ? "bg-green-100 text-green-700"
+                            : "bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                        }`}
+                >
+                    {isReserved ? (
+                        <>
+                            <Check size={14} />
+                            Reserved
+                        </>
+                    ) : (
+                        isReserving ? "Reserving..." : "Reserve"
+                    )}
                 </button>
             </div>
         </div>

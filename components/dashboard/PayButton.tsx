@@ -13,7 +13,7 @@ interface PayButtonProps {
 }
 
 export default function PayButton({ appointmentId, price }: PayButtonProps) {
-    const t = useTranslations('Dashboard');
+    const t = useTranslations('MyAppointmentPage');
     const [loading, setLoading] = useState(false);
     const locale = useLocale();
     const router = useRouter();
@@ -147,10 +147,10 @@ export default function PayButton({ appointmentId, price }: PayButtonProps) {
             <button
                 onClick={handlePayment}
                 disabled={loading}
-                className="bg-primary-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-primary-600/30 hover:bg-primary-700 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-primary-500/25 hover:bg-primary-600 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap min-w-[100px]"
             >
-                {loading ? <Loader2 className="animate-spin" size={16} /> : <CreditCard size={16} />}
-                {t('card.pay_now')}
+                {loading ? <Loader2 className="animate-spin text-white/80" size={16} /> : <CreditCard className="text-white/90" size={16} />}
+                <span>{t('card.pay_now')}</span>
             </button>
 
             {process.env.NODE_ENV === 'development' && (

@@ -61,7 +61,7 @@ export default async function BookingSuccessPage({
 
             <div className="w-full max-w-xs space-y-3">
                 <Link
-                    href="/consult"
+                    href="/myappointment"
                     className="block w-full py-3.5 bg-primary-600 text-white rounded-xl font-bold shadow-lg shadow-primary-600/30 hover:bg-primary-700 transition-all active:scale-95"
                 >
                     View My Appointments

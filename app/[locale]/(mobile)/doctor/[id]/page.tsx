@@ -18,7 +18,7 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
     return (
         <div className="bg-gray-50 min-h-screen pb-24">
             <div className="bg-white sticky top-0 z-10 px-4 py-3 flex items-center gap-3 shadow-sm">
-                <Link href="/consult" className="text-gray-600 hover:text-gray-900">
+                <Link href="/myappointment" className="text-gray-600 hover:text-gray-900">
                     <ChevronLeft size={24} />
                 </Link>
                 <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>

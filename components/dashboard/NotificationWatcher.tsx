@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { checkNewConfirmations } from '@/app/[locale]/(mobile)/dashboard/actions';
+import { checkNewConfirmations } from '@/app/[locale]/(mobile)/myappointment/actions';
 import { useRouter } from 'next/navigation';
 import { Bell } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export default function NotificationWatcher({ initialConfirmedIds }: { initialConfirmedIds: string[] }) {
-    const t = useTranslations('Dashboard');
+    const t = useTranslations('MyAppointmentPage');
     const router = useRouter();
     const [knownIds, setKnownIds] = useState<string[]>(initialConfirmedIds);
     const [notification, setNotification] = useState<{ message: string, id: string } | null>(null);
