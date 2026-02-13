@@ -1,52 +1,79 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Plus, Search, Filter } from 'lucide-react';
-import AppointmentActions from './AppointmentActions';
+import { Plus, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import AppointmentModal from '@/components/admin/AppointmentModal';
-import AppointmentRow from './AppointmentRow';
-import { useTranslations } from 'next-intl';
+import AppointmentRow from '@/components/admin/appointments/AppointmentRow';
+import { useTranslations, useFormatter } from 'next-intl';
 
-export default function ClientPage({ initialAppointments, search, status }: any) {
-    const t = useTranslations('Admin.nav'); // Using nav keys or common ones
+interface AppointmentsClientProps {
+    initialAppointments: any[];
+    initialTotal: number;
+    initialPage: number;
+    search?: string;
+    status?: string;
+}
+
+export default function AppointmentsClient({ initialAppointments, initialTotal, initialPage, search, status }: AppointmentsClientProps) {
+    const t = useTranslations('Admin.nav');
     const tDash = useTranslations('Admin.dashboard');
     const tStatus = useTranslations('Admin.status');
     const router = useRouter();
     const searchParams = useSearchParams();
+
+    // Check if initialAppointments is undefined or null, and default to empty array
+    const appointments = initialAppointments || [];
+
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState(search || '');
     const [statusFilter, setStatusFilter] = useState(status || 'ALL');
 
-    // Simple debounce implementation if hook doesn't exist
+    // Debounce search/filter updates
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            const currentParams = new URLSearchParams(searchParams.toString());
             const params = new URLSearchParams(searchParams.toString());
+            const currentQ = params.get('q') || '';
+            const currentStatus = params.get('status') || 'ALL';
 
-            if (searchTerm) {
-                params.set('q', searchTerm);
-            } else {
-                params.delete('q');
-            }
-            if (statusFilter && statusFilter !== 'ALL') {
-                params.set('status', statusFilter);
-            } else {
-                params.delete('status');
-            }
+            // Only update if values actually changed
+            if (currentQ !== searchTerm || currentStatus !== statusFilter) {
+                if (searchTerm) {
+                    params.set('q', searchTerm);
+                } else {
+                    params.delete('q');
+                }
 
-            // Only push if params have changed
-            if (currentParams.toString() !== params.toString()) {
+                if (statusFilter && statusFilter !== 'ALL') {
+                    params.set('status', statusFilter);
+                } else {
+                    params.delete('status');
+                }
+
+                // Reset to page 1 on new search/filter
+                params.set('page', '1');
+
                 router.push(`?${params.toString()}`);
             }
         }, 300);
         return () => clearTimeout(timeoutId);
-    }, [searchTerm, statusFilter, router, searchParams]);
+    }, [searchTerm, statusFilter]); // Removed router, searchParams to avoid loop
+
+    const handlePageChange = (newPage: number) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('page', newPage.toString());
+        router.push(`?${params.toString()}`);
+    };
+
+    const totalPages = Math.ceil(initialTotal / 10);
 
     return (
-        <>
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold">{t('appointments')}</h1>
+            </div>
+
             <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-center">
-                {/* ... Keep Search/Filter UI ... */}
                 <div className="flex items-center gap-2 w-full md:w-auto flex-1">
                     <div className="relative flex-1 max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -97,19 +124,39 @@ export default function ClientPage({ initialAppointments, search, status }: any)
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {initialAppointments.length === 0 ? (
+                            {appointments.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="p-8 text-center text-gray-400">
                                         {tDash('empty_state')}
                                     </td>
                                 </tr>
                             ) : (
-                                initialAppointments.map((apt: any) => (
+                                appointments.map((apt: any) => (
                                     <AppointmentRow key={apt.id} appointment={apt} />
                                 ))
                             )}
                         </tbody>
                     </table>
+                </div>
+                {/* Pagination */}
+                <div className="p-4 border-t border-gray-100 flex justify-end gap-2 items-center">
+                    <span className="text-sm text-gray-500 mr-4">
+                        Page {initialPage} of {totalPages || 1}
+                    </span>
+                    <button
+                        onClick={() => handlePageChange(initialPage - 1)}
+                        disabled={initialPage <= 1}
+                        className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <ChevronLeft size={16} />
+                    </button>
+                    <button
+                        onClick={() => handlePageChange(initialPage + 1)}
+                        disabled={initialPage >= totalPages}
+                        className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <ChevronRight size={16} />
+                    </button>
                 </div>
             </div>
 
@@ -117,6 +164,6 @@ export default function ClientPage({ initialAppointments, search, status }: any)
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
             />
-        </>
+        </div>
     );
 }

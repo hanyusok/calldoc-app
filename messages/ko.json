@@ -198,11 +198,12 @@
     "Admin": {
         "nav": {
             "dashboard": "대시보드",
+            "users": "회원 관리",
             "appointments": "예약 관리",
+            "patients": "환자 관리",
             "pharmacies": "약국 관리",
             "settings": "설정",
-            "logout": "로그아웃",
-            "patients": "환자 관리"
+            "logout": "로그아웃"
         },
         "dashboard": {
             "title": "관리자 대시보드",
@@ -221,7 +222,8 @@
             },
             "manage_appointment": "예약 관리",
             "additional_actions": "예약 확정 후 추가 기능을 사용할 수 있습니다.",
-            "patient_fallback": "환자"
+            "patient_fallback": "환자",
+            "edit": "수정"
         },
         "status": {
             "PENDING": "대기중",
@@ -241,7 +243,8 @@
             "edit": "수정",
             "delete": "삭제",
             "set_default": "기본 설정",
-            "is_default": "기본"
+            "is_default": "기본",
+            "search_placeholder": "약국 검색..."
         },
         "meet": {
             "title": "화상 진료",
@@ -270,7 +273,44 @@
             "confirm_delete": "정말 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
             "delete_success": "사용자가 삭제되었습니다",
             "delete_error": "사용자 삭제 실패",
-            "delete": "삭제"
+            "delete": "삭제",
+            "add_patient": "환자 추가"
+        },
+        "users": {
+            "title": "회원 관리",
+            "search_placeholder": "이름, 이메일 검색...",
+            "filter_all": "전체 권한",
+            "add_user": "회원 추가",
+            "no_users": "회원이 없습니다.",
+            "edit_user": "회원 정보 수정",
+            "delete": "삭제",
+            "edit": "수정",
+            "cancel": "취소",
+            "save": "저장",
+            "saving": "저장 중...",
+            "confirm_delete": "정말 이 회원을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+            "delete_success": "회원이 삭제되었습니다",
+            "delete_error": "회원 삭제 실패",
+            "create_success": "회원이 생성되었습니다",
+            "create_error": "회원 생성 실패",
+            "update_success": "회원 정보가 수정되었습니다",
+            "size_error": "회원 정보 수정 중 오류가 발생했습니다",
+            "error_generic": "오류가 발생했습니다",
+            "leave_blank": "비밀번호를 변경하지 않으려면 비워두세요",
+            "table": {
+                "name": "이름",
+                "email": "이메일",
+                "role": "권한",
+                "created_at": "가입일",
+                "actions": "관리"
+            },
+            "form": {
+                "name": "이름",
+                "email": "이메일",
+                "password": "비밀번호",
+                "role": "권한",
+                "phone": "전화번호"
+            }
         },
         "settings": {
             "title": "설정",

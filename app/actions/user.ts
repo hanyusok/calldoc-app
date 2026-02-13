@@ -2,14 +2,18 @@
 
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import bcrypt from "bcryptjs";
+import { Role } from "@prisma/client";
 
-export async function getUsers(page = 1, limit = 10, search = "") {
+export async function getUsers(page = 1, limit = 10, search = "", role?: Role | 'ALL') {
     try {
         const skip = (page - 1) * limit;
 
-        const where: any = {
-            role: 'PATIENT', // Only fetch patients, not admins or doctors(if role exists)
-        };
+        const where: any = {};
+
+        if (role && role !== 'ALL') {
+            where.role = role;
+        }
 
         if (search) {
             where.OR = [
@@ -51,6 +55,68 @@ export async function getUsers(page = 1, limit = 10, search = "") {
     }
 }
 
+export async function createUser(data: any) {
+    try {
+        const { name, email, password, role, phoneNumber } = data;
+
+        const existingUser = await prisma.user.findUnique({
+            where: { email }
+        });
+
+        if (existingUser) {
+            return { success: false, error: "User with this email already exists" };
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                role: role as Role,
+                phoneNumber
+            }
+        });
+
+        revalidatePath('/admin/users');
+        revalidatePath('/admin/patients');
+        return { success: true };
+    } catch (error) {
+        console.error("Error creating user:", error);
+        return { success: false, error: "Failed to create user" };
+    }
+}
+
+export async function updateUser(userId: string, data: any) {
+    try {
+        const { name, email, password, role, phoneNumber } = data;
+
+        const updateData: any = {
+            name,
+            email,
+            role: role as Role,
+            phoneNumber
+        };
+
+        if (password) {
+            updateData.password = await bcrypt.hash(password, 10);
+        }
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: updateData
+        });
+
+        revalidatePath('/admin/users');
+        revalidatePath('/admin/patients');
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating user:", error);
+        return { success: false, error: "Failed to update user" };
+    }
+}
+
 export async function deleteUser(userId: string) {
     try {
         // TODO: Verify admin privileges (middleware or session check)
@@ -59,6 +125,7 @@ export async function deleteUser(userId: string) {
             where: { id: userId }
         });
 
+        revalidatePath('/admin/users');
         revalidatePath('/admin/patients');
         return { success: true };
     } catch (error) {

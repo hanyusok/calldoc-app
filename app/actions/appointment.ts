@@ -3,8 +3,9 @@
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export async function getAppointments(search?: string, status?: string) {
+export async function getAppointments(search?: string, status?: string, page = 1, limit = 10) {
     try {
+        const skip = (page - 1) * limit;
         const whereClause: any = {};
 
         if (status && status !== 'ALL') {
@@ -19,19 +20,30 @@ export async function getAppointments(search?: string, status?: string) {
             ];
         }
 
-        const appointments = await prisma.appointment.findMany({
-            where: whereClause,
-            include: {
-                user: true,
-                doctor: true,
-                payment: true,
-                prescription: true,
-            },
-            orderBy: {
-                date: 'desc',
-            },
-        });
-        return appointments;
+        const [appointments, total] = await Promise.all([
+            prisma.appointment.findMany({
+                where: whereClause,
+                include: {
+                    user: true,
+                    doctor: true,
+                    payment: true,
+                    prescription: true,
+                },
+                orderBy: {
+                    date: 'desc',
+                },
+                skip,
+                take: limit,
+            }),
+            prisma.appointment.count({ where: whereClause })
+        ]);
+
+        return {
+            appointments,
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page
+        };
     } catch (error) {
         console.error("Error fetching appointments:", error);
         throw new Error("Failed to fetch appointments");

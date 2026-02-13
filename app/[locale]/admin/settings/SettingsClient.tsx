@@ -3,24 +3,34 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Save } from "lucide-react";
+import { updateSettings } from "@/app/actions/settings";
+import { useRouter } from "next/navigation";
 
-export default function SettingsClient() {
+interface SettingsClientProps {
+    initialSettings: {
+        siteName: string;
+        maintenanceMode: boolean;
+    };
+}
+
+export default function SettingsClient({ initialSettings }: SettingsClientProps) {
     const t = useTranslations('Admin.settings');
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
-
-    // Mock state for now since we don't have a Settings model yet
-    const [settings, setSettings] = useState({
-        siteName: "CallDoc",
-        maintenanceMode: false
-    });
+    const [settings, setSettings] = useState(initialSettings);
 
     const handleSave = async () => {
         setLoading(true);
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            alert(t('saved_success'));
+            const res = await updateSettings(settings);
+            if (res.success) {
+                alert(t('saved_success'));
+                router.refresh();
+            } else {
+                alert(t('saved_error'));
+            }
         } catch (error) {
+            console.error(error);
             alert(t('saved_error'));
         } finally {
             setLoading(false);

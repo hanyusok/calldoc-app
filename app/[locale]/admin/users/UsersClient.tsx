@@ -1,23 +1,42 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTranslations, useFormatter } from "next-intl";
 import { Search, Trash2, ChevronLeft, ChevronRight, Plus, Edit, X } from "lucide-react";
 import { deleteUser, createUser, updateUser } from "@/app/actions/user";
 import { Role } from "@prisma/client";
 
-export default function PatientsClient({ initialUsers, initialTotal, initialPage }: { initialUsers: any[], initialTotal: number, initialPage: number }) {
-    const t = useTranslations('Admin.patients');
-    // We can reuse some keys from Admin.users for common form fields if needed, or add to patients
-    const tUsers = useTranslations('Admin.users');
+export default function UsersClient({ initialUsers, initialTotal, initialPage }: { initialUsers: any[], initialTotal: number, initialPage: number }) {
+    const t = useTranslations('Admin.users');
     const format = useFormatter();
-    const router = useRouter();
-    const searchParams = useSearchParams();
-
     const [users, setUsers] = useState(initialUsers);
     const [search, setSearch] = useState("");
+    const [roleFilter, setRoleFilter] = useState<Role | 'ALL'>('ALL');
     const [loading, setLoading] = useState(false);
+
+    const router = useRouter();
+
+    // Debounce search/filter
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            const params = new URLSearchParams(window.location.search);
+            const currentQ = params.get('q') || '';
+            const currentRole = params.get('role') || 'ALL';
+
+            // Only push if changed
+            if (currentQ !== search || currentRole !== roleFilter) {
+                const newParams = new URLSearchParams();
+                if (search) newParams.set('q', search);
+                if (roleFilter && roleFilter !== 'ALL') newParams.set('role', roleFilter);
+                newParams.set('page', '1'); // Reset page
+
+                router.push(`?${newParams.toString()}`);
+            }
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [search, roleFilter]);
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,31 +50,6 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
         phoneNumber: ""
     });
 
-    // Debounce search
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            const params = new URLSearchParams(searchParams.toString());
-            const currentQ = params.get('q') || '';
-
-            if (currentQ !== search) {
-                if (search) {
-                    params.set('q', search);
-                } else {
-                    params.delete('q');
-                }
-                params.set('page', '1');
-                router.push(`?${params.toString()}`);
-            }
-        }, 300);
-        return () => clearTimeout(timeoutId);
-    }, [search]);
-
-    const handlePageChange = (newPage: number) => {
-        const params = new URLSearchParams(searchParams.toString());
-        params.set('page', newPage.toString());
-        router.push(`?${params.toString()}`);
-    };
-
     const openModal = (user?: any) => {
         if (user) {
             setIsEditing(true);
@@ -63,8 +57,8 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
             setFormData({
                 name: user.name || "",
                 email: user.email || "",
-                password: "",
-                role: "PATIENT",
+                password: "", // Don't show password
+                role: user.role,
                 phoneNumber: user.phoneNumber || ""
             });
         } else {
@@ -94,27 +88,26 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
             if (isEditing) {
                 const res = await updateUser(currentUser.id, formData);
                 if (res.success) {
-                    alert(tUsers('update_success'));
+                    alert(t('update_success'));
                     closeModal();
-                    router.refresh(); // Server component refresh
-                    // Optimistic update
-                    setUsers(users.map(u => u.id === currentUser.id ? { ...u, ...formData } : u));
+                    // In a real app, we would refresh data here. For now, we can rely on page refresh or optimistic update
+                    window.location.reload();
                 } else {
-                    alert(res.error || tUsers('size_error'));
+                    alert(res.error || t('size_error'));
                 }
             } else {
                 const res = await createUser(formData);
                 if (res.success) {
-                    alert(tUsers('create_success'));
+                    alert(t('create_success'));
                     closeModal();
-                    router.refresh();
+                    window.location.reload();
                 } else {
-                    alert(res.error || tUsers('create_error'));
+                    alert(res.error || t('create_error'));
                 }
             }
         } catch (error) {
             console.error(error);
-            alert(tUsers('error_generic'));
+            alert(t('error_generic'));
         } finally {
             setLoading(false);
         }
@@ -129,7 +122,6 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
             if (res.success) {
                 setUsers(users.filter(u => u.id !== userId));
                 alert(t('delete_success'));
-                router.refresh();
             } else {
                 alert(t('delete_error'));
             }
@@ -141,8 +133,6 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
         }
     };
 
-    const totalPages = Math.ceil(initialTotal / 10);
-
     return (
         <div className="max-w-6xl mx-auto p-4">
             <div className="flex justify-between items-center mb-6">
@@ -152,20 +142,32 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition"
                 >
                     <Plus size={18} />
-                    {t('add_patient') || tUsers('add_user')}
-                    {/* Fallback if add_patient key doesn't exist yet, effectively re-using add_user usually */}
+                    {t('add_user')}
                 </button>
             </div>
 
-            <div className="mb-6 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                    type="text"
-                    placeholder={t('search_placeholder')}
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
+            <div className="flex gap-4 mb-6">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <input
+                        type="text"
+                        placeholder={t('search_placeholder')}
+                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
+                <select
+                    className="border border-gray-200 rounded-lg px-4 py-2 bg-white"
+                    value={roleFilter}
+                    onChange={(e) => setRoleFilter(e.target.value as any)}
+                >
+                    <option value="ALL">{t('filter_all')}</option>
+                    <option value="ADMIN">ADMIN</option>
+                    <option value="STAFF">STAFF</option>
+                    <option value="PHARMACIST">PHARMACIST</option>
+                    <option value="PATIENT">PATIENT</option>
+                </select>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -175,8 +177,8 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                             <tr>
                                 <th className="p-4">{t('table.name')}</th>
                                 <th className="p-4">{t('table.email')}</th>
-                                <th className="p-4">{t('table.joined_at')}</th>
-                                <th className="p-4 text-center">{t('table.appointments')}</th>
+                                <th className="p-4">{t('table.role')}</th>
+                                <th className="p-4">{t('table.created_at')}</th>
                                 <th className="p-4 text-right">{t('table.actions')}</th>
                             </tr>
                         </thead>
@@ -184,7 +186,7 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                             {users.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="p-8 text-center text-gray-400">
-                                        No patients found.
+                                        {t('no_users')}
                                     </td>
                                 </tr>
                             ) : (
@@ -192,6 +194,15 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                                     <tr key={user.id} className="hover:bg-gray-50">
                                         <td className="p-4 font-medium text-gray-900">{user.name || "N/A"}</td>
                                         <td className="p-4 text-gray-600">{user.email}</td>
+                                        <td className="p-4">
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium 
+                                                ${user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' :
+                                                    user.role === 'STAFF' ? 'bg-green-100 text-green-700' :
+                                                        user.role === 'PHARMACIST' ? 'bg-orange-100 text-orange-700' :
+                                                            'bg-blue-50 text-blue-700'}`}>
+                                                {user.role}
+                                            </span>
+                                        </td>
                                         <td className="p-4 text-gray-500">
                                             {format.dateTime(new Date(user.createdAt), {
                                                 year: 'numeric',
@@ -199,16 +210,11 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                                                 day: 'numeric'
                                             })}
                                         </td>
-                                        <td className="p-4 text-center">
-                                            <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
-                                                {user._count?.appointments || 0}
-                                            </span>
-                                        </td>
                                         <td className="p-4 text-right flex justify-end gap-2">
                                             <button
                                                 onClick={() => openModal(user)}
                                                 className="text-blue-500 hover:bg-blue-50 p-2 rounded transition-colors"
-                                                title={tUsers('edit')}
+                                                title={t('edit')}
                                             >
                                                 <Edit size={16} />
                                             </button>
@@ -227,26 +233,6 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                         </tbody>
                     </table>
                 </div>
-                {/* Pagination */}
-                <div className="p-4 border-t border-gray-100 flex justify-end gap-2 items-center">
-                    <span className="text-sm text-gray-500 mr-4">
-                        Page {initialPage} of {totalPages || 1}
-                    </span>
-                    <button
-                        onClick={() => handlePageChange(initialPage - 1)}
-                        disabled={initialPage <= 1}
-                        className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ChevronLeft size={16} />
-                    </button>
-                    <button
-                        onClick={() => handlePageChange(initialPage + 1)}
-                        disabled={initialPage >= totalPages}
-                        className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ChevronRight size={16} />
-                    </button>
-                </div>
             </div>
 
             {/* Modal */}
@@ -254,14 +240,14 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
                         <div className="flex justify-between items-center p-4 border-b">
-                            <h3 className="text-lg font-bold">{isEditing ? tUsers('edit_user') : tUsers('add_user')}</h3>
+                            <h3 className="text-lg font-bold">{isEditing ? t('edit_user') : t('add_user')}</h3>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">
                                 <X size={20} />
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="p-4 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">{tUsers('form.name')}</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('form.name')}</label>
                                 <input
                                     type="text"
                                     required
@@ -271,7 +257,7 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">{tUsers('form.email')}</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('form.email')}</label>
                                 <input
                                     type="email"
                                     required
@@ -282,7 +268,7 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {tUsers('form.password')} {isEditing && <span className="text-xs text-gray-500">({tUsers('leave_blank')})</span>}
+                                    {t('form.password')} {isEditing && <span className="text-xs text-gray-500">({t('leave_blank')})</span>}
                                 </label>
                                 <input
                                     type="password"
@@ -292,11 +278,21 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                                     onChange={e => setFormData({ ...formData, password: e.target.value })}
                                 />
                             </div>
-                            {/* Role is hidden/fixed to PATIENT */}
-                            <input type="hidden" value="PATIENT" />
-
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">{tUsers('form.phone')}</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('form.role')}</label>
+                                <select
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    value={formData.role}
+                                    onChange={e => setFormData({ ...formData, role: e.target.value as Role })}
+                                >
+                                    <option value="PATIENT">Patient</option>
+                                    <option value="ADMIN">Admin</option>
+                                    <option value="STAFF">Staff</option>
+                                    <option value="PHARMACIST">Pharmacist</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('form.phone')}</label>
                                 <input
                                     type="tel"
                                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
@@ -311,14 +307,14 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                                     onClick={closeModal}
                                     className="flex-1 py-2 border rounded-lg hover:bg-gray-50 font-medium"
                                 >
-                                    {tUsers('cancel')}
+                                    {t('cancel')}
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={loading}
                                     className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50"
                                 >
-                                    {loading ? tUsers('saving') : tUsers('save')}
+                                    {loading ? t('saving') : t('save')}
                                 </button>
                             </div>
                         </form>

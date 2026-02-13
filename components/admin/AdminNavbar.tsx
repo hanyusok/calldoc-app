@@ -13,6 +13,7 @@ export default function AdminNavbar() {
 
     const navItems = [
         { href: "/admin/dashboard", label: t('dashboard'), icon: LayoutDashboard },
+        { href: "/admin/users", label: t('users'), icon: Users },
         { href: "/admin/appointments", label: t('appointments'), icon: Calendar },
         { href: "/admin/patients", label: t('patients'), icon: Users },
         { href: "/admin/pharmacies", label: t('pharmacies'), icon: Building2 },

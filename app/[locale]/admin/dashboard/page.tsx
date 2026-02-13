@@ -3,10 +3,7 @@ import { getAppointments } from '@/app/actions/appointment';
 import { getTranslations } from 'next-intl/server';
 import { auth } from "@/auth";
 import { redirect } from 'next/navigation';
-import { Calendar, Clock, User, Plus, Search, Filter } from 'lucide-react';
-import AppointmentActions from './AppointmentActions';
-import AppointmentModal from '@/components/admin/AppointmentModal';
-import ClientPage from './ClientPage';
+import AppointmentsClient from '../appointments/AppointmentsClient';
 
 export default async function AdminDashboardPage({
     searchParams,
@@ -21,7 +18,7 @@ export default async function AdminDashboardPage({
     }
 
     const { q: search, status } = await searchParams || {};
-    const appointments = await getAppointments(search as string, status as string);
+    const { appointments } = await getAppointments(search as string, status as string);
 
     return (
         <div className="bg-gray-50 min-h-screen pb-20">
@@ -36,7 +33,13 @@ export default async function AdminDashboardPage({
             </header>
 
             <main className="max-w-6xl mx-auto p-4 space-y-6">
-                <ClientPage initialAppointments={appointments} search={search as string} status={status as string} />
+                <AppointmentsClient
+                    initialAppointments={appointments}
+                    initialTotal={0} // Dashboard might not need pagination or we need to fetch count
+                    initialPage={1}
+                    search={search as string}
+                    status={status as string}
+                />
             </main>
         </div>
     );
