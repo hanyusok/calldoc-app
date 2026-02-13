@@ -203,6 +203,10 @@ model Vaccination {
   visitTime   String? // e.g. "30 min", "Mon-Fri 9-6"
   location    String? // e.g. "Seoul National Hospital"
   category    String? // e.g. "Flu", "COVID-19"
+  manufacturer String?
+  targetDisease String?
+  minAge      Int? // Minimum age in years
+  maxAge      Int? // Maximum age in years
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

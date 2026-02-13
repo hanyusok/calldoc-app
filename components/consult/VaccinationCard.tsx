@@ -10,6 +10,10 @@ interface Vaccination {
     visitTime: string | null;
     location: string | null;
     category: string | null;
+    manufacturer: string | null;
+    targetDisease: string | null;
+    minAge: number | null;
+    maxAge: number | null;
 }
 
 const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
@@ -21,8 +25,16 @@ const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
                         <span className="inline-flex items-center text-[10px] font-bold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">
                             {vaccination.category || "Vaccine"}
                         </span>
+                        {vaccination.minAge !== null && (
+                            <span className="inline-flex items-center text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                                Age: {vaccination.minAge}+
+                            </span>
+                        )}
                     </div>
                     <h3 className="font-bold text-gray-900">{vaccination.name}</h3>
+                    {vaccination.manufacturer && (
+                        <p className="text-xs text-blue-600 font-medium">{vaccination.manufacturer}</p>
+                    )}
                 </div>
                 <div className="bg-yellow-100 p-2 rounded-full text-yellow-600">
                     <Syringe size={20} />
@@ -30,6 +42,10 @@ const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
             </div>
 
             <p className="text-xs text-gray-500 line-clamp-2">{vaccination.description}</p>
+
+            {vaccination.targetDisease && (
+                <p className="text-xs text-gray-400 mt-1">Target: {vaccination.targetDisease}</p>
+            )}
 
             <div className="flex flex-col gap-1 mt-2 text-xs text-gray-600">
                 {vaccination.location && (
