@@ -1,4 +1,4 @@
-import AdminNavbar from "@/components/admin/AdminNavbar";
+import AdminLayoutClient from "@/components/admin/AdminLayoutClient";
 
 export default function AdminLayout({
     children,
@@ -6,11 +6,8 @@ export default function AdminLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="min-h-screen bg-gray-50">
-            <AdminNavbar />
-            <div className="pt-16">
-                {children}
-            </div>
-        </div>
+        <AdminLayoutClient>
+            {children}
+        </AdminLayoutClient>
     );
 }

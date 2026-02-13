@@ -1,10 +1,10 @@
 import React from 'react';
-import Header from "@/components/Header"; // We might need to refactor Header to allow passing search params or handle search internally better
 import BottomNav from "@/components/BottomNav";
 import DoctorCard from "@/components/consult/DoctorCard";
 import PharmacyCard from "@/components/consult/PharmacyCard";
+import VaccinationCard from "@/components/consult/VaccinationCard";
 import FilterBar from "@/components/consult/FilterBar";
-import { getDoctors, getPharmacies } from "./actions";
+import { getDoctors, getPharmacies, getVaccinations } from "./actions";
 import Link from "next/link";
 import { ChevronLeft, Search } from 'lucide-react';
 
@@ -18,15 +18,27 @@ export default async function ConsultPage(props: {
     const tService = await getTranslations('ServiceGrid');
 
     const category = params.category;
-    const isPharmacy = category === 'pharmacy';
 
-    const doctors = !isPharmacy ? await getDoctors({
+    // Handle legacy/redirects
+    if (category === 'supplements') {
+        const { redirect } = await import('next/navigation');
+        redirect('/consult?category=vaccination');
+    }
+
+    const isPharmacy = category === 'pharmacy';
+    const isVaccination = category === 'vaccination';
+
+    const doctors = (!isPharmacy && !isVaccination) ? await getDoctors({
         query: params.query,
         category: params.category,
         filter: params.filter
     }) : [];
 
     const pharmacies = isPharmacy ? await getPharmacies({
+        query: params.query
+    }) : [];
+
+    const vaccinations = isVaccination ? await getVaccinations({
         query: params.query
     }) : [];
 
@@ -86,7 +98,7 @@ export default async function ConsultPage(props: {
             </div>
 
             <div className="px-4 py-4 space-y-4">
-                {(isPharmacy ? pharmacies : doctors).length === 0 ? (
+                {(isPharmacy ? pharmacies : (isVaccination ? vaccinations : doctors)).length === 0 ? (
                     <div className="text-center py-10 text-gray-500">
                         <p>{t('no_results')}</p>
                         <Link href={`/consult${category ? `?category=${category}` : ''}`} className="text-primary-500 text-sm mt-2 inline-block">
@@ -98,9 +110,13 @@ export default async function ConsultPage(props: {
                         ? (pharmacies).map(pharmacy => (
                             <PharmacyCard key={pharmacy.id} pharmacy={pharmacy} />
                         ))
-                        : (doctors).map(doc => (
-                            <DoctorCard key={doc.id} doctor={doc} />
-                        ))
+                        : isVaccination
+                            ? (vaccinations).map(v => (
+                                <VaccinationCard key={v.id} vaccination={v} />
+                            ))
+                            : (doctors).map(doc => (
+                                <DoctorCard key={doc.id} doctor={doc} />
+                            ))
                 )}
             </div>
 

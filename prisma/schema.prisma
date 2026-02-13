@@ -194,3 +194,15 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Vaccination {
+  id          String   @id @default(cuid())
+  name        String
+  price       Float
+  description String?
+  visitTime   String? // e.g. "30 min", "Mon-Fri 9-6"
+  location    String? // e.g. "Seoul National Hospital"
+  category    String? // e.g. "Flu", "COVID-19"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

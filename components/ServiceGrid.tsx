@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Video, Stethoscope, Pill, Building2, Ticket, Activity, Salad, FlaskConical } from 'lucide-react';
+import { Video, Stethoscope, Pill, Building2, Ticket, Activity, Syringe, FlaskConical } from 'lucide-react';
 
 
 
@@ -15,7 +15,7 @@ const ServiceGrid = () => {
         { name: t('pharmacy'), icon: Pill, color: 'bg-orange-100 text-orange-600', id: 'pharmacy' },
         { name: t('symptoms'), icon: Stethoscope, color: 'bg-purple-100 text-purple-600', id: 'symptoms' },
         { name: t('health_check'), icon: Activity, color: 'bg-red-100 text-red-600', id: 'health-check' },
-        { name: t('supplements'), icon: Salad, color: 'bg-yellow-100 text-yellow-600', id: 'supplements' },
+        { name: t('vaccination'), icon: Syringe, color: 'bg-yellow-100 text-yellow-600', id: 'vaccination' },
         { name: t('lab_test'), icon: FlaskConical, color: 'bg-teal-100 text-teal-600', id: 'lab-test' },
         { name: t('events'), icon: Ticket, color: 'bg-indigo-100 text-indigo-600', id: 'events' },
     ];

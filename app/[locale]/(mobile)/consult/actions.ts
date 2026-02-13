@@ -142,3 +142,24 @@ export async function createAppointment(formData: FormData) {
     // Redirect to success page
     redirect(`/doctor/${doctorId}/book/success?appointmentId=${appointment.id}`);
 }
+
+export async function getVaccinations({
+    query,
+}: {
+    query?: string;
+}) {
+    const where: any = {};
+
+    if (query) {
+        where.OR = [
+            { name: { contains: query, mode: 'insensitive' } },
+            { category: { contains: query, mode: 'insensitive' } },
+            { description: { contains: query, mode: 'insensitive' } },
+        ];
+    }
+
+    return await prisma.vaccination.findMany({
+        where,
+        orderBy: { name: 'asc' },
+    });
+}

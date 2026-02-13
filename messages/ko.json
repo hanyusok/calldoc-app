@@ -24,9 +24,9 @@
         "telemedicine": "비대면 진료",
         "hospital": "병원 찾기",
         "pharmacy": "약국 찾기",
-        "symptoms": "증상 검색",
-        "health_check": "건강 검진",
-        "supplements": "영양제 추천",
+        "symptoms": "증상",
+        "health_check": "건강검진",
+        "vaccination": "예방접종",
         "lab_test": "검사 신청",
         "events": "이벤트"
     },
