@@ -1,7 +1,7 @@
 {
     "HomePage": {
-        "title": "콜닥터",
-        "welcome": "콜닥터에 오신 것을 환영합니다",
+        "title": "콜닥",
+        "welcome": "콜닥에 오신 것을 환영합니다",
         "welcome_user": "{name}님, 환영합니다!",
         "profile_verified": " (프로필 인증됨)",
         "profile_pending": " (프로필 대기중)"
@@ -155,7 +155,7 @@
         "view_all": "전체 보기"
     },
     "LoginPage": {
-        "title": "콜닥터",
+        "title": "콜닥",
         "subtitle": "나만의 맞춤 헬스케어 비서",
         "heading": "계속하려면 로그인하세요",
         "no_account": "계정이 없으신가요?",
