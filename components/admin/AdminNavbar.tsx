@@ -17,6 +17,7 @@ export default function AdminNavbar() {
         { href: "/admin/appointments", label: t('appointments'), icon: Calendar },
         { href: "/admin/patients", label: t('patients'), icon: Users },
         { href: "/admin/pharmacies", label: t('pharmacies'), icon: Building2 },
+        { href: "/admin/posts", label: "Posts", icon: LayoutDashboard }, // TODO: Add translation
         { href: "/admin/settings", label: t('settings'), icon: Settings },
     ];
 

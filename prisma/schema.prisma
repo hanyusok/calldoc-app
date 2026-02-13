@@ -182,3 +182,15 @@ model AppSettings {
   siteName        String  @default("CallDoc")
   maintenanceMode Boolean @default(false)
 }
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  imageUrl  String?
+  author    String?
+  category  String?  @default("Health")
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

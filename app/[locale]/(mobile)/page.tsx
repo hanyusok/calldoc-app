@@ -17,8 +17,14 @@ export default async function Home() {
         userProfile = await prisma.user.findUnique({
             where: { email: session.user.email },
         });
-        console.log("Profile Check Result:", userProfile ? "Exists" : "Not Found", session.user.email);
     }
+
+    // Fetch recommended content (limit to 3 for homepage)
+    const posts = await prisma.post.findMany({
+        take: 3,
+        orderBy: { createdAt: 'desc' },
+        where: { published: true }
+    });
 
     return (
         <div className="bg-white min-h-screen pb-20">
@@ -32,7 +38,7 @@ export default async function Home() {
             <HeroBanner />
             <ServiceGrid />
             <div className="h-2 bg-gray-50 my-2" />
-            <HealthFeed />
+            <HealthFeed posts={posts} />
             <BottomNav />
         </div>
     );

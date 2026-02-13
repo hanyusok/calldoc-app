@@ -202,6 +202,7 @@
             "appointments": "예약 관리",
             "patients": "환자 관리",
             "pharmacies": "약국 관리",
+            "posts": "게시글 관리",
             "settings": "설정",
             "logout": "로그아웃"
         },

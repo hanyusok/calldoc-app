@@ -1,34 +1,32 @@
+
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import Header from "@/components/Header";
+import BottomNav from "@/components/BottomNav";
+import { prisma } from "@/app/lib/prisma";
 import { useTranslations } from 'next-intl';
+import { getTranslations } from "next-intl/server";
+import Link from 'next/link';
+import { ChevronLeft } from 'lucide-react';
 
-interface Post {
-    id: string;
-    title: string;
-    content: string;
-    category: string | null;
-    createdAt: Date;
-    imageUrl: string | null;
-}
+export default async function PostsPage() {
+    const t = await getTranslations('HealthFeed');
 
-const HealthFeed = ({ posts }: { posts: Post[] }) => {
-    const t = useTranslations('HealthFeed');
-
-    // Fallback if no posts
-    const displayPosts = posts.length > 0 ? posts : [];
+    const posts = await prisma.post.findMany({
+        orderBy: { createdAt: 'desc' },
+        where: { published: true }
+    });
 
     return (
-        <div className="px-4 py-4 mb-20">
-            <div className="flex justify-between items-center mb-3">
-                <h3 className="font-bold text-lg text-gray-800">{t('title')}</h3>
-                <Link href="/posts" className="text-xs text-primary-500 font-medium flex items-center">
-                    {t('view_all')} <ChevronRight size={14} />
+        <div className="bg-white min-h-screen pb-20">
+            <div className="bg-white px-4 py-3 flex items-center border-b border-gray-100 sticky top-0 z-10">
+                <Link href="/" className="mr-3">
+                    <ChevronLeft size={24} className="text-gray-700" />
                 </Link>
+                <h1 className="font-bold text-lg text-gray-900">{t('title')}</h1>
             </div>
 
-            <div className="space-y-3">
-                {displayPosts.map((post) => (
+            <div className="px-4 py-4 space-y-3">
+                {posts.map((post) => (
                     <Link key={post.id} href={`/posts/${post.id}`} className="block">
                         <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex gap-3">
                             <div className="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 bg-cover bg-center"
@@ -47,8 +45,7 @@ const HealthFeed = ({ posts }: { posts: Post[] }) => {
                     </Link>
                 ))}
             </div>
+            <BottomNav />
         </div>
     );
-};
-
-export default HealthFeed;
+}
