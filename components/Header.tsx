@@ -19,7 +19,7 @@ const Header = () => {
         <header className="sticky top-0 z-50 bg-white px-4 py-3 shadow-sm">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-1">
-                    <span className="text-xl font-bold text-primary-500">CallDoc</span>
+                    <span className="text-xl font-bold text-primary-500">콜닥</span>
                 </div>
                 <div className="flex items-center gap-3">
                     <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full">

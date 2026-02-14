@@ -7,7 +7,7 @@ import "../globals.css";
 import LocaleSwitcher from '../../components/LocaleSwitcher';
 
 export const metadata: Metadata = {
-    title: "CallDoc - Telemedicine",
+    title: "콜닥-마트의원",
     description: "Your health, our priority.",
 };
 
