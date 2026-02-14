@@ -286,34 +286,93 @@ async function main() {
     console.log('Pharmacies seeded/renewed.');
 
     // 5. Seed Posts
-    for (let i = 0; i < 10; i++) {
-        const title = POST_TITLES[i];
-        const category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
-        const seed = `post-${i + 1}`;
-
-        const postData = {
-            title,
-            content: `This is the content for ${title}. It contains valuable health information and tips for users.`,
-            category,
-            author: "Dr. Smith",
-            imageUrl: `https://picsum.photos/seed/${seed}/300/300`,
-            published: true,
-        };
-
-        const existingPost = await prisma.post.findFirst({
-            where: { title }
-        });
-
-        if (existingPost) {
-            await prisma.post.update({
-                where: { id: existingPost.id },
-                data: postData
-            });
-        } else {
-            await prisma.post.create({ data: postData });
+    // Define the specific medical posts with local images
+    const MEDICAL_POSTS = [
+        {
+            title: "Manage Your Diabetes with Modern Tech",
+            content: "Continuous Glucose Monitors (CGMs) are revolutionizing diabetes care. Learn how real-time data can help you better manage your blood sugar levels and improve your quality of life. Our clinic offers consultation on the latest devices.",
+            category: "News",
+            imageUrl: "/images/posts/diabetes-tech.jpg",
+            author: "Dr. Sarah Kim"
+        },
+        {
+            title: "Recovery from Long COVID: A Guide",
+            content: "Experiencing lingering symptoms after COVID-19? You're not alone. Our respiratory specialists have developed a comprehensive rehabilitation program to help improve lung function and energy levels.",
+            category: "Health",
+            imageUrl: "/images/posts/long-covid.jpg",
+            author: "Dr. Olivia Choi"
+        },
+        {
+            title: "Flu Season is Here: Get Vaccinated",
+            content: "The best protection against the flu is the annual vaccine. We are now offering the quadrivalent flu shot for all ages. Protect yourself and your loved ones this winter.",
+            category: "Vaccination",
+            imageUrl: "/images/posts/flu-season.jpg",
+            author: "Dr. James Lee"
+        },
+        {
+            title: "Protect Yourself Against Shingles",
+            content: "Shingles can be painful and debilitating, especially as we age. If you are over 50, talk to us about the shingles vaccine. It's a simple step to prevent a serious condition.",
+            category: "Vaccination",
+            imageUrl: "/images/posts/shingles-vaccine.jpg",
+            author: "Dr. Michael Chen"
+        },
+        {
+            title: "HPV Vaccine: Cancer Prevention",
+            content: "The HPV vaccine is a critical tool in preventing certain cancers. We recommend it for pre-teens and young adults. Schedule a consultation to learn more about this life-saving vaccine.",
+            category: "Vaccination",
+            imageUrl: "/images/posts/hpv-vaccine.jpg",
+            author: "Dr. James Lee"
+        },
+        {
+            title: "Planning a Trip? Check Your Vaccines",
+            content: "Don't let an illness ruin your vacation. From typhoid to yellow fever, make sure you're protected before you travel abroad. Visit our travel clinic at least 4 weeks before departure.",
+            category: "Vaccination",
+            imageUrl: "/images/posts/travel-vaccine.jpg",
+            author: "Dr. Michael Chen"
+        },
+        {
+            title: "Heart Health: Why Screening Matters",
+            content: "Cardiovascular disease is a leading cause of death, but it's largely preventable. regular screenings for blood pressure and cholesterol are essential. Book your heart health checkup today.",
+            category: "News",
+            imageUrl: "/images/posts/heart-screening.jpg",
+            author: "Dr. Junho Choi"
+        },
+        {
+            title: "Brighten Your Smile with a Dental Checkup",
+            content: "Oral health is linked to overall health. Regular cleanings and checkups prevent gum disease and tooth decay. Our dental clinic offers pain-free exams and cosmetic services.",
+            category: "Promotion",
+            imageUrl: "/images/posts/dental-checkup.jpg",
+            author: "Dr. Minho Song"
+        },
+        {
+            title: "Advanced Diagnostics: MRI Services",
+            content: "Our center is equipped with state-of-the-art MRI technology for precise diagnosis of soft tissue injuries and neurological conditions. Fast, comfortable, and accurate scanning available.",
+            category: "Promotion",
+            imageUrl: "/images/posts/mri-scan.jpg",
+            author: "Dr. Sarah Kim"
+        },
+        {
+            title: "Bone Density Scans for Osteoporosis",
+            content: "Strong bones are the foundation of a healthy active life. Early detection of osteoporosis can prevent fractures. We offer quick and non-invasive DEXA scans for at-risk patients.",
+            category: "Promotion",
+            imageUrl: "/images/posts/bone-density.jpg",
+            author: "Dr. David Kim"
         }
+    ];
+
+    // Clear existing posts to avoid duplication/random data
+    await prisma.post.deleteMany({});
+    console.log('Existing posts cleared.');
+
+    for (const post of MEDICAL_POSTS) {
+        await prisma.post.create({
+            data: {
+                ...post,
+                published: true
+            }
+        });
     }
-    console.log('Posts seeded/renewed.');
+    console.log('Medical posts seeded.');
 
     // 6. Seed Vaccinations
     for (const v of VACCINATIONS) {

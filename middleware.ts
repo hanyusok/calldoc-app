@@ -12,6 +12,6 @@ export default NextAuth(authConfig).auth((req) => {
 
 export const config = {
     // Match only internationalized pathnames
-    // skip internal paths
-    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+    // skip internal paths and static files
+    matcher: ["/((?!api|_next/static|_next/image|images|favicon.ico).*)"],
 }
