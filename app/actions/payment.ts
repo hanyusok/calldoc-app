@@ -119,6 +119,8 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
 
         // 7. Revalidate Paths
         revalidatePath('/dashboard');
+        revalidatePath('/myappointment');
+        revalidatePath('/[locale]/myappointment'); // Ensure localized paths are hit
         revalidatePath('/admin/dashboard');
 
         return { success: true };
@@ -167,6 +169,8 @@ export async function processCancellationSuccess(paymentId: string, paymentKey?:
     */
 
     revalidatePath('/dashboard');
+    revalidatePath('/myappointment');
+    revalidatePath('/[locale]/myappointment');
     revalidatePath('/admin/dashboard');
 
     return { success: true };

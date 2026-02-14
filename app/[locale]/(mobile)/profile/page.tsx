@@ -7,11 +7,9 @@ import BottomNav from "@/components/BottomNav";
 import PersonalInfoForm from "@/components/profile/PersonalInfoForm";
 import FamilyMemberList from "@/components/profile/FamilyMemberList";
 import ProfileHeader from "@/components/profile/ProfileHeader";
-import PharmacySelector from "@/components/profile/PharmacySelector";
 import {
     updateProfile,
     updateName,
-    updatePharmacy,
     addFamilyMember,
     removeFamilyMember
 } from "./actions";
@@ -56,10 +54,7 @@ export default async function ProfilePage({
                     onUpdate={updateProfile}
                 />
 
-                <PharmacySelector
-                    selectedPharmacy={user.pharmacy} // user.pharmacy is the relation
-                    onSelect={updatePharmacy}
-                />
+
 
                 <FamilyMemberList
                     members={user.familyMembers}

@@ -1,20 +1,23 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import PopupCloseHandler from "@/components/payment/PopupCloseHandler";
 
 export default function PaymentSuccessPage() {
     const t = useTranslations('Dashboard');
+    const locale = useLocale();
     const searchParams = useSearchParams();
     const orderId = searchParams.get('orderId');
     const amount = searchParams.get('amount');
 
+    const redirectUrl = `/${locale}/myappointment`;
+
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-            <PopupCloseHandler redirectUrl="/dashboard" />
+            <PopupCloseHandler redirectUrl={redirectUrl} />
 
             <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center space-y-6">
                 <div className="flex justify-center">
@@ -41,10 +44,10 @@ export default function PaymentSuccessPage() {
 
                 <div className="pt-4">
                     <Link
-                        href="/dashboard"
+                        href={redirectUrl}
                         className="block w-full bg-primary-600 text-white py-3 rounded-xl font-bold hover:bg-primary-700 transition"
                     >
-                        Return to Dashboard
+                        Return to My Appointments
                     </Link>
                     <p className="text-xs text-gray-400 mt-4">
                         You will be redirected automatically...

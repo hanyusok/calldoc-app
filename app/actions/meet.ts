@@ -65,3 +65,45 @@ export async function createMeeting({
         return null; // Fail gracefully so payment isn't affected
     }
 }
+
+import { prisma } from "@/app/lib/prisma";
+import { revalidatePath } from "next/cache";
+
+export async function generateAndSaveMeetingLink(params: {
+    appointmentId: string;
+    startDateTime: Date;
+    endDateTime: Date;
+    summary?: string;
+    patientName?: string;
+}) {
+    const link = await createMeeting(params);
+
+    if (link) {
+        await prisma.appointment.update({
+            where: { id: params.appointmentId },
+            data: { meetingLink: link }
+        });
+
+        revalidatePath('/myappointment');
+        revalidatePath('/admin/dashboard/appointments');
+        return link;
+    }
+
+    return null;
+}
+export async function saveMeetingLink(appointmentId: string, link: string) {
+    try {
+        await prisma.appointment.update({
+            where: { id: appointmentId },
+            data: { meetingLink: link }
+        });
+
+        revalidatePath('/myappointment');
+        revalidatePath('/admin/dashboard/appointments');
+        revalidatePath('/[locale]/myappointment');
+        return true;
+    } catch (error) {
+        console.error("Error saving meeting link:", error);
+        return false;
+    }
+}

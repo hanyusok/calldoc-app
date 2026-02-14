@@ -15,11 +15,43 @@ export const authConfig = {
     session: {
         strategy: 'jwt',
     },
+    cookies: {
+        sessionToken: {
+            name: `next-auth.session-token`,
+            options: {
+                httpOnly: true,
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+            },
+        },
+        callbackUrl: {
+            name: `next-auth.callback-url`,
+            options: {
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+            },
+        },
+        csrfToken: {
+            name: `next-auth.csrf-token`,
+            options: {
+                httpOnly: true,
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+            },
+        },
+    },
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user;
-            const isOnDashboard = nextUrl.pathname.startsWith('/profile');
-            if (isOnDashboard) {
+            const isProtectedRoute =
+                nextUrl.pathname.startsWith('/profile') ||
+                nextUrl.pathname.startsWith('/dashboard') ||
+                nextUrl.pathname.startsWith('/myappointment');
+
+            if (isProtectedRoute) {
                 if (isLoggedIn) return true;
                 return false; // Redirect unauthenticated users to login page
             }

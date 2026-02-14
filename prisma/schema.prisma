@@ -128,6 +128,7 @@ model Appointment {
   doctor        Doctor   @relation(fields: [doctorId], references: [id])
   familyMember  FamilyMember? @relation(fields: [familyMemberId], references: [id])
   createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
   payment       Payment?
   prescription  Prescription?
 }
@@ -226,4 +227,14 @@ model VaccinationReservation {
   vaccination   Vaccination @relation(fields: [vaccinationId], references: [id])
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+}
+
+model MeetPreset {
+  id          String   @id @default(cuid())
+  name        String
+  link        String
+  description String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

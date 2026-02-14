@@ -2,17 +2,27 @@ import React from 'react';
 import { auth } from "@/auth";
 import { redirect } from 'next/navigation';
 import BottomNav from '@/components/BottomNav';
-import { Bell, History, Settings, ChevronRight, User } from 'lucide-react';
+import { Bell, History, ChevronRight } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import PharmacySelector from "@/components/profile/PharmacySelector";
+import { updatePharmacy } from "@/app/[locale]/(mobile)/profile/actions";
+import { prisma } from "@/app/lib/prisma";
 
 export default async function DashboardPage() {
     const session = await auth();
     const t = await getTranslations('Dashboard');
 
-    if (!session?.user) {
+    if (!session?.user?.email) {
         redirect('/login');
     }
+
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        include: { pharmacy: true }
+    });
+
+    if (!user) return <div>User not found</div>;
 
     return (
         <div className="bg-gray-50 min-h-screen pb-24">
@@ -26,16 +36,7 @@ export default async function DashboardPage() {
             </div>
 
             <div className="px-4 py-6 space-y-6">
-                {/* User Profile Summary */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                    <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center text-primary-600">
-                        <User size={32} />
-                    </div>
-                    <div>
-                        <h2 className="font-bold text-lg text-gray-900">{session.user.name}</h2>
-                        <p className="text-sm text-gray-500">{session.user.email}</p>
-                    </div>
-                </div>
+
 
                 {/* Notifications Section */}
                 <section>
@@ -82,16 +83,19 @@ export default async function DashboardPage() {
                         <ChevronRight size={20} className="text-gray-300 group-hover:text-gray-600 transition-colors" />
                     </Link>
 
-                    <Link href="/profile" className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group active:scale-[0.98] transition-all">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-amber-50 text-amber-600 p-2.5 rounded-xl">
-                                <Settings size={20} />
-                            </div>
-                            <span className="font-bold text-gray-800">{t('preferences')}</span>
-                        </div>
-                        <ChevronRight size={20} className="text-gray-300 group-hover:text-gray-600 transition-colors" />
-                    </Link>
+
                 </div>
+
+                {/* Nearby Pharmacy Section */}
+                <section>
+                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 px-1">
+                        Nearby Pharmacy
+                    </h2>
+                    <PharmacySelector
+                        selectedPharmacy={user.pharmacy}
+                        onSelect={updatePharmacy}
+                    />
+                </section>
             </div>
 
             <BottomNav />

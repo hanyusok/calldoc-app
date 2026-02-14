@@ -13,7 +13,7 @@
     },
     "Navigation": {
         "home": "홈",
-        "myappointment": "진료내역",
+        "myappointment": "진료예약",
         "consult": "진료신청",
         "dashboard": "대시보드",
         "profile": "마이페이지"
@@ -50,7 +50,7 @@
         "clear_filters": "필터 초기화"
     },
     "MyAppointmentPage": {
-        "title": "진료내역",
+        "title": "진료예약",
         "action_required": "조치 필요",
         "pending": "진료 요청 중",
         "upcoming": "예정된 진료",
@@ -215,6 +215,7 @@
             "vaccinations": "예방접종 관리",
             "posts": "게시글 관리",
             "payments": "결제 관리",
+            "meet": "화상 진료",
             "settings": "설정",
             "logout": "로그아웃"
         },
@@ -277,11 +278,44 @@
         "meet": {
             "title": "화상 진료",
             "generate_link": "구글 미트 링크 생성",
-            "link_created": "미팅 링크 생성 완료!",
-            "error_create": "미팅 생성 오류"
+            "generate_link_send": "링크 생성 및 전송",
+            "link_created": "미팅 링크가 생성되고 환자에게 전송되었습니다!",
+            "error_create": "미팅 생성 오류",
+            "manage_presets": "프리셋 관리",
+            "add_new_preset": "새 프리셋 추가",
+            "preset_name": "프리셋 이름",
+            "preset_link": "미팅 링크",
+            "is_default": "기본",
+            "actions": "관리",
+            "loading": "로딩 중...",
+            "no_presets": "프리셋이 없습니다.",
+            "preset_created": "프리셋이 생성되었습니다!",
+            "confirm_delete": "이 프리셋을 삭제하시겠습니까?",
+            "error_delete": "프리셋 삭제 실패",
+            "error_update": "프리셋 수정 실패",
+            "saving": "저장 중...",
+            "save_preset": "프리셋 저장",
+            "use_preset": "프리셋 사용",
+            "select_preset": "프리셋 선택...",
+            "send_preset_link": "프리셋 링크 전송",
+            "set_default": "기본으로 설정",
+            "delete": "삭제"
+        },
+        "price_manager": {
+            "title": "진료비 설정",
+            "description": "환자에게 청구할 진료비를 입력하세요.",
+            "request_payment": "결제 요청",
+            "invalid_price": "올바른 금액을 입력해주세요.",
+            "confirm_request": "{price}원을 청구하시겠습니까?",
+            "success_request": "결제 요청이 완료되었습니다.",
+            "error_request": "결제 요청 실패"
         },
         "prescription_manager": {
             "select_pharmacy": "약국 선택",
+            "select_placeholder": "약국을 선택하세요...",
+            "processing": "처리 중...",
+            "issuing": "발급 중...",
+            "fax_label": "팩스 번호",
             "upload_rx": "처방전 업로드",
             "issue_ready": "발급 및 팩스 준비",
             "send_fax": "팩스 전송",

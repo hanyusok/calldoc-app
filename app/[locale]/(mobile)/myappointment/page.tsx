@@ -23,8 +23,11 @@ export default async function MyAppointmentPage() {
 
     const pending = appointments.filter(a => a.status === 'PENDING');
     const awaitingPayment = appointments.filter(a => a.status === 'AWAITING_PAYMENT');
-    const upcoming = appointments.filter(a => (a.status === 'CONFIRMED' || a.status === 'COMPLETED') && new Date(a.date) >= new Date());
-    const past = appointments.filter(a => (a.status === 'CONFIRMED' || a.status === 'COMPLETED') && new Date(a.date) < new Date());
+    // Active appointments (CONFIRMED) are always shown in the main list until completed
+    const upcoming = appointments.filter(a => a.status === 'CONFIRMED');
+
+    // Past appointments are those that are marked COMPLETED
+    const past = appointments.filter(a => a.status === 'COMPLETED');
 
     // IDs that are already confirmed when the page loads
     const initialConfirmedIds = awaitingPayment.map(a => a.id);

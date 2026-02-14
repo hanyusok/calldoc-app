@@ -4,6 +4,7 @@ import { useState } from 'react';
 import AppointmentActions from './AppointmentActions';
 import MeetManager from '@/components/admin/appointments/MeetManager';
 import PrescriptionManager from '@/components/admin/appointments/PrescriptionManager';
+import PriceManager from '@/components/admin/appointments/PriceManager';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -73,6 +74,14 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                 <tr className="bg-gray-50/50">
                     <td colSpan={6} className="p-4 border-t border-gray-100">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Price Manager for PENDING */}
+                            {appointment.status === 'PENDING' && (
+                                <PriceManager
+                                    appointmentId={appointment.id}
+                                    currentPrice={appointment.price}
+                                />
+                            )}
+
                             {/* Meet Manager only if confirmed or active */}
                             {['CONFIRMED', 'COMPLETED'].includes(appointment.status) && (
                                 <MeetManager
@@ -93,11 +102,8 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                                 />
                             )}
 
-                            {!['CONFIRMED', 'COMPLETED'].includes(appointment.status) && (
-                                <div className="text-gray-500 italic p-4 text-center col-span-2">
-                                    {tDash('additional_actions')}
-                                </div>
-                            )}
+                            {/* Fallback for other statuses or if no actions needed */}
+                            {/* !['PENDING', 'CONFIRMED', 'COMPLETED'].includes(appointment.status) ... */}
                         </div>
                     </td>
                 </tr>
