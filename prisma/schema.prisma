@@ -196,6 +196,7 @@ model Post {
   author    String?
   category  String?  @default("Health")
   published Boolean  @default(true)
+  locale    String   @default("ko") // 'ko' or 'en'
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

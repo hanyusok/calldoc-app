@@ -5,15 +5,21 @@ import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function getPosts(query?: string, page: number = 1, limit: number = 10) {
+export async function getPosts(query?: string, page: number = 1, limit: number = 10, locale?: string) {
     const skip = (page - 1) * limit;
 
-    const where = query ? {
-        OR: [
+    const where: any = {};
+
+    if (locale && locale !== 'all') {
+        where.locale = locale;
+    }
+
+    if (query) {
+        where.OR = [
             { title: { contains: query, mode: 'insensitive' as const } },
             { content: { contains: query, mode: 'insensitive' as const } },
-        ]
-    } : {};
+        ];
+    }
 
     const [posts, total] = await Promise.all([
         prisma.post.findMany({
@@ -39,6 +45,7 @@ export async function createPost(formData: FormData) {
     const author = formData.get('author') as string;
     const imageUrl = formData.get('imageUrl') as string; // Ideally handle file upload, but string for now
     const published = formData.get('published') === 'true';
+    const locale = (formData.get('locale') as string) || 'ko';
 
     await prisma.post.create({
         data: {
@@ -47,7 +54,8 @@ export async function createPost(formData: FormData) {
             category,
             author,
             imageUrl,
-            published
+            published,
+            locale
         }
     });
 
@@ -62,6 +70,7 @@ export async function updatePost(id: string, formData: FormData) {
     const author = formData.get('author') as string;
     const imageUrl = formData.get('imageUrl') as string;
     const published = formData.get('published') === 'true';
+    const locale = (formData.get('locale') as string) || 'ko';
 
     await prisma.post.update({
         where: { id },
@@ -71,7 +80,8 @@ export async function updatePost(id: string, formData: FormData) {
             category,
             author,
             imageUrl,
-            published
+            published,
+            locale
         }
     });
 

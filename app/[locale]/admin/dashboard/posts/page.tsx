@@ -6,13 +6,14 @@ import { getPosts } from '@/app/actions/post';
 export default async function AdminPostsPage({
     searchParams,
 }: {
-    searchParams: Promise<{ q?: string; page?: string }>;
+    searchParams: Promise<{ q?: string; page?: string; locale?: string }>;
 }) {
     const params = await searchParams;
     const query = params.q || "";
     const page = Number(params.page) || 1;
+    const locale = params.locale || 'all';
 
-    const { posts, totalPages } = await getPosts(query, page);
+    const { posts, totalPages } = await getPosts(query, page, 20, locale);
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
