@@ -2,7 +2,7 @@ module.exports = {
     apps: [
         {
             name: 'calldoc-app',
-            script: 'npm',
+            script: 'node_modules/next/dist/bin/next',
             args: 'start',
             cwd: '/home/han/calldoctor-app',
             instances: 1,
