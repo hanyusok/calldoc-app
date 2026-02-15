@@ -94,3 +94,13 @@ export async function deletePost(id: string) {
     revalidatePath('/admin/dashboard/posts');
     revalidatePath('/');
 }
+
+export async function togglePostStatus(id: string, published: boolean) {
+    await prisma.post.update({
+        where: { id },
+        data: { published }
+    });
+    revalidatePath('/admin/dashboard/posts');
+    revalidatePath('/');
+    revalidatePath('/[locale]/(mobile)/posts');
+}

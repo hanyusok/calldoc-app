@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { getAvailableSlots } from '@/app/actions/doctor-availability';
 
 export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
     const router = useRouter();
@@ -12,19 +13,41 @@ export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [today, setToday] = useState<Date | null>(null);
+    const [timeSlots, setTimeSlots] = useState<string[]>([]);
+    const [loadingSlots, setLoadingSlots] = useState(false);
 
     useEffect(() => {
         const d = new Date();
         d.setHours(0, 0, 0, 0);
         setToday(d);
-        // We can default select today if we want, but let's leave it null for explicit user action
-        // setSelectedDate(d);
     }, []);
 
-    const timeSlots = [
-        "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-        "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"
-    ];
+    // Fetch available slots when date changes
+    useEffect(() => {
+        if (!selectedDate) {
+            setTimeSlots([]);
+            return;
+        }
+
+        const fetchSlots = async () => {
+            setLoadingSlots(true);
+            try {
+                const result = await getAvailableSlots(doctorId, selectedDate);
+                if (result.success) {
+                    setTimeSlots(result.slots || []);
+                } else {
+                    setTimeSlots([]);
+                }
+            } catch (error) {
+                console.error('Error fetching slots:', error);
+                setTimeSlots([]);
+            } finally {
+                setLoadingSlots(false);
+            }
+        };
+
+        fetchSlots();
+    }, [selectedDate, doctorId]);
 
     const getDaysInMonth = (date: Date) => {
         const year = date.getFullYear();
@@ -130,22 +153,32 @@ export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
                     {t('available_time')}
                 </h4>
                 {selectedDate ? (
-                    <div className="grid grid-cols-3 gap-3">
-                        {timeSlots.map((time) => (
-                            <button
-                                key={time}
-                                onClick={() => setSelectedTime(time)}
-                                className={`
-                                    py-2.5 px-3 rounded-xl text-sm font-semibold border transition-all active:scale-95
-                                    ${selectedTime === time
-                                        ? 'bg-primary-600 border-primary-600 text-white shadow-md shadow-primary-600/20'
-                                        : 'border-gray-200 text-gray-600 hover:border-primary-400 hover:text-primary-600 bg-white'}
-                                `}
-                            >
-                                {time}
-                            </button>
-                        ))}
-                    </div>
+                    loadingSlots ? (
+                        <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400 text-sm">
+                            Loading available slots...
+                        </div>
+                    ) : timeSlots.length > 0 ? (
+                        <div className="grid grid-cols-3 gap-3">
+                            {timeSlots.map((time) => (
+                                <button
+                                    key={time}
+                                    onClick={() => setSelectedTime(time)}
+                                    className={`
+                                        py-2.5 px-3 rounded-xl text-sm font-semibold border transition-all active:scale-95
+                                        ${selectedTime === time
+                                            ? 'bg-primary-600 border-primary-600 text-white shadow-md shadow-primary-600/20'
+                                            : 'border-gray-200 text-gray-600 hover:border-primary-400 hover:text-primary-600 bg-white'}
+                                    `}
+                                >
+                                    {time}
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400 text-sm">
+                            No available slots for this date
+                        </div>
+                    )
                 ) : (
                     <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400 text-sm">
                         {t('select_date_prompt')}

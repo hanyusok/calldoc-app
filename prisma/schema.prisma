@@ -110,8 +110,50 @@ model Doctor {
   bio         String?
   gender      String?  // 'male' | 'female'
   address     String?
+  consultationFee Int   @default(5000) // in cents or smallest currency unit
   isAvailable Boolean  @default(true)
   appointments Appointment[]
+  schedules   DoctorSchedule[]
+  exceptions  DoctorException[]
+}
+
+model DoctorSchedule {
+  id          String   @id @default(cuid())
+  doctorId    String
+  doctor      Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  
+  // Recurring schedule
+  dayOfWeek   Int      // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  startTime   String   // "09:00"
+  endTime     String   // "17:00"
+  slotDuration Int     @default(30) // minutes
+  
+  // Break time (e.g., lunch break)
+  breakStartTime String?  // "12:00"
+  breakEndTime   String?  // "13:00"
+  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([doctorId, dayOfWeek])
+}
+
+model DoctorException {
+  id          String   @id @default(cuid())
+  doctorId    String
+  doctor      Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  
+  date        DateTime @db.Date
+  isAvailable Boolean  @default(false) // false = day off, true = special hours
+  startTime   String?  // if isAvailable = true
+  endTime     String?  // if isAvailable = true
+  reason      String?  // "Holiday", "Conference", etc.
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([doctorId, date])
 }
 
 model Appointment {

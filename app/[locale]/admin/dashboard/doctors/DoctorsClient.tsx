@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useFormatter } from "next-intl";
-import { Search, Trash2, Plus, Edit, X } from "lucide-react";
+import { Search, Trash2, Plus, Edit, X, Calendar } from "lucide-react";
 import { deleteDoctor, createDoctor, updateDoctor } from "@/app/actions/doctor";
+import Link from "next/link";
 
 export default function DoctorsClient({ initialDoctors, initialTotal, initialPage }: { initialDoctors: any[], initialTotal: number, initialPage: number }) {
     const t = useTranslations('Admin.doctors');
@@ -42,6 +43,10 @@ export default function DoctorsClient({ initialDoctors, initialTotal, initialPag
         specialty: "",
         hospital: "",
         bio: "",
+        imageUrl: "",
+        rating: "5.0",
+        patients: "0",
+        consultationFee: "5000",
         isAvailable: true
     });
 
@@ -54,6 +59,10 @@ export default function DoctorsClient({ initialDoctors, initialTotal, initialPag
                 specialty: doctor.specialty || "",
                 hospital: doctor.hospital || "",
                 bio: doctor.bio || "",
+                imageUrl: doctor.imageUrl || "",
+                rating: doctor.rating?.toString() || "5.0",
+                patients: doctor.patients?.toString() || "0",
+                consultationFee: doctor.consultationFee?.toString() || "5000",
                 isAvailable: doctor.isAvailable
             });
         } else {
@@ -64,6 +73,10 @@ export default function DoctorsClient({ initialDoctors, initialTotal, initialPag
                 specialty: "",
                 hospital: "",
                 bio: "",
+                imageUrl: "",
+                rating: "5.0",
+                patients: "0",
+                consultationFee: "5000",
                 isAvailable: true
             });
         }
@@ -185,6 +198,13 @@ export default function DoctorsClient({ initialDoctors, initialTotal, initialPag
                                             </span>
                                         </td>
                                         <td className="p-4 text-right flex justify-end gap-2">
+                                            <Link
+                                                href={`/admin/dashboard/doctors/${doctor.id}/availability`}
+                                                className="text-green-500 hover:bg-green-50 p-2 rounded transition-colors"
+                                                title={t('manage_availability')}
+                                            >
+                                                <Calendar size={16} />
+                                            </Link>
                                             <button
                                                 onClick={() => openModal(doctor)}
                                                 className="text-blue-500 hover:bg-blue-50 p-2 rounded transition-colors"
@@ -258,6 +278,50 @@ export default function DoctorsClient({ initialDoctors, initialTotal, initialPag
                                     value={formData.bio}
                                     onChange={e => setFormData({ ...formData, bio: e.target.value })}
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('form.image_url')}</label>
+                                <input
+                                    type="text"
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    value={formData.imageUrl}
+                                    onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
+                                    placeholder="https://example.com/image.jpg"
+                                />
+                            </div>
+                            <div className="grid grid-cols-3 gap-3">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('form.rating')}</label>
+                                    <input
+                                        type="number"
+                                        step="0.1"
+                                        min="0"
+                                        max="5"
+                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                        value={formData.rating}
+                                        onChange={e => setFormData({ ...formData, rating: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('form.patients')}</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                        value={formData.patients}
+                                        onChange={e => setFormData({ ...formData, patients: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('form.consultation_fee')}</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                        value={formData.consultationFee}
+                                        onChange={e => setFormData({ ...formData, consultationFee: e.target.value })}
+                                    />
+                                </div>
                             </div>
                             <div className="flex items-center gap-2">
                                 <input

@@ -53,6 +53,10 @@ export async function createDoctor(data: any) {
                 specialty: data.specialty,
                 hospital: data.hospital,
                 bio: data.bio,
+                imageUrl: data.imageUrl,
+                rating: data.rating ? parseFloat(data.rating) : 5.0,
+                patients: data.patients ? parseInt(data.patients) : 0,
+                consultationFee: data.consultationFee ? parseInt(data.consultationFee) : 5000,
                 isAvailable: data.isAvailable
             }
         });
@@ -74,6 +78,10 @@ export async function updateDoctor(doctorId: string, data: any) {
                 specialty: data.specialty,
                 hospital: data.hospital,
                 bio: data.bio,
+                imageUrl: data.imageUrl,
+                rating: data.rating ? parseFloat(data.rating) : undefined,
+                patients: data.patients ? parseInt(data.patients) : undefined,
+                consultationFee: data.consultationFee ? parseInt(data.consultationFee) : undefined,
                 isAvailable: data.isAvailable
             }
         });

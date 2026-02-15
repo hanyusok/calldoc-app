@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Search, Edit, Trash, Globe } from 'lucide-react';
-import { deletePost, createPost, updatePost } from '@/app/actions/post';
+import { deletePost, createPost, updatePost, togglePostStatus } from '@/app/actions/post';
+import { useTranslations } from 'next-intl';
 
 interface Post {
     id: string;
@@ -24,6 +25,7 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
     const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || "");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingPost, setEditingPost] = useState<Post | null>(null);
+    const t = useTranslations('Admin.posts');
 
     const currentLocaleFilter = searchParams.get('locale') || 'all';
 
@@ -53,9 +55,24 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
     };
 
     const handleDelete = async (id: string) => {
-        if (confirm("Are you sure you want to delete this post?")) {
+        if (confirm(t('confirm_delete'))) {
             await deletePost(id);
             router.refresh();
+        }
+    };
+
+    const handleToggleStatus = async (post: Post) => {
+        const newStatus = !post.published;
+        // Optimistic update
+        setPosts(posts.map(p => p.id === post.id ? { ...p, published: newStatus } : p));
+
+        try {
+            await togglePostStatus(post.id, newStatus);
+            router.refresh();
+        } catch (error) {
+            // Revert on error
+            setPosts(posts.map(p => p.id === post.id ? { ...p, published: !newStatus } : p));
+            alert(t('update_error'));
         }
     };
 
@@ -93,19 +110,19 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                         onClick={() => handleLocaleFilterChange('all')}
                         className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${currentLocaleFilter === 'all' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
-                        All
+                        {t('all')}
                     </button>
                     <button
                         onClick={() => handleLocaleFilterChange('ko')}
                         className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${currentLocaleFilter === 'ko' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
-                        Korean
+                        {t('korean')}
                     </button>
                     <button
                         onClick={() => handleLocaleFilterChange('en')}
                         className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${currentLocaleFilter === 'en' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
-                        English
+                        {t('english')}
                     </button>
                 </div>
 
@@ -114,7 +131,7 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                         <input
                             type="text"
-                            placeholder="Search articles..."
+                            placeholder={t('search_placeholder')}
                             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -125,8 +142,8 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                         className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
                     >
                         <Plus size={20} />
-                        <span className="hidden sm:inline">New Article</span>
-                        <span className="sm:hidden">New</span>
+                        <span className="hidden sm:inline">{t('add_new')}</span>
+                        <span className="sm:hidden">{t('new_short')}</span>
                     </button>
                 </div>
             </div>
@@ -136,12 +153,12 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lang</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.title')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.lang')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.category')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.author')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.status')}</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.actions')}</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -165,8 +182,19 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                     {post.author || "Unknown"}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                                        {post.published ? 'Published' : 'Draft'}
+                                    <button
+                                        onClick={() => handleToggleStatus(post)}
+                                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${post.published ? 'bg-green-500' : 'bg-gray-200'}`}
+                                        role="switch"
+                                        aria-checked={post.published}
+                                    >
+                                        <span
+                                            aria-hidden="true"
+                                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${post.published ? 'translate-x-5' : 'translate-x-0'}`}
+                                        />
+                                    </button>
+                                    <span className="ml-2 text-xs text-gray-500">
+                                        {post.published ? t('status.published') : t('status.draft')}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -188,12 +216,12 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-xl w-full max-w-2xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
                         <div className="p-6 border-b">
-                            <h2 className="text-xl font-bold">{editingPost ? 'Edit Article' : 'New Article'}</h2>
+                            <h2 className="text-xl font-bold">{editingPost ? t('modal.edit_title') : t('modal.new_title')}</h2>
                         </div>
                         <div className="p-6 overflow-y-auto">
                             <form id="post-form" onSubmit={handleSave} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.language')}</label>
                                     <div className="flex gap-4">
                                         <label className="flex items-center">
                                             <input
@@ -203,7 +231,7 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                                 defaultChecked={editingPost ? editingPost.locale === 'ko' : true}
                                                 className="mr-2 text-blue-600 focus:ring-blue-500"
                                             />
-                                            Korean (한국어)
+                                            {t('modal.korean_label')}
                                         </label>
                                         <label className="flex items-center">
                                             <input
@@ -213,12 +241,12 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                                 defaultChecked={editingPost ? editingPost.locale === 'en' : false}
                                                 className="mr-2 text-blue-600 focus:ring-blue-500"
                                             />
-                                            English
+                                            {t('modal.english_label')}
                                         </label>
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.title_label')}</label>
                                     <input
                                         name="title"
                                         defaultValue={editingPost?.title}
@@ -228,7 +256,7 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.category_label')}</label>
                                         <input
                                             name="category"
                                             defaultValue={editingPost?.category || "Health"}
@@ -236,7 +264,7 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.author_label')}</label>
                                         <input
                                             name="author"
                                             defaultValue={editingPost?.author || "Admin"}
@@ -245,16 +273,16 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.image_url_label')}</label>
                                     <input
                                         name="imageUrl"
                                         defaultValue={editingPost?.imageUrl || ""}
-                                        placeholder="/images/placeholder.jpg"
+                                        placeholder={t('modal.image_placeholder')}
                                         className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.content_label')}</label>
                                     <textarea
                                         name="content"
                                         defaultValue={editingPost?.content}
@@ -271,7 +299,7 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                         defaultChecked={editingPost ? editingPost.published : true}
                                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
                                     />
-                                    <label className="ml-2 text-sm text-gray-700">Published</label>
+                                    <label className="ml-2 text-sm text-gray-700">{t('modal.published_label')}</label>
                                 </div>
                             </form>
                         </div>
@@ -281,14 +309,14 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                 onClick={() => setIsModalOpen(false)}
                                 className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
                             >
-                                Cancel
+                                {t('modal.cancel')}
                             </button>
                             <button
                                 type="submit"
                                 form="post-form"
                                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                             >
-                                {editingPost ? 'Save Changes' : 'Create Article'}
+                                {editingPost ? t('modal.save') : t('modal.create')}
                             </button>
                         </div>
                     </div>

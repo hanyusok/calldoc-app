@@ -460,6 +460,10 @@
                 "specialty": "전문 분야",
                 "hospital": "병원",
                 "bio": "소개",
+                "image_url": "이미지 URL",
+                "rating": "평점 (0-5)",
+                "patients": "진료 환자 수",
+                "consultation_fee": "진료비 (원)",
                 "is_available": "진료 가능 여부"
             },
             "confirm_delete": "정말 이 의사 정보를 삭제하시겠습니까?",
@@ -472,7 +476,86 @@
             "error_generic": "오류가 발생했습니다",
             "cancel": "취소",
             "save": "저장",
-            "saving": "저장 중..."
+            "saving": "저장 중...",
+            "manage_availability": "일정 관리",
+            "availability": {
+                "title": "진료 일정 관리",
+                "weekly_schedule": "주간 일정",
+                "exceptions": "예외 날짜",
+                "days": {
+                    "sunday": "일요일",
+                    "monday": "월요일",
+                    "tuesday": "화요일",
+                    "wednesday": "수요일",
+                    "thursday": "목요일",
+                    "friday": "금요일",
+                    "saturday": "토요일"
+                },
+                "start_time": "시작 시간",
+                "end_time": "종료 시간",
+                "slot_duration": "예약 간격 (분)",
+                "break_time": "휴게 시간",
+                "break_start": "휴게 시작",
+                "break_end": "휴게 종료",
+                "break_optional": "(선택사항, 예: 점심시간)",
+                "active": "활성",
+                "inactive": "비활성",
+                "save_schedule": "일정 저장",
+                "add_exception": "예외 추가",
+                "exception_date": "날짜",
+                "exception_reason": "사유",
+                "exception_unavailable": "휴무",
+                "exception_special_hours": "특별 진료 시간",
+                "no_exceptions": "설정된 예외가 없습니다",
+                "delete_exception": "삭제",
+                "save_success": "일정이 저장되었습니다",
+                "save_error": "일정 저장에 실패했습니다",
+                "exception_success": "예외가 추가되었습니다",
+                "exception_error": "예외 추가에 실패했습니다",
+                "preview_title": "예약 시간 미리보기",
+                "select_date": "날짜를 선택하세요",
+                "no_slots": "예약 가능한 시간이 없습니다"
+            }
+        },
+        "posts": {
+            "title": "게시글 관리",
+            "search_placeholder": "게시글 검색...",
+            "add_new": "새 게시글",
+            "new_short": "작성",
+            "all": "전체",
+            "korean": "한국어",
+            "english": "영어",
+            "table": {
+                "title": "제목",
+                "lang": "언어",
+                "category": "카테고리",
+                "author": "작성자",
+                "status": "상태",
+                "actions": "관리"
+            },
+            "status": {
+                "published": "발행됨",
+                "draft": "비공개"
+            },
+            "modal": {
+                "edit_title": "게시글 수정",
+                "new_title": "새 게시글",
+                "language": "언어",
+                "korean_label": "한국어",
+                "english_label": "영어",
+                "title_label": "제목",
+                "category_label": "카테고리",
+                "author_label": "작성자",
+                "image_url_label": "이미지 URL",
+                "image_placeholder": "/images/placeholder.jpg",
+                "content_label": "내용",
+                "published_label": "공개 여부",
+                "cancel": "취소",
+                "save": "변경사항 저장",
+                "create": "게시글 생성"
+            },
+            "confirm_delete": "정말 이 게시글을 삭제하시겠습니까?",
+            "update_error": "상태 업데이트 실패"
         }
     }
 }
