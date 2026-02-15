@@ -212,6 +212,7 @@
             "appointments": "Appointments",
             "patients": "Patients",
             "pharmacies": "Pharmacies",
+            "doctors": "Doctors",
             "vaccinations": "Vaccinations",
             "posts": "Posts",
             "payments": "Payments",
@@ -436,6 +437,42 @@
                 "cancelFailed": "Cancellation failed: ",
                 "error": "An error occurred."
             }
+        },
+        "doctors": {
+            "title": "Doctor Management",
+            "search_placeholder": "Search doctors...",
+            "add_new": "Add New Doctor",
+            "no_doctors": "No doctors found.",
+            "edit_doctor": "Edit Doctor",
+            "edit": "Edit",
+            "delete": "Delete",
+            "status_available": "Available",
+            "status_unavailable": "Unavailable",
+            "table": {
+                "name": "Name",
+                "specialty": "Specialty",
+                "hospital": "Hospital",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "form": {
+                "name": "Name",
+                "specialty": "Specialty",
+                "hospital": "Hospital",
+                "bio": "Bio",
+                "is_available": "Is Available"
+            },
+            "confirm_delete": "Are you sure you want to delete this doctor?",
+            "delete_success": "Doctor deleted successfully",
+            "delete_error": "Failed to delete doctor",
+            "create_success": "Doctor created successfully",
+            "create_error": "Failed to create doctor",
+            "update_success": "Doctor updated successfully",
+            "save_error": "Failed to save doctor",
+            "error_generic": "An error occurred",
+            "cancel": "Cancel",
+            "save": "Save",
+            "saving": "Saving..."
         }
     }
 }

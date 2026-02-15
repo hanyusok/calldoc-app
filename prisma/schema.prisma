@@ -143,7 +143,7 @@ model Payment {
   approvedAt    DateTime?
   receiptUrl    String?
   appointmentId String      @unique
-  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
 }
 
 model Pharmacy {

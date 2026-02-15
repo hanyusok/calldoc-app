@@ -212,6 +212,7 @@
             "appointments": "예약 관리",
             "patients": "환자 관리",
             "pharmacies": "약국 관리",
+            "doctors": "의사 관리",
             "vaccinations": "예방접종 관리",
             "posts": "게시글 관리",
             "payments": "결제 관리",
@@ -436,6 +437,42 @@
                 "cancelFailed": "취소 실패: ",
                 "error": "오류가 발생했습니다."
             }
+        },
+        "doctors": {
+            "title": "의사 관리",
+            "search_placeholder": "의사 검색...",
+            "add_new": "의사 추가",
+            "no_doctors": "등록된 의사가 없습니다.",
+            "edit_doctor": "의사 정보 수정",
+            "edit": "수정",
+            "delete": "삭제",
+            "status_available": "진료 가능",
+            "status_unavailable": "진료 불가",
+            "table": {
+                "name": "이름",
+                "specialty": "전문 분야",
+                "hospital": "병원",
+                "status": "상태",
+                "actions": "관리"
+            },
+            "form": {
+                "name": "이름",
+                "specialty": "전문 분야",
+                "hospital": "병원",
+                "bio": "소개",
+                "is_available": "진료 가능 여부"
+            },
+            "confirm_delete": "정말 이 의사 정보를 삭제하시겠습니까?",
+            "delete_success": "의사 정보가 삭제되었습니다",
+            "delete_error": "삭제 실패",
+            "create_success": "의사 정보가 생성되었습니다",
+            "create_error": "생성 실패",
+            "update_success": "의사 정보가 수정되었습니다",
+            "save_error": "저장 실패",
+            "error_generic": "오류가 발생했습니다",
+            "cancel": "취소",
+            "save": "저장",
+            "saving": "저장 중..."
         }
     }
 }
