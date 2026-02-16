@@ -35,13 +35,15 @@ export async function checkAppointmentNotifications(knownIds: string[]) {
         include: { doctor: true }
     });
 
-    // 2. Check for Meeting Ready (New)
+    // 2. Check for Meeting Ready (or just Confirmed)
+    // We want to notify/refresh even if link is missing, so the UI updates to "Confirmed" status
     const meetReady = await prisma.appointment.findMany({
         where: {
             userId: session.user.id,
-            status: { in: ['CONFIRMED', 'COMPLETED'] },
-            meetingLink: { not: null },
-            id: { notIn: knownIds }
+            status: { in: ['CONFIRMED'] }, // Only check CONFIRMED, COMPLETED is history
+            // meetingLink: { not: null }, // REMOVED: Allow triggering refresh even without link
+            id: { notIn: knownIds },
+            updatedAt: { gte: new Date(Date.now() - 1 * 60 * 60 * 1000) } // Only from last 1 hour
         },
         include: { doctor: true }
     });
@@ -62,7 +64,7 @@ export async function checkAppointmentNotifications(knownIds: string[]) {
     // Map to a common structure
     const notifications = [
         ...paymentRequired.map(apt => ({ ...apt, type: 'PAYMENT_REQUIRED' })),
-        ...meetReady.map(apt => ({ ...apt, type: 'MEET_READY' })),
+        ...meetReady.map(apt => ({ ...apt, type: 'MEET_READY', message: 'Appointment Confirmed' })),
         ...cancelled.map(apt => ({ ...apt, type: 'PAYMENT_CANCELLED' }))
     ];
 

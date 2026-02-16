@@ -1,5 +1,6 @@
 import { getUsers } from "@/app/actions/user";
 import UsersClient from "./UsersClient";
+import PageContainer from "@/components/admin/shared/PageContainer";
 import { Role } from "@prisma/client";
 
 export default async function UsersPage({
@@ -14,5 +15,9 @@ export default async function UsersPage({
 
     const { users, total } = await getUsers(page, 10, search, role);
 
-    return <UsersClient initialUsers={users} initialTotal={total} initialPage={page} />;
+    return (
+        <PageContainer>
+            <UsersClient initialUsers={users} initialTotal={total} initialPage={page} />
+        </PageContainer>
+    );
 }

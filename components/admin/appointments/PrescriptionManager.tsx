@@ -10,21 +10,27 @@ import { useTranslations } from "next-intl";
 type Pharmacy = {
     id: string;
     name: string;
-    fax?: string | null;
-    address?: string | null;
+    fax: string | null;
+    address: string | null;
+    phone: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    isDefault: boolean;
 };
 
 export default function PrescriptionManager({
     appointmentId,
-    prescription
+    prescription,
+    userPharmacy
 }: {
     appointmentId: string;
     prescription?: any;
+    userPharmacy?: Pharmacy | null;
 }) {
     const t = useTranslations('Admin.prescription_manager');
     const [step, setStep] = useState<'SELECT' | 'UPLOAD' | 'FAX'>(prescription ? 'UPLOAD' : 'SELECT');
     const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
-    const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null);
+    const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(userPharmacy || null);
     const [loading, setLoading] = useState(false);
 
     // For Upload
@@ -40,7 +46,14 @@ export default function PrescriptionManager({
 
     const loadPharmacies = async () => {
         const res = await getPharmacies(1, 100); // Load enough for demo
-        setPharmacies(res.pharmacies);
+        let list = res.pharmacies;
+
+        // Ensure user's pharmacy is in the list if it exists
+        if (userPharmacy && !list.find(p => p.id === userPharmacy.id)) {
+            list = [userPharmacy, ...list];
+        }
+
+        setPharmacies(list);
     };
 
     const handleRequest = async () => {

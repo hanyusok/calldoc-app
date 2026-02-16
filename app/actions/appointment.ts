@@ -24,7 +24,11 @@ export async function getAppointments(search?: string, status?: string, page = 1
             prisma.appointment.findMany({
                 where: whereClause,
                 include: {
-                    user: true,
+                    user: {
+                        include: {
+                            pharmacy: true
+                        }
+                    },
                     doctor: true,
                     payment: true,
                     prescription: true,
@@ -99,6 +103,7 @@ export async function updateAppointment(id: string, data: {
     }
 }
 
+// ... existing code ...
 export async function deleteAppointment(id: string) {
     try {
         await prisma.appointment.delete({
@@ -109,6 +114,40 @@ export async function deleteAppointment(id: string) {
     } catch (error) {
         console.error("Error deleting appointment:", error);
         throw new Error("Failed to delete appointment");
+    }
+}
+
+import { createNotification } from "./notification";
+import { getTranslations } from "next-intl/server";
+
+export async function completeAppointment(id: string) {
+    try {
+        const appointment = await prisma.appointment.update({
+            where: { id },
+            data: { status: 'COMPLETED' },
+            include: { doctor: true, user: true }
+        });
+
+        // Notify user
+        if (appointment.userId) {
+            await createNotification({
+                userId: appointment.userId,
+                type: 'APPOINTMENT_COMPLETED',
+                message: `Your consultation with ${appointment.doctor.name} has been completed.`,
+                key: 'Notifications.appointment_completed', // Ensure this key exists or fallback to message
+                params: { doctor: appointment.doctor.name },
+                link: `/myappointment`
+            });
+        }
+
+        revalidatePath('/admin/dashboard/appointments');
+        revalidatePath('/myappointment');
+        revalidatePath('/[locale]/myappointment');
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error completing appointment:", error);
+        return { success: false, error: "Failed to complete appointment" };
     }
 }
 

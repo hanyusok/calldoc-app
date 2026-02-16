@@ -31,8 +31,12 @@ export default function CancelPaymentButton({
                 router.refresh();
             } else {
                 // Try to translate if it's a known error code
-                const errorMessage = result.error || t('actions.error');
-                alert(t('actions.cancelFailed') + errorMessage);
+                const isErrorCode = /^[A-Z_]+$/.test(result.error || "");
+                const errorMessage = isErrorCode
+                    ? t(`errors.${result.error}`)
+                    : (result.error || t('actions.error'));
+
+                alert(t('actions.cancelFailed') + ": " + errorMessage);
             }
         } catch (e) {
             console.error(e);

@@ -112,6 +112,8 @@ export async function logout() {
     await signOut();
 }
 
+import { createNotification } from "@/app/actions/notification";
+
 export async function updatePharmacy(pharmacyId: string) {
     const user = await getAuthenticatedUser();
 
@@ -127,6 +129,14 @@ export async function updatePharmacy(pharmacyId: string) {
     await prisma.user.update({
         where: { id: user.id },
         data: { pharmacyId },
+    });
+
+    await createNotification({
+        userId: user.id,
+        type: 'PHARMACY_UPDATED',
+        message: `Pharmacy has been updated to ${pharmacy.name}`,
+        key: 'Notifications.pharmacy_updated',
+        params: { name: pharmacy.name }
     });
 
     revalidatePath('/profile');

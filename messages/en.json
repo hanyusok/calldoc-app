@@ -156,6 +156,7 @@
         "activity": "Activity History",
         "preferences": "User Preferences",
         "no_notifications": "No new notifications",
+        "new_count": "{count} new",
         "view_all": "View All",
         "nearby_pharmacy": "Nearby Pharmacy"
     },
@@ -229,7 +230,25 @@
             "payments": "Payments",
             "meet": "Video Consultation",
             "settings": "Settings",
+            "fax": "Fax",
             "logout": "Logout"
+        },
+        "fax": {
+            "title": "Fax Manager",
+            "description": "Manually send fax documents to pharmacies or other recipients.",
+            "receiver_name": "Receiver Name",
+            "receiver_name_placeholder": "e.g. Dr. Kim Pharmacy",
+            "fax_number": "Fax Number",
+            "fax_number_placeholder": "e.g. 02-1234-5678",
+            "document_label": "Document (PDF/Image)",
+            "supported_formats": "Supported formats: PDF, JPG, PNG, TIF. Max 5MB.",
+            "send_button": "Send Fax",
+            "sending": "Sending...",
+            "success": "Success",
+            "error": "Error",
+            "success_message": "Fax sent successfully! (Ref: {ref})",
+            "error_file_size": "File size exceeds 5MB limit.",
+            "error_generic": "An unexpected error occurred."
         },
         "dashboard": {
             "title": "Admin Dashboard",
@@ -264,7 +283,9 @@
             "pending": "Pending Requests",
             "additional_actions": "Additional actions available after confirmation.",
             "patient_fallback": "Patient",
-            "edit": "Edit"
+            "edit": "Edit",
+            "complete": "Complete",
+            "confirm_complete": "Are you sure you want to mark this appointment as completed?"
         },
         "status": {
             "PENDING": "Pending",
@@ -613,7 +634,13 @@
         "payment_cancelled": "Your payment has been cancelled and refunded.",
         "appointment_confirmed": "Your appointment with {doctor} has been confirmed.",
         "enter_room": "Enter Room",
-        "action_required": "Action Required"
+        "action_required": "Action Required",
+        "appointment_completed": "Your consultation with {doctor} has been completed.",
+        "notification": "Notification",
+        "meet_ready": "Video Consultation Ready",
+        "pharmacy_updated": "Pharmacy has been updated to {name}",
+        "fax_sent": "Fax sent successfully to {name}",
+        "fax_failed": "Fax transmission failed. Code: {error}"
     },
     "PaymentSuccess": {
         "title": "Payment Successful!",

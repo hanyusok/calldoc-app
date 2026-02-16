@@ -68,12 +68,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     trustHost: true,
     callbacks: {
         ...authConfig.callbacks,
-        // Override session to include user ID from database if strategy is "database" (default with adapter)
-        // But if we use Middleware, we might be forced to JWT or use database strategy only in non-edge.
-        // Let's stick to the default strategy (database) for auth.ts and see if we can just re-use.
+        async jwt({ token, user }) {
+            if (user) {
+                token.role = user.role;
+                token.sub = user.id;
+            }
+            return token;
+        },
         async session({ session, token }) {
             if (session.user && token.sub) {
                 session.user.id = token.sub;
+            }
+            if (session.user && token.role) {
+                session.user.role = token.role;
             }
             return session;
         }

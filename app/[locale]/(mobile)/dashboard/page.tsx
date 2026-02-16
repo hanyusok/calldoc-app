@@ -8,6 +8,8 @@ import Link from 'next/link';
 import PharmacySelector from "@/components/profile/PharmacySelector";
 import { updatePharmacy } from "@/app/[locale]/(mobile)/profile/actions";
 import { prisma } from "@/app/lib/prisma";
+import { getUserNotifications } from "@/app/actions/notification";
+import NotificationList from "@/components/dashboard/NotificationList";
 
 export default async function DashboardPage() {
     const session = await auth();
@@ -21,6 +23,8 @@ export default async function DashboardPage() {
         where: { email: session.user.email },
         include: { pharmacy: true }
     });
+
+    const notifications = await getUserNotifications(5); // Fetch latest 5 for dashboard
 
     if (!user) return <div>User not found</div>;
 
@@ -45,30 +49,10 @@ export default async function DashboardPage() {
                             <Bell size={16} />
                             {t('notifications')}
                         </h2>
-                        <button className="text-xs font-bold text-primary-600">{t('view_all')}</button>
+                        {/* <button className="text-xs font-bold text-primary-600">{t('view_all')}</button> */}
                     </div>
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 divide-y divide-gray-50">
-                        <div className="p-4 flex items-start gap-3">
-                            <div className="bg-blue-50 text-blue-500 p-2 rounded-xl mt-0.5">
-                                <Bell size={18} />
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-900">Appointment Confirmed</p>
-                                <p className="text-xs text-gray-500 mt-0.5">Your appointment with Dr. Smith is confirmed for tomorrow at 2:00 PM.</p>
-                                <p className="text-[10px] text-gray-400 mt-1.5">2 hours ago</p>
-                            </div>
-                        </div>
-                        <div className="p-4 flex items-start gap-3">
-                            <div className="bg-green-50 text-green-500 p-2 rounded-xl mt-0.5">
-                                <History size={18} />
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-900">Prescription Ready</p>
-                                <p className="text-xs text-gray-500 mt-0.5">Your medical prescription has been sent to the pharmacy.</p>
-                                <p className="text-[10px] text-gray-400 mt-1.5">Yesterday</p>
-                            </div>
-                        </div>
-                    </div>
+
+                    <NotificationList notifications={notifications} />
                 </section>
 
                 {/* Quick Shortcuts */}

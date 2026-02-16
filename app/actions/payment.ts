@@ -2,6 +2,7 @@
 
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 
 import { createMeeting } from "./meet";
 import { createNotification } from "./notification";
@@ -166,7 +167,9 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
         // 7. Revalidate Paths
         revalidatePath('/dashboard');
         revalidatePath('/myappointment');
-        revalidatePath('/[locale]/myappointment'); // Ensure localized paths are hit
+        revalidatePath('/[locale]/myappointment');
+        revalidatePath('/ko/myappointment'); // Explicitly needed sometimes
+        revalidatePath('/en/myappointment');
         revalidatePath('/admin/dashboard');
 
         return { success: true };
@@ -233,13 +236,10 @@ export async function processCancellationSuccess(paymentId: string, paymentKey?:
 }
 
 export async function cancelPayment(paymentId: string, reason: string) {
-    // TODO: Verify user is admin using your auth implementation
-    /*
     const session = await auth();
-    if (!session?.user || session.user.role !== 'ADMIN') {
+    if (!session?.user || (session.user as any).role !== 'ADMIN') {
         return { success: false, error: "Unauthorized" }
     }
-    */
 
     const payment = await prisma.payment.findUnique({
         where: { id: paymentId }

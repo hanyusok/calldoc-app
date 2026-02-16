@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Bell } from 'lucide-react';
 import { getUnreadNotifications, markNotificationAsRead } from '@/app/actions/notification';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface Notification {
     id: string;
@@ -18,6 +19,7 @@ export default function NotificationBell() {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const t = useTranslations('Dashboard');
 
     // Simple click outside handler
     useEffect(() => {
@@ -69,16 +71,16 @@ export default function NotificationBell() {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute left-full ml-2 top-0 w-80 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-200">
                     <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
-                        <h3 className="font-bold text-sm text-gray-900">Notifications</h3>
-                        <span className="text-xs text-gray-500">{notifications.length} new</span>
+                        <h3 className="font-bold text-sm text-gray-900">{t('notifications')}</h3>
+                        <span className="text-xs text-gray-500">{t('new_count', { count: notifications.length })}</span>
                     </div>
 
                     <div className="max-h-80 overflow-y-auto">
                         {notifications.length === 0 ? (
                             <div className="p-8 text-center text-gray-400 text-sm">
-                                No new notifications
+                                {t('no_notifications')}
                             </div>
                         ) : (
                             <ul className="divide-y divide-gray-50">

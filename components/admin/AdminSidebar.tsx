@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { LayoutDashboard, Calendar, Building2, Settings, LogOut, Users, FileText, ChevronLeft, ChevronRight, Syringe, CreditCard, Video, Stethoscope } from "lucide-react";
+import { LayoutDashboard, Calendar, Building2, Settings, LogOut, Users, FileText, ChevronLeft, ChevronRight, Syringe, CreditCard, Video, Stethoscope, Printer } from "lucide-react";
 import NotificationBell from "@/components/admin/NotificationBell";
 
 interface AdminSidebarProps {
@@ -28,6 +28,7 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar }: AdminSideba
         { href: "/admin/dashboard/posts", label: t('posts'), icon: FileText },
         { href: "/admin/dashboard/doctors", label: t('doctors'), icon: Stethoscope },
         { href: "/admin/dashboard/meet", label: t('meet'), icon: Video },
+        { href: "/admin/dashboard/fax", label: t('fax'), icon: Printer },
         { href: "/admin/dashboard/settings", label: t('settings'), icon: Settings },
     ];
 

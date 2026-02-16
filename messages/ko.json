@@ -156,6 +156,7 @@
         "activity": "활동 내역",
         "preferences": "회원 설정",
         "no_notifications": "새로운 알림이 없습니다",
+        "new_count": "{count}개의 새 알림",
         "view_all": "전체 보기",
         "nearby_pharmacy": "내 주변 약국"
     },
@@ -229,7 +230,25 @@
             "payments": "결제 관리",
             "meet": "화상 진료",
             "settings": "설정",
+            "fax": "팩스",
             "logout": "로그아웃"
+        },
+        "fax": {
+            "title": "팩스 관리",
+            "description": "약국이나 기타 수신처로 팩스를 수동 발송합니다.",
+            "receiver_name": "수신자(처) 명",
+            "receiver_name_placeholder": "예: 김약국",
+            "fax_number": "팩스 번호",
+            "fax_number_placeholder": "예: 02-1234-5678",
+            "document_label": "문서 (PDF/이미지)",
+            "supported_formats": "지원 형식: PDF, JPG, PNG, TIF. 최대 5MB.",
+            "send_button": "팩스 전송",
+            "sending": "전송 중...",
+            "success": "성공",
+            "error": "오류",
+            "success_message": "팩스가 성공적으로 전송되었습니다! (참조: {ref})",
+            "error_file_size": "파일 크기가 5MB를 초과합니다.",
+            "error_generic": "예기치 않은 오류가 발생했습니다."
         },
         "dashboard": {
             "title": "관리자 대시보드",
@@ -264,7 +283,9 @@
             "pending": "대기 중인 요청",
             "additional_actions": "예약 확정 후 추가 기능을 사용할 수 있습니다.",
             "patient_fallback": "환자",
-            "edit": "수정"
+            "edit": "수정",
+            "complete": "진료 완료",
+            "confirm_complete": "이 예약을 완료 처리하시겠습니까?"
         },
         "status": {
             "PENDING": "대기중",
@@ -613,7 +634,13 @@
         "payment_cancelled": "결제가 취소되고 환불되었습니다.",
         "appointment_confirmed": "{doctor}님과의 예약이 확정되었습니다.",
         "enter_room": "진료실 입장",
-        "action_required": "조치 필요"
+        "action_required": "조치 필요",
+        "appointment_completed": "{doctor}님과의 진료가 완료되었습니다.",
+        "notification": "알림",
+        "meet_ready": "화상 진료 준비 완료",
+        "pharmacy_updated": "약국이 {name}(으)로 변경되었습니다",
+        "fax_sent": "{name}님에게 팩스가 발송되었습니다.",
+        "fax_failed": "팩스 전송에 실패했습니다. 코드: {error}"
     },
     "PaymentSuccess": {
         "title": "결제 성공!",

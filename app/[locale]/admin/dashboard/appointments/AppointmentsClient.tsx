@@ -6,6 +6,7 @@ import { Plus, Search, Filter, ChevronLeft, ChevronRight, Stethoscope, Syringe }
 import AppointmentModal from '@/components/admin/appointments/AppointmentModal';
 import AppointmentRow from '@/components/admin/appointments/AppointmentRow';
 import VaccinationReservationRow from '@/components/admin/appointments/VaccinationReservationRow';
+import PageHeader from '@/components/admin/shared/PageHeader';
 import { useTranslations, useFormatter } from 'next-intl';
 
 interface AppointmentsClientProps {
@@ -90,9 +91,9 @@ export default function AppointmentsClient({
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">{t('appointments')}</h1>
-                {isConsultations && (
+            <PageHeader
+                title={t('appointments')}
+                actions={isConsultations ? (
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
@@ -100,16 +101,16 @@ export default function AppointmentsClient({
                         <Plus size={20} />
                         {tDash('new_appointment')}
                     </button>
-                )}
-            </div>
+                ) : null}
+            />
 
             {/* Tab Switcher */}
             <div className="flex border-b border-gray-200">
                 <button
                     onClick={() => setActiveTab('consultations')}
                     className={`px-6 py-3 text-sm font-bold flex items-center gap-2 transition-colors border-b-2 ${isConsultations
-                            ? 'border-blue-600 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                        ? 'border-blue-600 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
                         }`}
                 >
                     <Stethoscope size={18} />
@@ -118,8 +119,8 @@ export default function AppointmentsClient({
                 <button
                     onClick={() => setActiveTab('vaccinations')}
                     className={`px-6 py-3 text-sm font-bold flex items-center gap-2 transition-colors border-b-2 ${!isConsultations
-                            ? 'border-blue-600 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700'
+                        ? 'border-blue-600 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
                         }`}
                 >
                     <Syringe size={18} />

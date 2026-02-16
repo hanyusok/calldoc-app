@@ -53,24 +53,17 @@ export default async function MyAppointmentPage() {
                 label = t('status.completed');
                 className = "text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full text-xs font-bold border border-gray-200";
                 break;
+            case 'CANCELLED':
+                label = t('status.CANCELLED');
+                className = "text-red-600 bg-red-50 px-2.5 py-1 rounded-full text-xs font-bold border border-red-100";
+                break;
         }
         return <span className={className}>{label}</span>;
     };
 
     return (
         <div className="bg-gray-50 min-h-screen pb-24">
-            <NotificationWatcher
-                initialConfirmedIds={initialConfirmedIds}
-                messages={{
-                    payment_required: t('status.payment_required'),
-                    confirmed: t('status.confirmed'),
-                    cancelled: t('status.CANCELLED'), // Check if key exists (legacy key was uppercase in code but maybe lowercase in json)
-                    completed: t('status.completed'),
-                    price_confirmed_msg: t('card.price_confirmed_msg', { doctor: '{doctor}', price: '{price}' }),
-                    enter_room: t('card.enter_room'),
-                    action_required: t('action_required')
-                }}
-            />
+
             {/* Header (reused or simplified) */}
             <div className="bg-white sticky top-0 z-10 px-4 py-3 shadow-sm flex items-center justify-between">
                 <h1 className="text-lg font-bold text-gray-900">{t('title')}</h1>

@@ -99,6 +99,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                                 <PrescriptionManager
                                     appointmentId={appointment.id}
                                     prescription={appointment.prescription}
+                                    userPharmacy={appointment.user.pharmacy}
                                 />
                             )}
 

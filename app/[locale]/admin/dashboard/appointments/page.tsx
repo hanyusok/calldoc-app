@@ -1,6 +1,7 @@
 import { getAppointments } from '@/app/actions/appointment';
 import { getVaccinationReservations } from '@/app/actions/vaccination-booking';
 import AppointmentsClient from './AppointmentsClient';
+import PageContainer from '@/components/admin/shared/PageContainer';
 
 export default async function AppointmentsPage({
     searchParams,
@@ -19,7 +20,7 @@ export default async function AppointmentsPage({
     ]);
 
     return (
-        <div className="max-w-6xl mx-auto p-4">
+        <PageContainer>
             <AppointmentsClient
                 initialAppointments={consultData.appointments}
                 initialTotal={consultData.total}
@@ -30,6 +31,6 @@ export default async function AppointmentsPage({
                 status={status}
                 initialTab={tab}
             />
-        </div>
+        </PageContainer>
     );
 }

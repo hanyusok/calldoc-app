@@ -1,26 +1,18 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
-import { checkAppointmentNotifications } from '@/app/[locale]/(mobile)/myappointment/actions';
+import { checkNewNotifications } from '@/app/actions/notification';
+import { checkAppointmentNotifications } from '@/app/[locale]/(mobile)/myappointment/actions'; // Keep for legacy/immediate checks if needed
 import { useRouter } from 'next/navigation';
-import { Bell, Video, CreditCard } from 'lucide-react';
+import { Bell, Video, CreditCard, Building2, FileText, AlertCircle, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-export default function NotificationWatcher({
-    initialConfirmedIds,
-    messages: propMessages // renaming to avoid confusion with hook
-}: {
-    initialConfirmedIds: string[],
-    messages: {
-        payment_required: string;
-        confirmed: string;
-        cancelled: string;
-        completed: string;
-        price_confirmed_msg: string;
-        enter_room: string;
-        action_required: string;
-    }
-}) {
+interface NotificationWatcherProps {
+    initialConfirmedIds?: string[];
+    messages?: Record<string, string>;
+}
+
+export default function NotificationWatcher({ initialConfirmedIds = [], messages }: NotificationWatcherProps) {
     const router = useRouter();
     const t = useTranslations('Notifications');
     const [knownIds, setKnownIds] = useState<string[]>(initialConfirmedIds);
@@ -29,30 +21,38 @@ export default function NotificationWatcher({
         key?: string;
         params?: string; // serialized JSON
         id: string;
-        type: 'PAYMENT' | 'MEET' | 'CANCELLED';
+        type: string;
     } | null>(null);
 
     useEffect(() => {
         const interval = setInterval(async () => {
             try {
-                const notifications = await checkAppointmentNotifications(knownIds);
+                // 1. Check Unified Notifications (Persistent DB)
+                const newNotices = await checkNewNotifications();
 
-                if (notifications.length > 0) {
-                    const latest = notifications[0] as any;
-                    const isPayment = latest.type === 'APPOINTMENT_CONFIRMED' || latest.type === 'PAYMENT_CONFIRMED';
-                    const isCancelled = latest.type === 'PAYMENT_CANCELLED';
+                // 2. Check Appointment Status (Legacy Polling for real-time status changes not via notification table yet)
+                // Note: We might want to move fully to DB notifications eventually
+                const appointmentNotices = await checkAppointmentNotifications(knownIds);
+
+                // Combine
+                const allNotices = [...newNotices, ...appointmentNotices];
+
+                if (allNotices.length > 0) {
+                    const latest = allNotices[0] as any;
 
                     setNotification({
                         message: latest.message,
                         key: latest.key,
                         params: latest.params,
                         id: latest.id,
-                        type: isPayment ? 'PAYMENT' : (isCancelled ? 'CANCELLED' : 'MEET')
+                        type: latest.type
                     });
 
-                    // Update known IDs so we don't notify again
-                    const newIds = notifications.map((a: any) => a.id);
-                    setKnownIds(prev => [...prev, ...newIds]);
+                    // Update known IDs for appointment polling to avoid loops
+                    // For DB notifications, they are marked read by the action, so won't reappear
+                    if (latest.type.includes('PAYMENT') || latest.type.includes('MEET')) {
+                        setKnownIds(prev => [...prev, latest.id]);
+                    }
 
                     // Refresh the page data
                     router.refresh();
@@ -70,33 +70,69 @@ export default function NotificationWatcher({
 
     if (!notification) return null;
 
-    const isPayment = notification.type === 'PAYMENT';
-    const isCancelled = notification.type === 'CANCELLED';
-
     // Determine styles based on type
-    let borderColor = 'border-green-500';
-    let iconBg = 'bg-green-50 text-green-500';
-    let Icon = Video;
-    let title = "Ready to Join";
+    let borderColor = 'border-blue-500';
+    let iconBg = 'bg-blue-50 text-blue-500';
+    let Icon = Bell;
+    let title = t('notification'); // Default title
 
-    if (isPayment) {
-        borderColor = 'border-blue-500';
-        iconBg = 'bg-blue-50 text-blue-500';
-        Icon = Bell;
-        title = t('action_required');
-    } else if (isCancelled) {
-        borderColor = 'border-red-500';
-        iconBg = 'bg-red-50 text-red-500';
-        Icon = CreditCard; // Or XCircle
-        title = t('payment_cancelled'); // Fallback title or use generic
+    switch (notification.type) {
+        case 'PAYMENT_REQUIRED':
+        case 'PAYMENT_CONFIRMED':
+            borderColor = 'border-blue-500';
+            iconBg = 'bg-blue-50 text-blue-500';
+            Icon = Bell;
+            title = t('action_required');
+            break;
+        case 'PAYMENT_CANCELLED':
+        case 'CANCELLED':
+            borderColor = 'border-red-500';
+            iconBg = 'bg-red-50 text-red-500';
+            Icon = CreditCard;
+            title = t('payment_cancelled');
+            break;
+        case 'MEET_READY':
+        case 'APPOINTMENT_CONFIRMED':
+            borderColor = 'border-green-500';
+            iconBg = 'bg-green-50 text-green-500';
+            Icon = Video;
+            title = t('meet_ready'); // Ensure key exists or use fallback
+            break;
+        case 'APPOINTMENT_COMPLETED':
+            borderColor = 'border-gray-500';
+            iconBg = 'bg-gray-50 text-gray-500';
+            Icon = FileText;
+            title = t('appointment_completed');
+            break;
+        case 'PHARMACY_UPDATED':
+            borderColor = 'border-purple-500';
+            iconBg = 'bg-purple-50 text-purple-500';
+            Icon = Building2;
+            title = t('pharmacy_updated');
+            break;
+        case 'FAX_SENT':
+            borderColor = 'border-indigo-500';
+            iconBg = 'bg-indigo-50 text-indigo-500';
+            Icon = Send;
+            title = t('fax_sent');
+            break;
+        case 'FAX_FAILED':
+            borderColor = 'border-red-500';
+            iconBg = 'bg-red-50 text-red-500';
+            Icon = AlertCircle;
+            title = t('fax_failed');
+            break;
+        default:
+            borderColor = 'border-blue-500';
+            iconBg = 'bg-blue-50 text-blue-500';
+            Icon = Bell;
     }
 
     // Resolve Message
-    let displayMessage = notification.message; // Fallback to database message
+    let displayMessage = notification.message;
     if (notification.key) {
         try {
-            const params = notification.params ? JSON.parse(notification.params) : {};
-            // Using 'any' cast to bypass strict key checking since keys come from DB
+            const params = notification.params ? (typeof notification.params === 'string' ? JSON.parse(notification.params) : notification.params) : {};
             displayMessage = t(notification.key as any, params);
         } catch (e) {
             console.error("Failed to parse notification params", e);
@@ -113,7 +149,7 @@ export default function NotificationWatcher({
                     <h3 className="font-bold text-gray-900 text-sm">
                         {title}
                     </h3>
-                    <p className="text-gray-600 text-xs">{displayMessage}</p>
+                    <p className="text-gray-600 text-xs text-left">{displayMessage}</p>
                 </div>
                 <button
                     onClick={() => setNotification(null)}
@@ -125,4 +161,5 @@ export default function NotificationWatcher({
         </div>
     );
 }
+
 
