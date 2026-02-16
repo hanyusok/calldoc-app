@@ -83,7 +83,10 @@
         "top_rated": "Top Rated",
         "available_now": "Available Now",
         "female_doctor": "Female Doctor",
-        "price": "Price"
+        "price": "Price",
+        "anseong": "Anseong",
+        "pyeongtaek": "Pyeongtaek",
+        "osan": "Osan"
     },
     "DoctorCard": {
         "avail": "Available",
@@ -152,7 +155,8 @@
         "activity": "Activity History",
         "preferences": "User Preferences",
         "no_notifications": "No new notifications",
-        "view_all": "View All"
+        "view_all": "View All",
+        "nearby_pharmacy": "Nearby Pharmacy"
     },
     "LoginPage": {
         "title": "CallDoc",
@@ -274,7 +278,8 @@
             "delete": "Delete",
             "set_default": "Set Default",
             "is_default": "Default",
-            "search_placeholder": "Search pharmacies..."
+            "search_placeholder": "Search pharmacies...",
+            "search": "Search"
         },
         "meet": {
             "title": "Video Consultation",
@@ -557,5 +562,13 @@
             "confirm_delete": "Are you sure you want to delete this post?",
             "update_error": "Failed to update status"
         }
+    },
+    "PharmacySelector": {
+        "title": "Nearby Pharmacy",
+        "select": "Select Pharmacy",
+        "change": "Change",
+        "search_placeholder": "Search pharmacy...",
+        "loading": "Loading...",
+        "no_results": "No pharmacies found"
     }
 }

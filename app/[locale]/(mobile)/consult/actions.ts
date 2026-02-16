@@ -84,8 +84,10 @@ export async function getDoctors({
 
 export async function getPharmacies({
     query,
+    filter
 }: {
     query?: string;
+    filter?: string;
 }) {
     const where: any = {};
 
@@ -94,6 +96,17 @@ export async function getPharmacies({
             { name: { contains: query, mode: 'insensitive' } },
             { address: { contains: query, mode: 'insensitive' } },
         ];
+    }
+
+    if (filter && filter !== 'all') {
+        // Map filter ID to Korean city name or part of address
+        const cityMap: Record<string, string> = {
+            'anseong': '안성',
+            'pyeongtaek': '평택',
+            'osan': '오산',
+        };
+        const searchTerm = cityMap[filter] || filter;
+        where.address = { contains: searchTerm };
     }
 
     return await prisma.pharmacy.findMany({

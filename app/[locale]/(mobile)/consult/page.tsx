@@ -35,7 +35,8 @@ export default async function ConsultPage(props: {
     }) : [];
 
     const pharmacies = isPharmacy ? await getPharmacies({
-        query: params.query
+        query: params.query,
+        filter: params.filter
     }) : [];
 
     const vaccinations = isVaccination ? await getVaccinations({
@@ -94,7 +95,7 @@ export default async function ConsultPage(props: {
                     </form>
                 </div>
 
-                <FilterBar />
+                <FilterBar category={category} />
             </div>
 
             <div className="px-4 py-4 space-y-4">

@@ -11,39 +11,48 @@ interface PharmacyClientProps {
     initialTotal: number;
     initialPage: number;
     search?: string;
+    initialFilter?: string;
 }
 
-export default function PharmacyClient({ initialPharmacies, initialTotal, initialPage, search }: PharmacyClientProps) {
+export default function PharmacyClient({ initialPharmacies, initialTotal, initialPage, search, initialFilter }: PharmacyClientProps) {
     const t = useTranslations('Admin.pharmacy');
     const router = useRouter();
     const searchParams = useSearchParams();
 
     const [pharmacies, setPharmacies] = useState(initialPharmacies);
     const [searchTerm, setSearchTerm] = useState(search || "");
+    const [filter, setFilter] = useState(initialFilter || "");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentId, setCurrentId] = useState<string | null>(null);
     const [formData, setFormData] = useState({ name: "", fax: "", phone: "", address: "" });
     const [loading, setLoading] = useState(false);
 
-    // Debounce search
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            const params = new URLSearchParams(searchParams.toString());
-            const currentQ = params.get('q') || '';
+    const triggerSearch = () => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (searchTerm) {
+            params.set('q', searchTerm);
+        } else {
+            params.delete('q');
+        }
+        params.set('page', '1');
+        router.push(`?${params.toString()}`);
+    };
 
-            if (currentQ !== searchTerm) {
-                if (searchTerm) {
-                    params.set('q', searchTerm);
-                } else {
-                    params.delete('q');
-                }
-                params.set('page', '1');
-                router.push(`?${params.toString()}`);
-            }
-        }, 300);
-        return () => clearTimeout(timeoutId);
-    }, [searchTerm]);
+    // Auto-search removed to reduce API calls
+    // Search is now triggered only by "Enter" key or "Search" button
+
+    const handleFilterChange = (newFilter: string) => {
+        setFilter(newFilter);
+        const params = new URLSearchParams(searchParams.toString());
+        if (newFilter && newFilter !== 'all') {
+            params.set('filter', newFilter);
+        } else {
+            params.delete('filter');
+        }
+        params.set('page', '1');
+        router.push(`?${params.toString()}`);
+    };
 
     const handlePageChange = (newPage: number) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -120,23 +129,66 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
                 <h1 className="text-2xl font-bold">{t('title')}</h1>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
-                <div className="relative w-full md:max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                        type="text"
-                        placeholder={t('search_placeholder') || "Search..."}
-                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+            <div className="flex flex-col gap-4 mb-6">
+                {/* Filters */}
+                <div className="flex flex-wrap gap-2">
+                    <button
+                        onClick={() => handleFilterChange('')}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition ${!filter ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                    >
+                        All
+                    </button>
+                    <button
+                        onClick={() => handleFilterChange('안성')}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition ${filter === '안성' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                    >
+                        안성 (Anseong)
+                    </button>
+                    <button
+                        onClick={() => handleFilterChange('평택')}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition ${filter === '평택' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                    >
+                        평택 (Pyeongtaek)
+                    </button>
+                    <button
+                        onClick={() => handleFilterChange('오산')}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition ${filter === '오산' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                    >
+                        오산 (Osan)
+                    </button>
                 </div>
-                <button
-                    onClick={() => openModal()}
-                    className="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition"
-                >
-                    <Plus size={20} /> {t('add_new')}
-                </button>
+
+                <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+                    <div className="flex w-full md:max-w-md gap-2">
+                        <div className="relative w-full">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                            <input
+                                type="text"
+                                placeholder={t('search_placeholder') || "Search..."}
+                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && triggerSearch()}
+                            />
+                        </div>
+                        <button
+                            onClick={triggerSearch}
+                            className="bg-gray-100 text-gray-700 px-8 py-2 rounded-lg hover:bg-gray-200 transition font-medium whitespace-nowrap shrink-0"
+                        >
+                            {t('search') || "Search"}
+                        </button>
+                    </div>
+                    <button
+                        onClick={() => openModal()}
+                        className="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition"
+                    >
+                        <Plus size={20} /> {t('add_new')}
+                    </button>
+                </div>
             </div>
 
             <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">

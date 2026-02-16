@@ -11,17 +11,32 @@ const pharmacySchema = z.object({
     address: z.string().optional(),
 });
 
-export async function getPharmacies(page: number = 1, limit: number = 10, query: string = "") {
+export async function getPharmacies(page: number = 1, limit: number = 10, query: string = "", filter: string = "") {
     // No auth check for listing in this demo/context, or add if needed
 
     const skip = (page - 1) * limit;
 
-    const where = query ? {
-        OR: [
-            { name: { contains: query, mode: 'insensitive' as const } },
-            { address: { contains: query, mode: 'insensitive' as const } },
-        ]
-    } : {};
+    const where: any = {};
+
+    if (query) {
+        const terms = query.trim().split(/[\s,]+/).filter(Boolean);
+        if (terms.length > 0) {
+            where.AND = where.AND || [];
+            terms.forEach(term => {
+                where.AND.push({
+                    OR: [
+                        { name: { contains: term, mode: 'insensitive' as const } },
+                        { address: { contains: term, mode: 'insensitive' as const } },
+                    ]
+                });
+            });
+        }
+    }
+
+    if (filter && filter !== 'all') {
+        where.AND = where.AND || [];
+        where.AND.push({ address: { contains: filter, mode: 'insensitive' as const } });
+    }
 
     const [pharmacies, total] = await Promise.all([
         prisma.pharmacy.findMany({

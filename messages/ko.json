@@ -83,7 +83,10 @@
         "top_rated": "별점 높은 순",
         "available_now": "진료 가능",
         "female_doctor": "여의사",
-        "price": "가격순"
+        "price": "가격순",
+        "anseong": "안성",
+        "pyeongtaek": "평택",
+        "osan": "오산"
     },
     "DoctorCard": {
         "avail": "진료가능",
@@ -152,7 +155,8 @@
         "activity": "활동 내역",
         "preferences": "회원 설정",
         "no_notifications": "새로운 알림이 없습니다",
-        "view_all": "전체 보기"
+        "view_all": "전체 보기",
+        "nearby_pharmacy": "내 주변 약국"
     },
     "LoginPage": {
         "title": "콜닥",
@@ -274,7 +278,8 @@
             "delete": "삭제",
             "set_default": "기본 설정",
             "is_default": "기본",
-            "search_placeholder": "약국 검색..."
+            "search_placeholder": "약국 검색...",
+            "search": "검색"
         },
         "meet": {
             "title": "화상 진료",
@@ -557,5 +562,13 @@
             "confirm_delete": "정말 이 게시글을 삭제하시겠습니까?",
             "update_error": "상태 업데이트 실패"
         }
+    },
+    "PharmacySelector": {
+        "title": "내 주변 약국",
+        "select": "약국 선택",
+        "change": "변경",
+        "search_placeholder": "약국 검색...",
+        "loading": "로딩 중...",
+        "no_results": "검색된 약국이 없습니다"
     }
 }

@@ -89,7 +89,7 @@ export default async function DashboardPage() {
                 {/* Nearby Pharmacy Section */}
                 <section>
                     <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 px-1">
-                        Nearby Pharmacy
+                        {t('nearby_pharmacy')}
                     </h2>
                     <PharmacySelector
                         selectedPharmacy={user.pharmacy}

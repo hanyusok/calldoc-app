@@ -1,5 +1,7 @@
 import { PrismaClient, Role } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import fs from 'fs'
+import path from 'path'
 
 const prisma = new PrismaClient()
 
@@ -150,19 +152,7 @@ const doctors = [
     }
 ];
 
-const PHARMACY_NAMES = [
-    "Better Health Pharmacy", "City Center Chemists", "Sunshine Drugstore",
-    "Community Care Pharmacy", "Quick Relief Meds", "MediPlus Pharmacy",
-    "Wellness Corner", "Family First Pharmacy", "Urban Apothecary", "Green Cross Pharmacy"
-];
 
-const ADDRESSES = [
-    "123 Gangnam-daero, Gangnam-gu, Seoul", "456 Teheran-ro, Gangnam-gu, Seoul",
-    "789 Sejong-daero, Jongno-gu, Seoul", "101 Itaewon-ro, Yongsan-gu, Seoul",
-    "202 Hongdae-ro, Mapo-gu, Seoul", "303 Yeouido-daero, Yeongdeungpo-gu, Seoul",
-    "404 Jamsil-ro, Songpa-gu, Seoul", "505 Apgujeong-ro, Gangnam-gu, Seoul",
-    "606 Cheongdam-ro, Gangnam-gu, Seoul", "707 Hannam-daero, Yongsan-gu, Seoul"
-];
 
 const POST_TITLES = [
     "10 Tips for a Healthy Heart", "Understanding Seasonal Allergies", "The Benefits of Regular Exercise",
@@ -259,19 +249,46 @@ async function main() {
     }
     console.log('Doctors seeded/renewed.');
 
-    // 4. Seed Pharmacies
-    for (let i = 0; i < 10; i++) {
-        const name = PHARMACY_NAMES[i];
+    // 4. Seed Pharmacies from JSON
+    const jsonPathPyt = path.join(process.cwd(), 'public', 'raw', 'pyt.json');
+    const jsonPathAnseong = path.join(process.cwd(), 'public', 'raw', 'anseong_pharm.json');
+
+    const jsonFilePyt = fs.readFileSync(jsonPathPyt, 'utf8');
+    const jsonFileAnseong = fs.readFileSync(jsonPathAnseong, 'utf8');
+
+    const pharmacyDataPyt = JSON.parse(jsonFilePyt);
+    const pharmacyDataAnseong = JSON.parse(jsonFileAnseong);
+
+    const allPharmacyData = [...pharmacyDataPyt, ...pharmacyDataAnseong];
+
+    console.log(`Found ${allPharmacyData.length} pharmacies in JSON (${pharmacyDataPyt.length} from pyt.json, ${pharmacyDataAnseong.length} from anseong_pharm.json).`);
+
+    for (const p of allPharmacyData) {
+        const name = p['약국이름'];
+        const address = p['주소'];
+        const phone = p['전화번호'];
+
+        // Only process if name exists
+        if (!name) continue;
+
         const pharmacyData = {
             name,
-            address: ADDRESSES[i],
-            phone: `02-${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
-            fax: `02-${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
-            isDefault: i === 0
+            address,
+            phone,
+            // You might want to set isDefault logic differently or just keep it false for all imported
+            isDefault: false
         };
 
+        // We use finding by name + address to be more specific if names are not unique, 
+        // but schema doesn't enforce unique name. Let's try finding by name first or name+address.
+        // For simplicity and to match previous logic, let's just create or update based on name.
+        // If there are duplicates in JSON, this might update the same record multiple times.
+        // Ideally we should have a unique constraint, but for now:
         const existingPharmacy = await prisma.pharmacy.findFirst({
-            where: { name }
+            where: {
+                name: name,
+                address: address
+            }
         });
 
         if (existingPharmacy) {
@@ -283,7 +300,7 @@ async function main() {
             await prisma.pharmacy.create({ data: pharmacyData });
         }
     }
-    console.log('Pharmacies seeded/renewed.');
+    console.log('Pharmacies seeded/renewed from JSON.');
 
     // 5. Seed Posts
     // Define the specific medical posts with local images

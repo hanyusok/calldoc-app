@@ -18,7 +18,7 @@ interface PharmacySelectorProps {
 }
 
 export default function PharmacySelector({ selectedPharmacy, onSelect }: PharmacySelectorProps) {
-    const t = useTranslations('ProfilePage');
+    const t = useTranslations('PharmacySelector');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -66,7 +66,7 @@ export default function PharmacySelector({ selectedPharmacy, onSelect }: Pharmac
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-bold text-gray-900">
-                    Nearby Pharmacy
+                    {t('title')}
                 </h2>
             </div>
 
@@ -82,7 +82,7 @@ export default function PharmacySelector({ selectedPharmacy, onSelect }: Pharmac
                             onClick={handleOpenModal}
                             className="bg-white text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm hover:bg-blue-50 transition-colors"
                         >
-                            Change
+                            {t('change')}
                         </button>
                     </div>
                 </div>
@@ -92,7 +92,7 @@ export default function PharmacySelector({ selectedPharmacy, onSelect }: Pharmac
                     className="w-full py-4 border-2 border-dashed border-gray-200 rounded-xl text-gray-500 font-medium flex items-center justify-center gap-2 hover:border-primary-300 hover:text-primary-600 hover:bg-primary-50 transition-all ml-0"
                 >
                     <Plus size={20} />
-                    Select Pharmacy
+                    {t('select')}
                 </button>
             )}
 
@@ -100,7 +100,7 @@ export default function PharmacySelector({ selectedPharmacy, onSelect }: Pharmac
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-xl w-full max-w-md shadow-xl overflow-hidden max-h-[80vh] flex flex-col">
                         <div className="flex justify-between items-center p-4 border-b">
-                            <h2 className="text-lg font-bold">Select Pharmacy</h2>
+                            <h2 className="text-lg font-bold">{t('select')}</h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
                                 <X size={20} />
                             </button>
@@ -111,7 +111,7 @@ export default function PharmacySelector({ selectedPharmacy, onSelect }: Pharmac
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                                 <input
                                     type="text"
-                                    placeholder="Search pharmacy..."
+                                    placeholder={t('search_placeholder')}
                                     className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
@@ -121,9 +121,9 @@ export default function PharmacySelector({ selectedPharmacy, onSelect }: Pharmac
 
                         <div className="overflow-y-auto flex-1 p-2">
                             {loading ? (
-                                <div className="p-8 text-center text-gray-400">Loading...</div>
+                                <div className="p-8 text-center text-gray-400">{t('loading')}</div>
                             ) : pharmacies.length === 0 ? (
-                                <div className="p-8 text-center text-gray-500">No pharmacies found</div>
+                                <div className="p-8 text-center text-gray-500">{t('no_results')}</div>
                             ) : (
                                 <div className="space-y-2">
                                     {pharmacies.map(pharmacy => (
