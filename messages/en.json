@@ -177,6 +177,8 @@
         "signing_in": "Signing in...",
         "or": "OR",
         "kakao_login": "Login with Kakao",
+        "google_login": "Login with Google",
+        "naver_login": "Login with Naver",
         "guest_login": "Sign in as Guest"
     },
     "DoctorDetails": {

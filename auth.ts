@@ -1,5 +1,7 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
+import Google from "next-auth/providers/google"
+import Naver from "@/lib/providers/naver"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/app/lib/prisma"
 import { authConfig } from "./auth.config"
@@ -13,6 +15,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
     secret: process.env.AUTH_SECRET,
     providers: [
+        Google({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        }),
+        Naver({
+            clientId: process.env.NAVER_CLIENT_ID!,
+            clientSecret: process.env.NAVER_CLIENT_SECRET!,
+        }),
         ...authConfig.providers,
         Credentials({
             async authorize(credentials) {

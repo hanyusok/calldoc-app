@@ -177,6 +177,8 @@
         "signing_in": "로그인 중...",
         "or": "또는",
         "kakao_login": "카카오 로그인",
+        "google_login": "구글 로그인",
+        "naver_login": "네이버 로그인",
         "guest_login": "게스트로 시작하기"
     },
     "DoctorDetails": {
