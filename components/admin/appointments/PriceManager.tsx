@@ -61,8 +61,11 @@ export default function PriceManager({
                         type="number"
                         min="0"
                         step="0.01"
-                        value={price}
-                        onChange={(e) => setPrice(parseFloat(e.target.value))}
+                        value={price === 0 && !loading ? '' : price}
+                        onChange={(e) => {
+                            const val = parseFloat(e.target.value);
+                            setPrice(isNaN(val) ? 0 : val);
+                        }}
                         className="block w-full pl-7 pr-12 py-2 sm:text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 border"
                         placeholder="0.00"
                     />

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { User as UserIcon, Users, Check, ChevronRight, UserPlus } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface FamilyMember {
     id: string;
@@ -27,6 +28,7 @@ interface PatientSelectionProps {
 export default function PatientSelection({ user, doctorId }: PatientSelectionProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const t = useTranslations('BookingPatient');
     const [selectedPatientId, setSelectedPatientId] = useState<string>(user.id);
     const [patientType, setPatientType] = useState<'myself' | 'family'>('myself');
 
@@ -71,7 +73,7 @@ export default function PatientSelection({ user, doctorId }: PatientSelectionPro
                         <UserIcon size={20} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900 text-sm">Myself</h3>
+                        <h3 className="font-bold text-gray-900 text-sm">{t('myself')}</h3>
                         <p className="text-xs text-gray-500">{user.name}</p>
                     </div>
                 </div>
@@ -83,14 +85,14 @@ export default function PatientSelection({ user, doctorId }: PatientSelectionPro
             {/* Family Members Header */}
             <div className="flex items-center justify-between pt-2">
                 <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                    <Users size={16} /> Family Members
+                    <Users size={16} /> {t('family_members')}
                 </h3>
                 {/* Link to profile for adding members since we are keeping this simple for now */}
                 <button
                     onClick={() => router.push('/profile')}
                     className="text-xs text-primary-600 font-medium flex items-center gap-1"
                 >
-                    <UserPlus size={14} /> Add New
+                    <UserPlus size={14} /> {t('add_new')}
                 </button>
             </div>
 
@@ -98,7 +100,7 @@ export default function PatientSelection({ user, doctorId }: PatientSelectionPro
             <div className="space-y-3">
                 {user.familyMembers.length === 0 ? (
                     <div className="text-center py-6 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400 text-sm">
-                        No family members found.
+                        {t('no_family')}
                     </div>
                 ) : (
                     user.familyMembers.map((member) => (
@@ -135,7 +137,7 @@ export default function PatientSelection({ user, doctorId }: PatientSelectionPro
                     onClick={handleNext}
                     className="w-full py-3.5 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 shadow-lg shadow-primary-600/30 active:scale-95 transition-all"
                 >
-                    Review & Confirm
+                    {t('review_confirm')}
                 </button>
             </div>
         </div>

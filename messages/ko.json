@@ -59,7 +59,8 @@
             "requested": "요청됨",
             "payment_required": "결제 필요",
             "confirmed": "예약 확정",
-            "completed": "진료 완료"
+            "completed": "진료 완료",
+            "CANCELLED": "취소됨"
         },
         "empty": {
             "title": "예정된 진료가 없습니다",
@@ -210,6 +211,11 @@
         "select_date_prompt": "위 달력에서 날짜를 선택해주세요"
     },
     "Admin": {
+        "toast": {
+            "new_request": "새 요청",
+            "just_now": "방금 전",
+            "view_details": "상세 보기"
+        },
         "nav": {
             "dashboard": "대시보드",
             "users": "회원 관리",
@@ -570,5 +576,35 @@
         "search_placeholder": "약국 검색...",
         "loading": "로딩 중...",
         "no_results": "검색된 약국이 없습니다"
+    },
+    "BookingPatient": {
+        "title": "환자 선택",
+        "step": "2 / 3 단계",
+        "myself": "나 (본인)",
+        "family_members": "가족 구성원",
+        "add_new": "가족 추가",
+        "no_family": "등록된 가족이 없습니다.",
+        "review_confirm": "예약 확인"
+    },
+    "BookingReview": {
+        "title": "예약 확인",
+        "step": "3 / 3 단계",
+        "appointment_details": "예약 상세 정보",
+        "date_time": "날짜 및 시간",
+        "patient": "환자",
+        "self": "본인",
+        "family_member": "가족",
+        "consultation_fee": "진료비",
+        "to_be_confirmed": "확정 예정",
+        "service_fee": "서비스 수수료",
+        "estimated_total": "예상 결제 금액",
+        "total_guide": "~ {fee} + 수수료",
+        "request_appointment": "예약 요청하기"
+    },
+    "BookingSuccess": {
+        "title": "요청 완료!",
+        "description": "{name}님과의 예약 요청이 전송되었습니다. 의사가 진료비를 확정할 때까지 기다려 주세요.",
+        "view_appointments": "내 예약 보기",
+        "back_to_home": "홈으로 돌아가기"
     }
 }

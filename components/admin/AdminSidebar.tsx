@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LayoutDashboard, Calendar, Building2, Settings, LogOut, Users, FileText, ChevronLeft, ChevronRight, Syringe, CreditCard, Video, Stethoscope } from "lucide-react";
+import NotificationBell from "@/components/admin/NotificationBell";
 
 interface AdminSidebarProps {
     isCollapsed: boolean;
@@ -47,12 +48,15 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar }: AdminSideba
                         <LayoutDashboard className="h-8 w-8" />
                     </Link>
                 )}
-                <button
-                    onClick={toggleSidebar}
-                    className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors"
-                >
-                    {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-                </button>
+                <div className="flex items-center gap-2">
+                    <NotificationBell />
+                    <button
+                        onClick={toggleSidebar}
+                        className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors"
+                    >
+                        {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+                    </button>
+                </div>
             </div>
 
             <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">

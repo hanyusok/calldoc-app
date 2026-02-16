@@ -37,7 +37,7 @@ export async function getDoctors({
             'pharmacy': '', // Maybe show Pharmacists if added?
             'symptoms': '',
             'health-check': 'Family Medicine',
-            'supplements': '',
+            'vaccination': '', // Handled separately via getVaccinations
             'lab-test': '',
             'events': '',
         };
@@ -159,7 +159,25 @@ export async function createAppointment(formData: FormData) {
             date: date,
             status: "PENDING", // Wait for doctor to set price
         },
+        include: { user: true } // Include user to get name for notification
     });
+
+    // Notify Admins (For now, we notify the doctor if they have a user account, or all admins)
+    // Finding admin users
+    const admins = await prisma.user.findMany({
+        where: { role: 'ADMIN' }
+    });
+
+    if (admins.length > 0) {
+        await prisma.notification.createMany({
+            data: admins.map(admin => ({
+                userId: admin.id,
+                type: 'APPOINTMENT_REQUEST',
+                message: `New appointment request from ${appointment.user.name || 'User'}`,
+                link: `/admin/dashboard/appointments?highlight=${appointment.id}`,
+            }))
+        });
+    }
 
     revalidatePath('/myappointment');
 

@@ -36,6 +36,7 @@ model User {
   pharmacyId    String?
   pharmacy      Pharmacy?       @relation(fields: [pharmacyId], references: [id])
   vaccinationReservations VaccinationReservation[]
+  notifications Notification[]
 }
 
 model Insurance {
@@ -280,4 +281,15 @@ model MeetPreset {
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // 'APPOINTMENT_REQUEST', 'SYSTEM', etc.
+  message   String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
 }

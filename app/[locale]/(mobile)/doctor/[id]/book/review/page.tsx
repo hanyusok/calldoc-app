@@ -5,6 +5,7 @@ import { prisma } from "@/app/lib/prisma";
 import { redirect } from 'next/navigation';
 import { ChevronLeft, Calendar, User, Clock, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 export default async function BookingReviewPage({
     params,
@@ -17,6 +18,7 @@ export default async function BookingReviewPage({
     const { date, time, patientId, patientName, patientType } = await searchParams;
     const doctor = await getDoctorById(id);
     const session = await auth();
+    const t = await getTranslations('BookingReview');
 
     if (!doctor || !date || !time || !patientId || !session?.user?.email) {
         redirect(`/doctor/${id}/book`); // Redirect back if missing data
@@ -45,8 +47,8 @@ export default async function BookingReviewPage({
                     <ChevronLeft size={24} />
                 </Link>
                 <div className="flex-1">
-                    <h1 className="text-lg font-bold text-gray-900 leading-tight">Review & Confirm</h1>
-                    <p className="text-xs text-gray-500">Step 3 of 3</p>
+                    <h1 className="text-lg font-bold text-gray-900 leading-tight">{t('title')}</h1>
+                    <p className="text-xs text-gray-500">{t('step')}</p>
                 </div>
             </div>
 
@@ -69,14 +71,14 @@ export default async function BookingReviewPage({
 
                 {/* Appointment Details */}
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-                    <h3 className="font-bold text-gray-800 text-sm">Appointment Details</h3>
+                    <h3 className="font-bold text-gray-800 text-sm">{t('appointment_details')}</h3>
 
                     <div className="flex items-start gap-3">
                         <div className="p-2 rounded-full bg-blue-50 text-blue-600">
                             <Calendar size={18} />
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500">Date & Time</p>
+                            <p className="text-xs text-gray-500">{t('date_time')}</p>
                             <p className="font-medium text-gray-900">{formattedDate}</p>
                             <p className="font-medium text-gray-900">{time}</p>
                         </div>
@@ -87,9 +89,9 @@ export default async function BookingReviewPage({
                             <User size={18} />
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500">Patient</p>
+                            <p className="text-xs text-gray-500">{t('patient')}</p>
                             <p className="font-medium text-gray-900">{patientName}</p>
-                            <p className="text-xs text-gray-400 capitalize">{patientType === 'myself' ? 'Self' : 'Family Member'}</p>
+                            <p className="text-xs text-gray-400 capitalize">{patientType === 'myself' ? t('self') : t('family_member')}</p>
                         </div>
                     </div>
 
@@ -98,7 +100,7 @@ export default async function BookingReviewPage({
                             <CheckCircle size={18} />
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500">Consultation Fee</p>
+                            <p className="text-xs text-gray-500">{t('consultation_fee')}</p>
                             <p className="font-bold text-gray-900">$50.00</p>
                         </div>
                     </div>
@@ -107,16 +109,16 @@ export default async function BookingReviewPage({
                 {/* Payment Breakdown (Visual Only) */}
                 <div className="bg-white p-4 rounded-xl border border-gray-100">
                     <div className="flex justify-between items-center text-sm mb-2">
-                        <span className="text-gray-500">Consultation Fee</span>
-                        <span className="text-gray-900 font-medium">To be confirmed</span>
+                        <span className="text-gray-500">{t('consultation_fee')}</span>
+                        <span className="text-gray-900 font-medium">{t('to_be_confirmed')}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm mb-2">
-                        <span className="text-gray-500">Service Fee</span>
+                        <span className="text-gray-500">{t('service_fee')}</span>
                         <span className="text-gray-900 font-medium">$2.00</span>
                     </div>
                     <div className="border-t border-gray-100 my-2 pt-2 flex justify-between items-center">
-                        <span className="font-bold text-gray-900">Estimated Total</span>
-                        <span className="font-bold text-primary-600 text-lg">~ $2.00 + Fee</span>
+                        <span className="font-bold text-gray-900">{t('estimated_total')}</span>
+                        <span className="font-bold text-primary-600 text-lg">{t('total_guide', { fee: '$2.00' })}</span>
                     </div>
                 </div>
             </div>
@@ -135,7 +137,7 @@ export default async function BookingReviewPage({
                         type="submit"
                         className="w-full py-3.5 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 shadow-lg shadow-primary-600/30 active:scale-95 transition-all"
                     >
-                        Request Appointment
+                        {t('request_appointment')}
                     </button>
                 </form>
             </div>

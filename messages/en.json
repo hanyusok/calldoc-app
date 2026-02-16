@@ -59,7 +59,8 @@
             "requested": "Requested",
             "payment_required": "Payment Required",
             "confirmed": "Confirmed",
-            "completed": "Completed"
+            "completed": "Completed",
+            "CANCELLED": "Cancelled"
         },
         "empty": {
             "title": "No Appointments Yet",
@@ -210,6 +211,11 @@
         "select_date_prompt": "Please select a date above to see available times"
     },
     "Admin": {
+        "toast": {
+            "new_request": "New Request",
+            "just_now": "Just Now",
+            "view_details": "View Details"
+        },
         "nav": {
             "dashboard": "Dashboard",
             "users": "Users",
@@ -570,5 +576,35 @@
         "search_placeholder": "Search pharmacy...",
         "loading": "Loading...",
         "no_results": "No pharmacies found"
+    },
+    "BookingPatient": {
+        "title": "Select Patient",
+        "step": "Step 2 of 3",
+        "myself": "Myself",
+        "family_members": "Family Members",
+        "add_new": "Add New",
+        "no_family": "No family members found.",
+        "review_confirm": "Review & Confirm"
+    },
+    "BookingReview": {
+        "title": "Review & Confirm",
+        "step": "Step 3 of 3",
+        "appointment_details": "Appointment Details",
+        "date_time": "Date & Time",
+        "patient": "Patient",
+        "self": "Self",
+        "family_member": "Family Member",
+        "consultation_fee": "Consultation Fee",
+        "to_be_confirmed": "To be confirmed",
+        "service_fee": "Service Fee",
+        "estimated_total": "Estimated Total",
+        "total_guide": "~ {fee} + Fee",
+        "request_appointment": "Request Appointment"
+    },
+    "BookingSuccess": {
+        "title": "Request Sent!",
+        "description": "Your appointment request with {name} has been sent. Please wait for the doctor to confirm the price.",
+        "view_appointments": "View My Appointments",
+        "back_to_home": "Back to Home"
     }
 }

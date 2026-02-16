@@ -4,10 +4,23 @@ import { useEffect, useState } from 'react';
 import { checkAppointmentNotifications } from '@/app/[locale]/(mobile)/myappointment/actions';
 import { useRouter } from 'next/navigation';
 import { Bell, Video, CreditCard } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 
-export default function NotificationWatcher({ initialConfirmedIds }: { initialConfirmedIds: string[] }) {
-    const t = useTranslations('MyAppointmentPage');
+
+export default function NotificationWatcher({
+    initialConfirmedIds,
+    messages
+}: {
+    initialConfirmedIds: string[],
+    messages: {
+        payment_required: string;
+        confirmed: string;
+        cancelled: string;
+        completed: string;
+        price_confirmed_msg: string;
+        enter_room: string;
+        action_required: string;
+    }
+}) {
     const router = useRouter();
     const [knownIds, setKnownIds] = useState<string[]>(initialConfirmedIds);
     const [notification, setNotification] = useState<{
@@ -28,11 +41,14 @@ export default function NotificationWatcher({ initialConfirmedIds }: { initialCo
 
                     let message = '';
                     if (isPayment) {
-                        message = t('card.price_confirmed_msg', { doctor: latest.doctor.name, price: latest.price });
+                        // Simple replacement for now, or handle variable interpolation manually if needed
+                        message = messages.price_confirmed_msg
+                            .replace('{doctor}', latest.doctor.name)
+                            .replace('{price}', latest.price);
                     } else if (isCancelled) {
-                        message = t('status.CANCELLED'); // Use existing status translation or add explicit one
+                        message = messages.cancelled;
                     } else {
-                        message = t('card.enter_room'); // "Enter Room" or similar as proxy for meeting ready
+                        message = messages.enter_room;
                     }
 
                     setNotification({
@@ -57,7 +73,7 @@ export default function NotificationWatcher({ initialConfirmedIds }: { initialCo
         }, 5000); // Poll every 5 seconds
 
         return () => clearInterval(interval);
-    }, [knownIds, router, t]);
+    }, [knownIds, router, messages]);
 
     if (!notification) return null;
 
@@ -74,12 +90,12 @@ export default function NotificationWatcher({ initialConfirmedIds }: { initialCo
         borderColor = 'border-blue-500';
         iconBg = 'bg-blue-50 text-blue-500';
         Icon = Bell;
-        title = t('action_required');
+        title = messages.action_required;
     } else if (isCancelled) {
         borderColor = 'border-red-500';
         iconBg = 'bg-red-50 text-red-500';
         Icon = CreditCard; // Or XCircle
-        title = t('status.CANCELLED');
+        title = messages.cancelled;
     }
 
     return (

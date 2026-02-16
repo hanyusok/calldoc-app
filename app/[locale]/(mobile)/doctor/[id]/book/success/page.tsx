@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Check, Calendar, Home } from 'lucide-react';
 import { prisma } from "@/app/lib/prisma";
+import { getTranslations } from 'next-intl/server';
 
 export default async function BookingSuccessPage({
     params,
@@ -12,6 +13,7 @@ export default async function BookingSuccessPage({
 }) {
     const { id } = await params;
     const { appointmentId } = await searchParams;
+    const t = await getTranslations('BookingSuccess');
 
     if (!appointmentId) {
         return <div>Invalid Request</div>;
@@ -44,9 +46,12 @@ export default async function BookingSuccessPage({
                 <Check size={40} className="text-green-600 stroke-[3]" />
             </div>
 
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Request Sent!</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('title')}</h1>
             <p className="text-gray-500 mb-8 max-w-xs mx-auto">
-                Your appointment request with <span className="font-semibold text-gray-800">{appointment.doctor.name}</span> has been sent. Please wait for the doctor to confirm the price.
+                {t.rich('description', {
+                    name: appointment.doctor.name,
+                    span: (chunks) => <span className="font-semibold text-gray-800">{chunks}</span>
+                })}
             </p>
 
             <div className="bg-gray-50 rounded-2xl p-6 w-full max-w-xs mb-8 border border-gray-100">
@@ -64,14 +69,14 @@ export default async function BookingSuccessPage({
                     href="/myappointment"
                     className="block w-full py-3.5 bg-primary-600 text-white rounded-xl font-bold shadow-lg shadow-primary-600/30 hover:bg-primary-700 transition-all active:scale-95"
                 >
-                    View My Appointments
+                    {t('view_appointments')}
                 </Link>
                 <Link
                     href="/"
                     className="block w-full py-3.5 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
                 >
                     <Home size={18} />
-                    Back to Home
+                    {t('back_to_home')}
                 </Link>
             </div>
         </div>

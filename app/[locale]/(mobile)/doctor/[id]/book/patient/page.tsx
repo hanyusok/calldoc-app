@@ -5,10 +5,12 @@ import { redirect } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import PatientSelection from '@/components/booking/PatientSelection';
+import { getTranslations } from 'next-intl/server';
 
 export default async function BookingPatientPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const session = await auth();
+    const t = await getTranslations('BookingPatient');
 
     if (!session?.user?.email) {
         redirect('/login');
@@ -31,8 +33,8 @@ export default async function BookingPatientPage({ params }: { params: Promise<{
                     <ChevronLeft size={24} />
                 </Link>
                 <div className="flex-1">
-                    <h1 className="text-lg font-bold text-gray-900 leading-tight">Select Patient</h1>
-                    <p className="text-xs text-gray-500">Step 2 of 3</p>
+                    <h1 className="text-lg font-bold text-gray-900 leading-tight">{t('title')}</h1>
+                    <p className="text-xs text-gray-500">{t('step')}</p>
                 </div>
             </div>
 
