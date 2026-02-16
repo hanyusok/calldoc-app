@@ -4,10 +4,12 @@ import PaymentsClient from "./PaymentsClient";
 export default async function PaymentsPage({
     searchParams,
 }: {
-    searchParams: { [key: string]: string | string[] | undefined };
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-    const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1;
-    const status = typeof searchParams.status === 'string' ? searchParams.status : undefined;
+    const { page: pageRaw, status: statusRaw } = await searchParams;
+
+    const page = typeof pageRaw === 'string' ? parseInt(pageRaw) : 1;
+    const status = typeof statusRaw === 'string' ? statusRaw : undefined;
 
     const { data: payments, pagination } = await getAdminPayments(page, status);
 

@@ -33,3 +33,33 @@ export async function markNotificationAsRead(id: string) {
         data: { isRead: true }
     });
 }
+
+export async function createNotification({
+    userId,
+    type,
+    message,
+    key,
+    params,
+    link
+}: {
+    userId: string;
+    type: string;
+    message: string;
+    key?: string;
+    params?: any;
+    link?: string;
+}) {
+    // If no session, internal system action (allowed)
+    // or verify admin if needed. For now, open internal usage.
+
+    return await prisma.notification.create({
+        data: {
+            userId,
+            type,
+            message,
+            key,
+            params: params ? JSON.stringify(params) : undefined,
+            link
+        }
+    });
+}

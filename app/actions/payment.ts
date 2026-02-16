@@ -3,9 +3,8 @@
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-// NOTE: These modules are not yet implemented in the current codebase.
-// import { createMeeting } from "./meet";
-// import { createNotification } from "@/app/lib/notifications";
+import { createMeeting } from "./meet";
+import { createNotification } from "./notification";
 // import { getTranslations } from "next-intl/server";
 
 export async function initiatePayment(appointmentId: string) {
@@ -61,7 +60,14 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
         // 1. Fetch Payment and Appointment details
         const payment = await prisma.payment.findUnique({
             where: { id: orderId },
-            include: { appointment: true }
+            include: {
+                appointment: {
+                    include: {
+                        user: true,
+                        doctor: true
+                    }
+                }
+            }
         });
 
         if (!payment) return { success: false, error: "Payment record not found" };
@@ -75,20 +81,31 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
         // 3. Verify Amount
         if (payment.amount !== amount) {
             console.warn(`Payment amount mismatch for ${orderId}: expected ${payment.amount}, got ${amount}`);
-            // Note: We currently log the warning but proceed. 
+            // Note: We currently log the warning but proceed.
         }
 
-        // 4. Create Google Meet (Placeholder)
-        /*
+        // 4. Create Google Meet
         let meetingLink = null;
         try {
             if (!payment.appointment.meetingLink) {
-                 // meetingLink = await createMeeting(...);
+                // Calculate start time (assuming 30 min from now or appointment time)
+                // For now, use appointment date + 30 min
+                const start = payment.appointment.date;
+                const end = new Date(start.getTime() + 30 * 60000);
+
+                // Use createMeeting directly to get the link string without side effect saving
+                meetingLink = await createMeeting({
+                    appointmentId: payment.appointmentId,
+                    startDateTime: start,
+                    endDateTime: end,
+                    patientName: payment.appointment.user.name || 'Patient'
+                });
+            } else {
+                meetingLink = payment.appointment.meetingLink;
             }
         } catch (e) {
             console.error("Meet creation failed", e);
         }
-        */
 
         // 5. Update Database Transaction
         await prisma.$transaction([
@@ -105,17 +122,46 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
                 where: { id: payment.appointmentId },
                 data: {
                     status: 'CONFIRMED',
-                    // ...(meetingLink ? { meetingLink } : {})
+                    // Save meeting link atomically with confirmation
+                    ...(meetingLink ? { meetingLink } : {})
                 }
             })
         ]);
 
         console.log(`Payment ${orderId} successfully confirmed.`);
 
-        // 6. Notify Admins & Patient (Placeholder)
-        /*
-        // ... notification logic
-        */
+        // 6. Notify Admins & Patient
+        try {
+            // Notify Patient
+            await createNotification({
+                userId: payment.appointment.userId,
+                type: 'APPOINTMENT_CONFIRMED',
+                message: `Payment successful. Your consultation with ${payment.appointment.doctor.name} is confirmed.`,
+                key: 'Notifications.payment_confirmed',
+                params: { doctor: payment.appointment.doctor.name },
+                link: `/myappointment`
+            });
+
+            // Notify Doctor (if user attached) or Admin
+            // For now, finding admins
+            const admins = await prisma.user.findMany({
+                where: { role: 'ADMIN' }
+            });
+
+            if (admins.length > 0) {
+                await prisma.notification.createMany({
+                    data: admins.map(admin => ({
+                        userId: admin.id,
+                        type: 'PAYMENT_CONFIRMED',
+                        message: `Payment confirmed for ${payment.appointment.user.name || 'Patient'}. Doctor: ${payment.appointment.doctor.name}`,
+                        link: `/admin/dashboard/payments?highlight=${orderId}`,
+                    }))
+                });
+            }
+
+        } catch (e) {
+            console.error("Notification failed", e);
+        }
 
         // 7. Revalidate Paths
         revalidatePath('/dashboard');
@@ -139,7 +185,9 @@ export async function processCancellationSuccess(paymentId: string, paymentKey?:
     const payment = await prisma.payment.findUnique({
         where: { id: paymentId },
         include: {
-            appointment: true
+            appointment: {
+                include: { user: true }
+            }
         }
     });
 
@@ -161,12 +209,20 @@ export async function processCancellationSuccess(paymentId: string, paymentKey?:
         })
     ]);
 
-    // Notify the Patient User (Placeholder)
-    /*
-    if (payment.appointment.userId) {
-         // await createNotification(...)
+    // Notify the Patient User
+    try {
+        if (payment.appointment.userId) {
+            await createNotification({
+                userId: payment.appointment.userId,
+                type: 'PAYMENT_CANCELLED',
+                message: `Your payment has been cancelled and refunded.`,
+                key: 'Notifications.payment_cancelled',
+                link: `/myappointment`
+            });
+        }
+    } catch (e) {
+        console.error("Cancellation notification failed", e);
     }
-    */
 
     revalidatePath('/dashboard');
     revalidatePath('/myappointment');

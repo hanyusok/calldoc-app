@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { getAvailableSlots } from '@/app/actions/doctor-availability';
 
 export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
     const router = useRouter();
     const t = useTranslations('Booking');
+    const locale = useLocale();
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -96,7 +97,7 @@ export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
                     <ChevronLeft size={20} className="text-gray-500" />
                 </button>
                 <h3 className="font-bold text-gray-800">
-                    {currentMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+                    {currentMonth.toLocaleString(locale, { month: 'long', year: 'numeric' })}
                 </h3>
                 <button onClick={() => changeMonth(1)} className="p-1 hover:bg-gray-100 rounded-full">
                     <ChevronRight size={20} className="text-gray-500" />
@@ -106,11 +107,17 @@ export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
             {/* Calendar Grid */}
             <div className="p-4">
                 <div className="grid grid-cols-7 mb-2 text-center">
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                        <div key={i} className="text-xs font-bold text-gray-400 py-1">
-                            {day}
-                        </div>
-                    ))}
+                    {Array.from({ length: 7 }).map((_, i) => {
+                        // Create a date for each day of the week (starting from Sunday)
+                        // 2024-01-07 was a Sunday
+                        const date = new Date(2024, 0, 7 + i);
+                        const dayName = new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date);
+                        return (
+                            <div key={i} className="text-xs font-bold text-gray-400 py-1">
+                                {dayName}
+                            </div>
+                        );
+                    })}
                 </div>
                 <div className="grid grid-cols-7 gap-y-2 gap-x-1">
                     {Array.from({ length: firstDay }).map((_, i) => (

@@ -214,7 +214,8 @@
         "toast": {
             "new_request": "New Request",
             "just_now": "Just Now",
-            "view_details": "View Details"
+            "view_details": "View Details",
+            "message_appointment_request": "New appointment request from {name}"
         },
         "nav": {
             "dashboard": "Dashboard",
@@ -606,5 +607,20 @@
         "description": "Your appointment request with {name} has been sent. Please wait for the doctor to confirm the price.",
         "view_appointments": "View My Appointments",
         "back_to_home": "Back to Home"
+    },
+    "Notifications": {
+        "payment_confirmed": "Payment successful. Your consultation with {doctor} is confirmed.",
+        "payment_cancelled": "Your payment has been cancelled and refunded.",
+        "appointment_confirmed": "Your appointment with {doctor} has been confirmed.",
+        "enter_room": "Enter Room",
+        "action_required": "Action Required"
+    },
+    "PaymentSuccess": {
+        "title": "Payment Successful!",
+        "description": "Your payment has been processed successfully.",
+        "order_id": "Order ID",
+        "amount": "Amount",
+        "return_button": "Return to My Appointments",
+        "redirecting": "You will be redirected automatically..."
     }
 }

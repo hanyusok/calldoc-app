@@ -7,7 +7,7 @@ import Link from "next/link";
 import PopupCloseHandler from "@/components/payment/PopupCloseHandler";
 
 export default function PaymentSuccessPage() {
-    const t = useTranslations('Dashboard');
+    const t = useTranslations('PaymentSuccess');
     const locale = useLocale();
     const searchParams = useSearchParams();
     const orderId = searchParams.get('orderId');
@@ -27,17 +27,17 @@ export default function PaymentSuccessPage() {
                 </div>
 
                 <div className="space-y-2">
-                    <h1 className="text-2xl font-bold text-gray-900">Payment Successful!</h1>
-                    <p className="text-gray-500">Your payment has been processed successfully.</p>
+                    <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+                    <p className="text-gray-500">{t('description')}</p>
                 </div>
 
                 <div className="bg-gray-50 p-4 rounded-xl text-left space-y-2">
                     <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Order ID</span>
+                        <span className="text-gray-500">{t('order_id')}</span>
                         <span className="font-medium">{orderId}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Amount</span>
+                        <span className="text-gray-500">{t('amount')}</span>
                         <span className="font-medium">{parseInt(amount || '0').toLocaleString()} KRW</span>
                     </div>
                 </div>
@@ -47,10 +47,10 @@ export default function PaymentSuccessPage() {
                         href={redirectUrl}
                         className="block w-full bg-primary-600 text-white py-3 rounded-xl font-bold hover:bg-primary-700 transition"
                     >
-                        Return to My Appointments
+                        {t('return_button')}
                     </Link>
                     <p className="text-xs text-gray-400 mt-4">
-                        You will be redirected automatically...
+                        {t('redirecting')}
                     </p>
                 </div>
             </div>

@@ -214,7 +214,8 @@
         "toast": {
             "new_request": "새 요청",
             "just_now": "방금 전",
-            "view_details": "상세 보기"
+            "view_details": "상세 보기",
+            "message_appointment_request": "{name}님의 새 예약 요청"
         },
         "nav": {
             "dashboard": "대시보드",
@@ -606,5 +607,20 @@
         "description": "{name}님과의 예약 요청이 전송되었습니다. 의사가 진료비를 확정할 때까지 기다려 주세요.",
         "view_appointments": "내 예약 보기",
         "back_to_home": "홈으로 돌아가기"
+    },
+    "Notifications": {
+        "payment_confirmed": "결제가 완료되었습니다. {doctor}님과의 진료가 확정되었습니다.",
+        "payment_cancelled": "결제가 취소되고 환불되었습니다.",
+        "appointment_confirmed": "{doctor}님과의 예약이 확정되었습니다.",
+        "enter_room": "진료실 입장",
+        "action_required": "조치 필요"
+    },
+    "PaymentSuccess": {
+        "title": "결제 성공!",
+        "description": "결제가 성공적으로 처리되었습니다.",
+        "order_id": "주문 번호",
+        "amount": "결제 금액",
+        "return_button": "예약 내역으로 돌아가기",
+        "redirecting": "잠시 후 자동으로 이동합니다..."
     }
 }

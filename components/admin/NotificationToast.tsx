@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { getUnreadNotifications, markNotificationAsRead } from '@/app/actions/notification';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Bell, X, CheckCircle, ExternalLink } from 'lucide-react';
 
 interface Notification {
@@ -20,6 +21,7 @@ export default function NotificationToast() {
     const [knownIds, setKnownIds] = useState<Set<string>>(new Set());
     const [isInitialized, setIsInitialized] = useState(false);
     const router = useRouter();
+    const t = useTranslations('Admin.toast');
 
     const fetchNotifications = async () => {
         try {
@@ -93,18 +95,25 @@ export default function NotificationToast() {
                 <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
                         <h4 className="font-bold text-gray-900 text-sm uppercase tracking-wide mb-1">
-                            New Request
+                            {t('new_request')}
                         </h4>
                         <span className="text-[10px] text-gray-400 font-medium bg-gray-50 px-1.5 py-0.5 rounded">
-                            Just now
+                            {t('just_now')}
                         </span>
                     </div>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                        {currentNotification.message}
+                        {currentNotification.type === 'APPOINTMENT_REQUEST'
+                            ? (() => {
+                                // Try to extract name: "New appointment request from {Name}"
+                                const match = currentNotification.message.match(/New appointment request from (.*)/);
+                                const name = match ? match[1] : 'User';
+                                return t('message_appointment_request', { name });
+                            })()
+                            : currentNotification.message}
                     </p>
                     {currentNotification.link && (
                         <div className="mt-2 text-xs font-bold text-blue-600 group-hover:underline flex items-center gap-1">
-                            View Details <ExternalLink size={10} />
+                            {t('view_details')} <ExternalLink size={10} />
                         </div>
                     )}
                 </div>

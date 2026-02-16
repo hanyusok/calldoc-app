@@ -289,6 +289,8 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   type      String   // 'APPOINTMENT_REQUEST', 'SYSTEM', etc.
   message   String
+  key       String?
+  params    String?  // JSON stringified parameters
   isRead    Boolean  @default(false)
   link      String?
   createdAt DateTime @default(now())

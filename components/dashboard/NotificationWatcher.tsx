@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import { checkAppointmentNotifications } from '@/app/[locale]/(mobile)/myappointment/actions';
 import { useRouter } from 'next/navigation';
 import { Bell, Video, CreditCard } from 'lucide-react';
-
+import { useTranslations } from 'next-intl';
 
 export default function NotificationWatcher({
     initialConfirmedIds,
-    messages
+    messages: propMessages // renaming to avoid confusion with hook
 }: {
     initialConfirmedIds: string[],
     messages: {
@@ -22,9 +22,12 @@ export default function NotificationWatcher({
     }
 }) {
     const router = useRouter();
+    const t = useTranslations('Notifications');
     const [knownIds, setKnownIds] = useState<string[]>(initialConfirmedIds);
     const [notification, setNotification] = useState<{
-        message: string;
+        message?: string;
+        key?: string;
+        params?: string; // serialized JSON
         id: string;
         type: 'PAYMENT' | 'MEET' | 'CANCELLED';
     } | null>(null);
@@ -36,23 +39,13 @@ export default function NotificationWatcher({
 
                 if (notifications.length > 0) {
                     const latest = notifications[0] as any;
-                    const isPayment = latest.type === 'PAYMENT_REQUIRED';
+                    const isPayment = latest.type === 'APPOINTMENT_CONFIRMED' || latest.type === 'PAYMENT_CONFIRMED';
                     const isCancelled = latest.type === 'PAYMENT_CANCELLED';
 
-                    let message = '';
-                    if (isPayment) {
-                        // Simple replacement for now, or handle variable interpolation manually if needed
-                        message = messages.price_confirmed_msg
-                            .replace('{doctor}', latest.doctor.name)
-                            .replace('{price}', latest.price);
-                    } else if (isCancelled) {
-                        message = messages.cancelled;
-                    } else {
-                        message = messages.enter_room;
-                    }
-
                     setNotification({
-                        message,
+                        message: latest.message,
+                        key: latest.key,
+                        params: latest.params,
                         id: latest.id,
                         type: isPayment ? 'PAYMENT' : (isCancelled ? 'CANCELLED' : 'MEET')
                     });
@@ -73,7 +66,7 @@ export default function NotificationWatcher({
         }, 5000); // Poll every 5 seconds
 
         return () => clearInterval(interval);
-    }, [knownIds, router, messages]);
+    }, [knownIds, router]);
 
     if (!notification) return null;
 
@@ -90,12 +83,24 @@ export default function NotificationWatcher({
         borderColor = 'border-blue-500';
         iconBg = 'bg-blue-50 text-blue-500';
         Icon = Bell;
-        title = messages.action_required;
+        title = t('action_required');
     } else if (isCancelled) {
         borderColor = 'border-red-500';
         iconBg = 'bg-red-50 text-red-500';
         Icon = CreditCard; // Or XCircle
-        title = messages.cancelled;
+        title = t('payment_cancelled'); // Fallback title or use generic
+    }
+
+    // Resolve Message
+    let displayMessage = notification.message; // Fallback to database message
+    if (notification.key) {
+        try {
+            const params = notification.params ? JSON.parse(notification.params) : {};
+            // Using 'any' cast to bypass strict key checking since keys come from DB
+            displayMessage = t(notification.key as any, params);
+        } catch (e) {
+            console.error("Failed to parse notification params", e);
+        }
     }
 
     return (
@@ -108,7 +113,7 @@ export default function NotificationWatcher({
                     <h3 className="font-bold text-gray-900 text-sm">
                         {title}
                     </h3>
-                    <p className="text-gray-600 text-xs">{notification.message}</p>
+                    <p className="text-gray-600 text-xs">{displayMessage}</p>
                 </div>
                 <button
                     onClick={() => setNotification(null)}
@@ -120,3 +125,4 @@ export default function NotificationWatcher({
         </div>
     );
 }
+
