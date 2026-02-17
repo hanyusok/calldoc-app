@@ -28,6 +28,12 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
     const [formData, setFormData] = useState({ name: "", fax: "", phone: "", address: "" });
     const [loading, setLoading] = useState(false);
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(initialPage);
+    const [total, setTotal] = useState(initialTotal);
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(total / itemsPerPage);
+
     const triggerSearch = () => {
         const params = new URLSearchParams(searchParams.toString());
         if (searchTerm) {
@@ -55,9 +61,12 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
     };
 
     const handlePageChange = (newPage: number) => {
+        if (newPage < 1 || newPage > totalPages) return;
+
         const params = new URLSearchParams(searchParams.toString());
         params.set('page', newPage.toString());
         router.push(`?${params.toString()}`);
+        setCurrentPage(newPage);
     };
 
     const openModal = (pharmacy?: any) => {
@@ -121,7 +130,7 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
         }
     };
 
-    const totalPages = Math.ceil(initialTotal / 10);
+
 
     return (
         <div className="max-w-6xl mx-auto p-4">
@@ -238,25 +247,34 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
                     </table>
                 </div>
                 {/* Pagination */}
-                <div className="p-4 border-t border-gray-100 flex justify-end gap-2 items-center">
-                    <span className="text-sm text-gray-500 mr-4">
-                        Page {initialPage} of {totalPages || 1}
-                    </span>
-                    <button
-                        onClick={() => handlePageChange(initialPage - 1)}
-                        disabled={initialPage <= 1}
-                        className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ChevronLeft size={16} />
-                    </button>
-                    <button
-                        onClick={() => handlePageChange(initialPage + 1)}
-                        disabled={initialPage >= totalPages}
-                        className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ChevronRight size={16} />
-                    </button>
-                </div>
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between bg-white px-6 py-4 border-t border-gray-100">
+                        <div className="text-sm text-gray-600">
+                            {t('pagination.showing')} {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, total)} {t('pagination.of')} {total}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                <ChevronLeft size={18} />
+                                {t('pagination.previous')}
+                            </button>
+                            <div className="text-sm text-gray-600 px-3">
+                                {t('pagination.page')} {currentPage} {t('pagination.of')} {totalPages}
+                            </div>
+                            <button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                {t('pagination.next')}
+                                <ChevronRight size={18} />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {isModalOpen && (

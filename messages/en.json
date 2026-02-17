@@ -309,7 +309,14 @@
             "set_default": "Set Default",
             "is_default": "Default",
             "search_placeholder": "Search pharmacies...",
-            "search": "Search"
+            "search": "Search",
+            "pagination": {
+                "showing": "Showing",
+                "of": "of",
+                "page": "Page",
+                "previous": "Previous",
+                "next": "Next"
+            }
         },
         "meet": {
             "title": "Video Consultation",
@@ -372,7 +379,14 @@
             "delete_success": "User deleted successfully",
             "delete_error": "Failed to delete user",
             "delete": "Delete",
-            "add_patient": "Add Patient"
+            "add_patient": "Add Patient",
+            "pagination": {
+                "showing": "Showing",
+                "of": "of",
+                "page": "Page",
+                "previous": "Previous",
+                "next": "Next"
+            }
         },
         "users": {
             "title": "User Management",
@@ -408,6 +422,13 @@
                 "password": "Password",
                 "role": "Role",
                 "phone": "Phone Number"
+            },
+            "pagination": {
+                "showing": "Showing",
+                "of": "of",
+                "page": "Page",
+                "previous": "Previous",
+                "next": "Next"
             }
         },
         "settings": {
@@ -444,7 +465,23 @@
             "saving": "Saving...",
             "cancel": "Cancel",
             "save_error": "Failed to save vaccination",
-            "back_to_list": "Back to List"
+            "back_to_list": "Back to List",
+            "table": {
+                "name": "Vaccine Name",
+                "category": "Category",
+                "manufacturer": "Manufacturer",
+                "target": "Target Disease",
+                "price": "Price",
+                "age_range": "Age Range",
+                "actions": "Actions"
+            },
+            "pagination": {
+                "showing": "Showing",
+                "of": "of",
+                "page": "Page",
+                "previous": "Previous",
+                "next": "Next"
+            }
         },
         "payments": {
             "title": "Payment Management",
@@ -471,6 +508,13 @@
                 "cancelSuccess": "Payment cancelled successfully.",
                 "cancelFailed": "Cancellation failed: ",
                 "error": "An error occurred."
+            },
+            "pagination": {
+                "showing": "Showing",
+                "of": "of",
+                "page": "Page",
+                "previous": "Previous",
+                "next": "Next"
             }
         },
         "doctors": {

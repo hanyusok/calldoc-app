@@ -309,7 +309,14 @@
             "set_default": "기본 설정",
             "is_default": "기본",
             "search_placeholder": "약국 검색...",
-            "search": "검색"
+            "search": "검색",
+            "pagination": {
+                "showing": "표시 중",
+                "of": "/",
+                "page": "페이지",
+                "previous": "이전",
+                "next": "다음"
+            }
         },
         "meet": {
             "title": "화상 진료",
@@ -372,7 +379,14 @@
             "delete_success": "사용자가 삭제되었습니다",
             "delete_error": "사용자 삭제 실패",
             "delete": "삭제",
-            "add_patient": "환자 추가"
+            "add_patient": "환자 추가",
+            "pagination": {
+                "showing": "표시 중",
+                "of": "/",
+                "page": "페이지",
+                "previous": "이전",
+                "next": "다음"
+            }
         },
         "users": {
             "title": "회원 관리",
@@ -408,6 +422,13 @@
                 "password": "비밀번호",
                 "role": "권한",
                 "phone": "전화번호"
+            },
+            "pagination": {
+                "showing": "표시 중",
+                "of": "/",
+                "page": "페이지",
+                "previous": "이전",
+                "next": "다음"
             }
         },
         "settings": {
@@ -440,11 +461,27 @@
             "location": "접종 장소",
             "min_age": "최소 연령 (세)",
             "max_age": "최대 연령 (세)",
-            "save": "저장",
+            "save": "백신 저장",
             "saving": "저장 중...",
             "cancel": "취소",
-            "save_error": "저장 실패",
-            "back_to_list": "목록으로 돌아가기"
+            "save_error": "백신 저장 실패",
+            "back_to_list": "목록으로 돌아가기",
+            "table": {
+                "name": "백신명",
+                "category": "분류",
+                "manufacturer": "제조사",
+                "target": "대상 질병",
+                "price": "가격",
+                "age_range": "연령대",
+                "actions": "관리"
+            },
+            "pagination": {
+                "showing": "표시 중",
+                "of": "/",
+                "page": "페이지",
+                "previous": "이전",
+                "next": "다음"
+            }
         },
         "payments": {
             "title": "결제 관리",
@@ -471,6 +508,13 @@
                 "cancelSuccess": "결제가 성공적으로 취소되었습니다.",
                 "cancelFailed": "취소 실패: ",
                 "error": "오류가 발생했습니다."
+            },
+            "pagination": {
+                "showing": "표시 중",
+                "of": "/",
+                "page": "페이지",
+                "previous": "이전",
+                "next": "다음"
             }
         },
         "doctors": {

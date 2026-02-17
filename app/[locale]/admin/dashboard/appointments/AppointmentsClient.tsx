@@ -41,6 +41,15 @@ export default function AppointmentsClient({
     const [activeTab, setActiveTab] = useState(initialTab);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(initialPage);
+    const [consultTotal, setConsultTotal] = useState(initialTotal);
+    const [vacTotal, setVacTotal] = useState(initialVacTotal);
+    const itemsPerPage = 10;
+    const totalPages = activeTab === 'consultations'
+        ? Math.ceil(consultTotal / itemsPerPage)
+        : Math.ceil(vacTotal / itemsPerPage);
+
     // Aliases for compatibility with existing code
     const appointments = initialAppointments || [];
 
@@ -78,14 +87,13 @@ export default function AppointmentsClient({
     }, [searchTerm, statusFilter, activeTab]);
 
     const handlePageChange = (newPage: number) => {
+        if (newPage < 1 || newPage > totalPages) return;
+
         const params = new URLSearchParams(searchParams.toString());
         params.set('page', newPage.toString());
         router.push(`?${params.toString()}`);
+        setCurrentPage(newPage);
     };
-
-    const totalPages = activeTab === 'consultations'
-        ? Math.ceil(initialTotal / 10)
-        : Math.ceil(initialVacTotal / 10);
 
     const isConsultations = activeTab === 'consultations';
 
@@ -202,25 +210,34 @@ export default function AppointmentsClient({
                     </table>
                 </div>
                 {/* Pagination */}
-                <div className="p-4 border-t border-gray-100 flex justify-end gap-2 items-center">
-                    <span className="text-sm text-gray-500 mr-4">
-                        Page {initialPage} of {totalPages || 1}
-                    </span>
-                    <button
-                        onClick={() => handlePageChange(initialPage - 1)}
-                        disabled={initialPage <= 1}
-                        className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ChevronLeft size={16} />
-                    </button>
-                    <button
-                        onClick={() => handlePageChange(initialPage + 1)}
-                        disabled={initialPage >= totalPages}
-                        className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ChevronRight size={16} />
-                    </button>
-                </div>
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between bg-white px-6 py-4 border-t border-gray-100">
+                        <div className="text-sm text-gray-600">
+                            {tDash('pagination') ? tDash('pagination.showing') : 'Showing'} {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, activeTab === 'consultations' ? consultTotal : vacTotal)} {tDash('pagination') ? tDash('pagination.of') : 'of'} {activeTab === 'consultations' ? consultTotal : vacTotal}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                <ChevronLeft size={18} />
+                                {tDash('pagination') ? tDash('pagination.previous') : 'Previous'}
+                            </button>
+                            <div className="text-sm text-gray-600 px-3">
+                                {tDash('pagination') ? tDash('pagination.page') : 'Page'} {currentPage} {tDash('pagination') ? tDash('pagination.of') : 'of'} {totalPages}
+                            </div>
+                            <button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                {tDash('pagination') ? tDash('pagination.next') : 'Next'}
+                                <ChevronRight size={18} />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <AppointmentModal

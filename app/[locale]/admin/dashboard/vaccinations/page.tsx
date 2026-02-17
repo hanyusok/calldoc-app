@@ -14,13 +14,17 @@ export default async function AdminVaccinationsPage({
     const page = Number(params.page) || 1;
     const t = await getTranslations('Admin.vaccinations');
 
-    const { vaccinations, totalPages } = await getVaccinations({ query, page });
+    const { vaccinations, totalPages, total } = await getVaccinations({ query, page });
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 className="text-2xl font-bold mb-6">{t('title')}</h1>
             <Suspense fallback={<div>Loading...</div>}>
-                <VaccinationsClient initialVaccinations={vaccinations} totalPages={totalPages} />
+                <VaccinationsClient
+                    initialVaccinations={vaccinations}
+                    initialTotal={total}
+                    initialPage={page}
+                />
             </Suspense>
         </div>
     );

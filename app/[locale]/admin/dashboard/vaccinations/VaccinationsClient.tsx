@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Search, Plus, Edit, Trash2, Syringe } from "lucide-react";
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { deleteVaccination } from "@/app/actions/vaccination";
 
@@ -24,10 +24,12 @@ interface Vaccination {
 
 export default function VaccinationsClient({
     initialVaccinations,
-    totalPages
+    initialTotal,
+    initialPage
 }: {
     initialVaccinations: Vaccination[];
-    totalPages: number;
+    initialTotal: number;
+    initialPage: number;
 }) {
     const t = useTranslations('Admin.vaccinations');
     const router = useRouter();
@@ -35,9 +37,27 @@ export default function VaccinationsClient({
     const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
     const [isDeleting, setIsDeleting] = useState("");
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(initialPage);
+    const [total, setTotal] = useState(initialTotal);
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(total / itemsPerPage);
+
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        router.push(`/admin/dashboard/vaccinations?q=${searchTerm}`);
+        const params = new URLSearchParams();
+        if (searchTerm) params.set('q', searchTerm);
+        params.set('page', '1');
+        router.push(`?${params.toString()}`);
+    };
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage < 1 || newPage > totalPages) return;
+
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('page', newPage.toString());
+        router.push(`?${params.toString()}`);
+        setCurrentPage(newPage);
     };
 
     const handleDelete = async (id: string) => {
@@ -52,6 +72,13 @@ export default function VaccinationsClient({
         } finally {
             setIsDeleting("");
         }
+    };
+
+    const formatAgeRange = (minAge: number | null, maxAge: number | null) => {
+        if (minAge === null && maxAge === null) return '-';
+        const min = minAge ?? 0;
+        const max = maxAge ? `${maxAge}` : '+';
+        return `${min} - ${max}`;
     };
 
     return (
@@ -76,77 +103,103 @@ export default function VaccinationsClient({
                 </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {initialVaccinations.map((vaccination) => (
-                    <div key={vaccination.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="p-5">
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="p-2 bg-blue-50 rounded-lg">
-                                    <Syringe className="w-6 h-6 text-blue-600" />
-                                </div>
-                                <div className="flex gap-2">
-                                    <Link
-                                        href={`/admin/dashboard/vaccinations/${vaccination.id}/edit`}
-                                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
-                                    >
-                                        <Edit size={18} />
-                                    </Link>
-                                    <button
-                                        onClick={() => handleDelete(vaccination.id)}
-                                        disabled={isDeleting === vaccination.id}
-                                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-100">
+                            <tr>
+                                <th className="p-4">{t('table.name')}</th>
+                                <th className="p-4">{t('table.category')}</th>
+                                <th className="p-4">{t('table.manufacturer')}</th>
+                                <th className="p-4">{t('table.target')}</th>
+                                <th className="p-4">{t('table.age_range')}</th>
+                                <th className="p-4 text-right">{t('table.price')}</th>
+                                <th className="p-4 text-center">{t('table.actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {initialVaccinations.length === 0 ? (
+                                <tr>
+                                    <td colSpan={7} className="p-8 text-center text-gray-400">
+                                        {t('no_vaccinations')}
+                                    </td>
+                                </tr>
+                            ) : (
+                                initialVaccinations.map((vaccination) => (
+                                    <tr key={vaccination.id} className="hover:bg-gray-50">
+                                        <td className="p-4 font-medium text-gray-900">{vaccination.name}</td>
+                                        <td className="p-4 text-gray-600">
+                                            {vaccination.category ? (
+                                                <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                                                    {vaccination.category}
+                                                </span>
+                                            ) : '-'}
+                                        </td>
+                                        <td className="p-4 text-gray-600">
+                                            {vaccination.manufacturer ? (
+                                                <span className="text-xs font-semibold px-2 py-1 bg-blue-50 text-blue-600 rounded-full">
+                                                    {vaccination.manufacturer}
+                                                </span>
+                                            ) : '-'}
+                                        </td>
+                                        <td className="p-4 text-gray-600">{vaccination.targetDisease || '-'}</td>
+                                        <td className="p-4 text-gray-600">{formatAgeRange(vaccination.minAge, vaccination.maxAge)}</td>
+                                        <td className="p-4 text-right font-semibold text-gray-900">
+                                            {vaccination.price === 0 ? 'Free' : `₩${vaccination.price.toLocaleString()}`}
+                                        </td>
+                                        <td className="p-4 text-center flex justify-center gap-2">
+                                            <Link
+                                                href={`/admin/dashboard/vaccinations/${vaccination.id}/edit`}
+                                                className="text-blue-500 hover:bg-blue-50 p-2 rounded transition-colors"
+                                                title={t('edit_vaccination')}
+                                            >
+                                                <Edit size={16} />
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDelete(vaccination.id)}
+                                                disabled={isDeleting === vaccination.id}
+                                                className="text-red-500 hover:bg-red-50 p-2 rounded transition-colors disabled:opacity-50"
+                                                title={t('confirm_delete')}
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between bg-white px-6 py-4 border-t border-gray-100">
+                        <div className="text-sm text-gray-600">
+                            {t('pagination.showing')} {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, total)} {t('pagination.of')} {total}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                <ChevronLeft size={18} />
+                                {t('pagination.previous')}
+                            </button>
+                            <div className="text-sm text-gray-600 px-3">
+                                {t('pagination.page')} {currentPage} {t('pagination.of')} {totalPages}
                             </div>
-
-                            <h3 className="text-lg font-bold text-gray-900 mb-1">{vaccination.name}</h3>
-                            <div className="flex items-center gap-2 mb-3">
-                                <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
-                                    {vaccination.category}
-                                </span>
-                                {vaccination.manufacturer && (
-                                    <span className="text-xs font-semibold px-2 py-1 bg-blue-50 text-blue-600 rounded-full">
-                                        {vaccination.manufacturer}
-                                    </span>
-                                )}
-                            </div>
-
-                            <div className="space-y-2 text-sm text-gray-600">
-                                <div className="flex justify-between">
-                                    <span>Price</span>
-                                    <span className="font-semibold text-gray-900">
-                                        {vaccination.price === 0 ? "Free" : `₩${vaccination.price.toLocaleString()}`}
-                                    </span>
-                                </div>
-                                {vaccination.targetDisease && (
-                                    <div className="flex justify-between">
-                                        <span>Target</span>
-                                        <span className="text-gray-900">{vaccination.targetDisease}</span>
-                                    </div>
-                                )}
-                                {(vaccination.minAge !== null || vaccination.maxAge !== null) && (
-                                    <div className="flex justify-between">
-                                        <span>Age Limit</span>
-                                        <span className="text-gray-900">
-                                            {vaccination.minAge ?? 0} - {vaccination.maxAge ?? "+"}
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
+                            <button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                {t('pagination.next')}
+                                <ChevronRight size={18} />
+                            </button>
                         </div>
                     </div>
-                ))}
+                )}
             </div>
-
-            {initialVaccinations.length === 0 && (
-                <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
-                    <Syringe className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">{t('no_vaccinations')}</h3>
-                    <p className="text-gray-500">{t('no_vaccinations_desc')}</p>
-                </div>
-            )}
         </div>
     );
 }

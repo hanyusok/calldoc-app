@@ -16,6 +16,12 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
     const [roleFilter, setRoleFilter] = useState<Role | 'ALL'>('ALL');
     const [loading, setLoading] = useState(false);
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(initialPage);
+    const [total, setTotal] = useState(initialTotal);
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(total / itemsPerPage);
+
     const router = useRouter();
 
     // Debounce search/filter
@@ -134,6 +140,18 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
         }
     };
 
+    const handlePageChange = (newPage: number) => {
+        if (newPage < 1 || newPage > totalPages) return;
+
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', newPage.toString());
+        if (search) params.set('q', search);
+        if (roleFilter && roleFilter !== 'ALL') params.set('role', roleFilter);
+
+        router.push(`?${params.toString()}`);
+        setCurrentPage(newPage);
+    };
+
     return (
         <div className="space-y-6">
             <PageHeader
@@ -236,6 +254,35 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
                         </tbody>
                     </table>
                 </div>
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between bg-white px-6 py-4 border-t border-gray-100">
+                        <div className="text-sm text-gray-600">
+                            {t('pagination.showing')} {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, total)} {t('pagination.of')} {total}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                <ChevronLeft size={18} />
+                                {t('pagination.previous')}
+                            </button>
+                            <div className="text-sm text-gray-600 px-3">
+                                {t('pagination.page')} {currentPage} {t('pagination.of')} {totalPages}
+                            </div>
+                            <button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                {t('pagination.next')}
+                                <ChevronRight size={18} />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Modal */}
