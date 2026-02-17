@@ -11,13 +11,20 @@ import { createVaccination, updateVaccination } from "@/app/actions/vaccination"
 interface Vaccination {
     id?: string;
     name: string;
+    nameEn?: string | null;
     price: number;
     description: string | null;
+    descriptionEn?: string | null;
     category: string | null;
+    categoryEn?: string | null;
     manufacturer: string | null;
+    manufacturerEn?: string | null;
     targetDisease: string | null;
+    targetDiseaseEn?: string | null;
     visitTime: string | null;
+    visitTimeEn?: string | null;
     location: string | null;
+    locationEn?: string | null;
     minAge: number | null;
     maxAge: number | null;
 }
@@ -62,14 +69,24 @@ export default function VaccinationForm({
 
             <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                 <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('name')}</label>
-                        <input
-                            name="name"
-                            defaultValue={initialData?.name}
-                            required
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                        />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('name')} (KO)</label>
+                            <input
+                                name="name"
+                                defaultValue={initialData?.name}
+                                required
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('name')} (EN)</label>
+                            <input
+                                name="nameEn"
+                                defaultValue={initialData?.nameEn || ''}
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -84,7 +101,7 @@ export default function VaccinationForm({
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('category')}</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('category')} (KO)</label>
                             <input
                                 name="category"
                                 defaultValue={initialData?.category || ''}
@@ -94,18 +111,38 @@ export default function VaccinationForm({
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('description')}</label>
-                        <textarea
-                            name="description"
-                            defaultValue={initialData?.description || ''}
-                            rows={3}
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('category')} (EN)</label>
+                        <input
+                            name="categoryEn"
+                            defaultValue={initialData?.categoryEn || ''}
                             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('manufacturer')}</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('description')} (KO)</label>
+                            <textarea
+                                name="description"
+                                defaultValue={initialData?.description || ''}
+                                rows={3}
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('description')} (EN)</label>
+                            <textarea
+                                name="descriptionEn"
+                                defaultValue={initialData?.descriptionEn || ''}
+                                rows={3}
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('manufacturer')} (KO)</label>
                             <input
                                 name="manufacturer"
                                 defaultValue={initialData?.manufacturer || ''}
@@ -113,10 +150,10 @@ export default function VaccinationForm({
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('target_disease')}</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('manufacturer')} (EN)</label>
                             <input
-                                name="targetDisease"
-                                defaultValue={initialData?.targetDisease || ''}
+                                name="manufacturerEn"
+                                defaultValue={initialData?.manufacturerEn || ''}
                                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                             />
                         </div>
@@ -124,7 +161,26 @@ export default function VaccinationForm({
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('location')}</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('target_disease')} (KO)</label>
+                            <input
+                                name="targetDisease"
+                                defaultValue={initialData?.targetDisease || ''}
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('target_disease')} (EN)</label>
+                            <input
+                                name="targetDiseaseEn"
+                                defaultValue={initialData?.targetDiseaseEn || ''}
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('location')} (KO)</label>
                             <input
                                 name="location"
                                 defaultValue={initialData?.location || ''}
@@ -132,10 +188,30 @@ export default function VaccinationForm({
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('visit_time')}</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('location')} (EN)</label>
+                            <input
+                                name="locationEn"
+                                defaultValue={initialData?.locationEn || ''}
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('visit_time')} (KO)</label>
                             <input
                                 name="visitTime"
                                 defaultValue={initialData?.visitTime || ''}
+                                placeholder="e.g. 15 min"
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('visit_time')} (EN)</label>
+                            <input
+                                name="visitTimeEn"
+                                defaultValue={initialData?.visitTimeEn || ''}
                                 placeholder="e.g. 15 min"
                                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                             />

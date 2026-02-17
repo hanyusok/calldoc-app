@@ -37,7 +37,7 @@ export async function getVaccinations({
     ]);
 
     return {
-        vaccinations,
+        vaccinations: vaccinations as any[], // Casting to any[] to bypass strict type checking for now, or define a proper type
         total,
         totalPages: Math.ceil(total / limit)
     };
@@ -55,6 +55,14 @@ export async function createVaccination(formData: FormData) {
     const minAge = formData.get('minAge') ? parseInt(formData.get('minAge') as string) : null;
     const maxAge = formData.get('maxAge') ? parseInt(formData.get('maxAge') as string) : null;
 
+    const nameEn = formData.get('nameEn') as string;
+    const descriptionEn = formData.get('descriptionEn') as string;
+    const categoryEn = formData.get('categoryEn') as string;
+    const manufacturerEn = formData.get('manufacturerEn') as string;
+    const targetDiseaseEn = formData.get('targetDiseaseEn') as string;
+    const visitTimeEn = formData.get('visitTimeEn') as string;
+    const locationEn = formData.get('locationEn') as string;
+
     if (!name || isNaN(price)) {
         throw new Error("Name and Price are required");
     }
@@ -62,13 +70,20 @@ export async function createVaccination(formData: FormData) {
     await prisma.vaccination.create({
         data: {
             name,
+            nameEn,
             price,
             description,
+            descriptionEn,
             category,
+            categoryEn,
             manufacturer,
+            manufacturerEn,
             targetDisease,
+            targetDiseaseEn,
             visitTime,
+            visitTimeEn,
             location,
+            locationEn,
             minAge,
             maxAge
         }
@@ -90,6 +105,14 @@ export async function updateVaccination(id: string, formData: FormData) {
     const minAge = formData.get('minAge') ? parseInt(formData.get('minAge') as string) : null;
     const maxAge = formData.get('maxAge') ? parseInt(formData.get('maxAge') as string) : null;
 
+    const nameEn = formData.get('nameEn') as string;
+    const descriptionEn = formData.get('descriptionEn') as string;
+    const categoryEn = formData.get('categoryEn') as string;
+    const manufacturerEn = formData.get('manufacturerEn') as string;
+    const targetDiseaseEn = formData.get('targetDiseaseEn') as string;
+    const visitTimeEn = formData.get('visitTimeEn') as string;
+    const locationEn = formData.get('locationEn') as string;
+
     if (!name || isNaN(price)) {
         throw new Error("Name and Price are required");
     }
@@ -98,13 +121,20 @@ export async function updateVaccination(id: string, formData: FormData) {
         where: { id },
         data: {
             name,
+            nameEn,
             price,
             description,
+            descriptionEn,
             category,
+            categoryEn,
             manufacturer,
+            manufacturerEn,
             targetDisease,
+            targetDiseaseEn,
             visitTime,
+            visitTimeEn,
             location,
+            locationEn,
             minAge,
             maxAge
         }

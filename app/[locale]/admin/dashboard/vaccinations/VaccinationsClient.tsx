@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -11,13 +11,20 @@ import { deleteVaccination } from "@/app/actions/vaccination";
 interface Vaccination {
     id: string;
     name: string;
+    nameEn: string | null;
     price: number;
     description: string | null;
+    descriptionEn: string | null;
     category: string | null;
+    categoryEn: string | null;
     manufacturer: string | null;
+    manufacturerEn: string | null;
     targetDisease: string | null;
+    targetDiseaseEn: string | null;
     visitTime: string | null;
+    visitTimeEn: string | null;
     location: string | null;
+    locationEn: string | null;
     minAge: number | null;
     maxAge: number | null;
 }
@@ -32,6 +39,8 @@ export default function VaccinationsClient({
     initialPage: number;
 }) {
     const t = useTranslations('Admin.vaccinations');
+    const { locale } = useParams();
+    const isEn = locale === 'en';
     const router = useRouter();
     const searchParams = useSearchParams();
     const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
@@ -127,22 +136,26 @@ export default function VaccinationsClient({
                             ) : (
                                 initialVaccinations.map((vaccination) => (
                                     <tr key={vaccination.id} className="hover:bg-gray-50">
-                                        <td className="p-4 font-medium text-gray-900">{vaccination.name}</td>
+                                        <td className="p-4 font-medium text-gray-900">
+                                            {isEn ? (vaccination.nameEn || vaccination.name) : vaccination.name}
+                                        </td>
                                         <td className="p-4 text-gray-600">
-                                            {vaccination.category ? (
+                                            {(isEn ? (vaccination.categoryEn || vaccination.category) : vaccination.category) ? (
                                                 <span className="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
-                                                    {vaccination.category}
+                                                    {isEn ? (vaccination.categoryEn || vaccination.category) : vaccination.category}
                                                 </span>
                                             ) : '-'}
                                         </td>
                                         <td className="p-4 text-gray-600">
-                                            {vaccination.manufacturer ? (
+                                            {(isEn ? (vaccination.manufacturerEn || vaccination.manufacturer) : vaccination.manufacturer) ? (
                                                 <span className="text-xs font-semibold px-2 py-1 bg-blue-50 text-blue-600 rounded-full">
-                                                    {vaccination.manufacturer}
+                                                    {isEn ? (vaccination.manufacturerEn || vaccination.manufacturer) : vaccination.manufacturer}
                                                 </span>
                                             ) : '-'}
                                         </td>
-                                        <td className="p-4 text-gray-600">{vaccination.targetDisease || '-'}</td>
+                                        <td className="p-4 text-gray-600">
+                                            {(isEn ? (vaccination.targetDiseaseEn || vaccination.targetDisease) : vaccination.targetDisease) || '-'}
+                                        </td>
                                         <td className="p-4 text-gray-600">{formatAgeRange(vaccination.minAge, vaccination.maxAge)}</td>
                                         <td className="p-4 text-right font-semibold text-gray-900">
                                             {vaccination.price === 0 ? 'Free' : `₩${vaccination.price.toLocaleString()}`}

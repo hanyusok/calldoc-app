@@ -245,19 +245,26 @@ model Post {
 }
 
 model Vaccination {
-  id          String   @id @default(cuid())
-  name        String
-  price       Float
-  description String?
-  visitTime   String? // e.g. "30 min", "Mon-Fri 9-6"
-  location    String? // e.g. "Seoul National Hospital"
-  category    String? // e.g. "Flu", "COVID-19"
-  manufacturer String?
+  id            String   @id @default(cuid())
+  name          String
+  nameEn        String?  // English content
+  price         Float
+  description   String?
+  descriptionEn String?  // English content
+  visitTime     String? // e.g. "30 min", "Mon-Fri 9-6"
+  visitTimeEn   String?  // English content
+  location      String? // e.g. "Seoul National Hospital"
+  locationEn    String?  // English content
+  category      String? // e.g. "Flu", "COVID-19"
+  categoryEn    String?  // English content
+  manufacturer  String?
+  manufacturerEn String? // English content
   targetDisease String?
-  minAge      Int? // Minimum age in years
-  maxAge      Int? // Maximum age in years
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  targetDiseaseEn String? // English content
+  minAge        Int? // Minimum age in years
+  maxAge        Int? // Maximum age in years
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   reservations VaccinationReservation[]
 }
 
