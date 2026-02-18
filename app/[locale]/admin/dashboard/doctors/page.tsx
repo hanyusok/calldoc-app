@@ -1,4 +1,4 @@
-import { getDoctors } from "@/app/actions/doctor";
+import { getDoctors, getClinicsForSelect } from "@/app/actions/doctor";
 import DoctorsClient from "./DoctorsClient";
 import PageContainer from "@/components/admin/shared/PageContainer";
 
@@ -12,10 +12,16 @@ export default async function DoctorsPage({
     const search = params?.search || "";
 
     const { doctors, total } = await getDoctors(page, 10, search);
+    const clinics = await getClinicsForSelect();
 
     return (
         <PageContainer>
-            <DoctorsClient initialDoctors={doctors} initialTotal={total} initialPage={page} />
+            <DoctorsClient
+                initialDoctors={doctors}
+                initialTotal={total}
+                initialPage={page}
+                clinics={clinics}
+            />
         </PageContainer>
     );
 }

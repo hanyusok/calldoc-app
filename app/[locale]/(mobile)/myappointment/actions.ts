@@ -12,7 +12,9 @@ export async function getUserAppointments() {
             userId: session.user.id
         },
         include: {
-            doctor: true,
+            doctor: {
+                include: { clinic: true }
+            },
             prescription: true,
         },
         orderBy: {
@@ -32,7 +34,11 @@ export async function checkAppointmentNotifications(knownIds: string[]) {
             status: 'AWAITING_PAYMENT',
             id: { notIn: knownIds }
         },
-        include: { doctor: true }
+        include: {
+            doctor: {
+                include: { clinic: true }
+            }
+        }
     });
 
     // 2. Check for Meeting Ready (or just Confirmed)
@@ -45,7 +51,11 @@ export async function checkAppointmentNotifications(knownIds: string[]) {
             id: { notIn: knownIds },
             updatedAt: { gte: new Date(Date.now() - 1 * 60 * 60 * 1000) } // Only from last 1 hour
         },
-        include: { doctor: true }
+        include: {
+            doctor: {
+                include: { clinic: true }
+            }
+        }
     });
 
     // 3. Check for Payment Cancelled (New)
@@ -58,7 +68,11 @@ export async function checkAppointmentNotifications(knownIds: string[]) {
             id: { notIn: knownIds },
             updatedAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } // Only show cancellations from last 24h
         },
-        include: { doctor: true }
+        include: {
+            doctor: {
+                include: { clinic: true }
+            }
+        }
     });
 
     // Map to a common structure

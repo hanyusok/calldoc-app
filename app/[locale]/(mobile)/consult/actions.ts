@@ -21,6 +21,9 @@ export async function getDoctors({
         where.OR = [
             { name: { contains: query, mode: 'insensitive' } },
             { specialty: { contains: query, mode: 'insensitive' } },
+            // Search in Clinic name as well
+            { clinic: { name: { contains: query, mode: 'insensitive' } } },
+            // Legacy fallback
             { hospital: { contains: query, mode: 'insensitive' } },
             { bio: { contains: query, mode: 'insensitive' } },
         ];
@@ -77,10 +80,32 @@ export async function getDoctors({
     const doctors = await prisma.doctor.findMany({
         where,
         orderBy,
+        include: { clinic: true } // Include clinic details
     });
 
     return doctors;
 }
+
+export async function getClinics({
+    query,
+}: {
+    query?: string;
+}) {
+    const where: any = {};
+
+    if (query) {
+        where.OR = [
+            { name: { contains: query, mode: 'insensitive' } },
+            { address: { contains: query, mode: 'insensitive' } },
+        ];
+    }
+
+    return await prisma.clinic.findMany({
+        where,
+        orderBy: { name: 'asc' },
+    });
+}
+
 
 export async function getPharmacies({
     query,
@@ -118,6 +143,7 @@ export async function getPharmacies({
 export async function getDoctorById(id: string) {
     return await prisma.doctor.findUnique({
         where: { id },
+        include: { clinic: true }
     });
 }
 

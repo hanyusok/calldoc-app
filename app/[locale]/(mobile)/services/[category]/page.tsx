@@ -2,7 +2,7 @@ import React from 'react';
 import { ChevronLeft, Search } from 'lucide-react';
 import Link from 'next/link';
 import FilterBar from '@/components/FilterBar';
-import DoctorCard from '@/components/DoctorCard';
+import DoctorCard from '@/components/consult/DoctorCard';
 import { prisma } from '@/app/lib/prisma';
 
 export default async function ServiceCategoryPage({
@@ -17,7 +17,9 @@ export default async function ServiceCategoryPage({
 
     // Fetch doctors from database
     // Note: In a real app we'd filter by category, but for now we fetch all to demonstrate DB connection
-    const doctors = await prisma.doctor.findMany();
+    const doctors = await prisma.doctor.findMany({
+        include: { clinic: true }
+    });
 
     return (
         <div className="bg-gray-50 min-h-screen pb-20">
@@ -41,19 +43,14 @@ export default async function ServiceCategoryPage({
                     Found {doctors.length} specialists available
                 </p>
 
-                {doctors.map((doctor) => (
-                    <DoctorCard
-                        key={doctor.id}
-                        name={doctor.name}
-                        specialty={doctor.specialty}
-                        hospital={doctor.hospital}
-                        rating={doctor.rating}
-                        reviewCount={100} // Placeholder until we have reviews
-                        imageUrl={doctor.imageUrl || undefined}
-                        isAvailable={doctor.isAvailable}
-                        distance="1.2km" // Placeholder
-                    />
-                ))}
+                <div className="space-y-4">
+                    {doctors.map((doctor) => (
+                        <DoctorCard
+                            key={doctor.id}
+                            doctor={doctor}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );

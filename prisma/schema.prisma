@@ -104,18 +104,38 @@ model Doctor {
   id          String   @id @default(cuid())
   name        String
   specialty   String
-  hospital    String
+  clinicId    String?
+  clinic      Clinic?  @relation(fields: [clinicId], references: [id])
   rating      Float    @default(5.0)
   patients    Int      @default(0)
   imageUrl    String?
   bio         String?
   gender      String?  // 'male' | 'female'
   address     String?
-  consultationFee Int   @default(5000) // in cents or smallest currency unit
+  consultationFee Int   @default(5000)
   isAvailable Boolean  @default(true)
   appointments Appointment[]
   schedules   DoctorSchedule[]
   exceptions  DoctorException[]
+}
+
+model Clinic {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  address     String
+  city        String?
+  latitude    Float?
+  longitude   Float?
+  phoneNumber String?
+  website     String?
+  rating      Float    @default(0.0)
+  images      String[]
+  
+  doctors     Doctor[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model DoctorSchedule {

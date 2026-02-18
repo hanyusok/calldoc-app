@@ -1,10 +1,11 @@
 import React from 'react';
 import BottomNav from "@/components/BottomNav";
 import DoctorCard from "@/components/consult/DoctorCard";
+import ClinicCard from "@/components/consult/ClinicCard";
 import PharmacyCard from "@/components/consult/PharmacyCard";
 import VaccinationCard from "@/components/consult/VaccinationCard";
 import FilterBar from "@/components/consult/FilterBar";
-import { getDoctors, getPharmacies, getVaccinations } from "./actions";
+import { getDoctors, getClinics, getPharmacies, getVaccinations } from "./actions";
 import Link from "next/link";
 import { ChevronLeft, Search } from 'lucide-react';
 
@@ -34,6 +35,10 @@ export default async function ConsultPage(props: {
         filter: params.filter
     }) : [];
 
+    const clinics = (!isPharmacy && !isVaccination) ? await getClinics({
+        query: params.query
+    }) : [];
+
     const pharmacies = isPharmacy ? await getPharmacies({
         query: params.query,
         filter: params.filter
@@ -43,14 +48,8 @@ export default async function ConsultPage(props: {
         query: params.query
     }) : [];
 
-    // Map category ID to translated name if it exists, otherwise use ID
-    // Note: This logic assumes category params match keys in ServiceGrid if possible, or we need a mapping.
-    // However, params.category comes from URL which was set from ServiceGrid previously.
-    // Let's try to map it back or just use the parameter for now if dynamic.
-    // Actually, in ServiceGrid we used `service.name.toLowerCase()...` which is English.
-    // If we change ServiceGrid to use IDs, we should update the URL generation there too.
-    // For now, let's just translate the default title.
-
+    // Map category ID to translated name if it exists...
+    // ... (existing helper logic)
     let title = t('title_default');
     if (params.category) {
         // Ideally we map category slug back to translation key
@@ -66,6 +65,10 @@ export default async function ConsultPage(props: {
         }
     }
 
+    const showClinics = clinics.length > 0;
+    const showDoctors = doctors.length > 0;
+    const hasResults = showClinics || showDoctors || pharmacies.length > 0 || vaccinations.length > 0;
+
     return (
         <div className="bg-gray-50 min-h-screen pb-24">
             {/* Custom Header for Consult Page */}
@@ -77,12 +80,11 @@ export default async function ConsultPage(props: {
                     <h1 className="text-lg font-bold text-gray-900">{title}</h1>
                 </div>
 
-                {/* Search Input - duplicated from Header for now, or could be a component */}
+                {/* Search Input */}
                 <div className="relative mb-2">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Search className="h-4 w-4 text-gray-400" />
                     </div>
-                    {/* Client component for search input behavior would be better, but simple form works for SSR */}
                     <form action="/consult" method="GET">
                         {params.category && <input type="hidden" name="category" value={params.category} />}
                         <input
@@ -98,8 +100,8 @@ export default async function ConsultPage(props: {
                 <FilterBar category={category} />
             </div>
 
-            <div className="px-4 py-4 space-y-4">
-                {(isPharmacy ? pharmacies : (isVaccination ? vaccinations : doctors)).length === 0 ? (
+            <div className="px-4 py-4 space-y-6">
+                {!hasResults ? (
                     <div className="text-center py-10 text-gray-500">
                         <p>{t('no_results')}</p>
                         <Link href={`/consult${category ? `?category=${category}` : ''}`} className="text-primary-500 text-sm mt-2 inline-block">
@@ -107,17 +109,37 @@ export default async function ConsultPage(props: {
                         </Link>
                     </div>
                 ) : (
-                    isPharmacy
-                        ? (pharmacies).map(pharmacy => (
+                    <>
+                        {isPharmacy && (pharmacies).map(pharmacy => (
                             <PharmacyCard key={pharmacy.id} pharmacy={pharmacy} />
-                        ))
-                        : isVaccination
-                            ? (vaccinations).map(v => (
-                                <VaccinationCard key={v.id} vaccination={v} />
-                            ))
-                            : (doctors).map(doc => (
-                                <DoctorCard key={doc.id} doctor={doc} />
-                            ))
+                        ))}
+
+                        {isVaccination && (vaccinations).map(v => (
+                            <VaccinationCard key={v.id} vaccination={v} />
+                        ))}
+
+                        {/* Clinics Section */}
+                        {!isPharmacy && !isVaccination && showClinics && (
+                            <div>
+                                <h2 className="text-lg font-bold text-gray-900 mb-3">{t('clinics_section')}</h2>
+                                {clinics.map(clinic => (
+                                    <ClinicCard key={clinic.id} clinic={clinic} />
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Doctors Section */}
+                        {!isPharmacy && !isVaccination && showDoctors && (
+                            <div>
+                                {showClinics && <h2 className="text-lg font-bold text-gray-900 mb-3 mt-6">{t('doctors_section')}</h2>}
+                                <div className="space-y-4">
+                                    {doctors.map(doc => (
+                                        <DoctorCard key={doc.id} doctor={doc} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 

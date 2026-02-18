@@ -47,7 +47,9 @@
         "title_default": "Find a Doctor",
         "search_placeholder": "Search doctors, hospitals...",
         "no_results": "No doctors found matching your criteria.",
-        "clear_filters": "Clear all filters"
+        "clear_filters": "Clear all filters",
+        "clinics_section": "Clinics",
+        "doctors_section": "Doctors"
     },
     "MyAppointmentPage": {
         "title": "Appointments",
@@ -96,6 +98,11 @@
         "next_available": "Next: {time}",
         "patients": "{count} patients",
         "patients_k": "{count}k+ patients"
+    },
+    "ClinicCard": {
+        "view_doctors": "View Doctors",
+        "rating": "Rating",
+        "phone": "Phone"
     },
     "Profile": {
         "enter_name": "Enter name",
@@ -530,14 +537,14 @@
             "table": {
                 "name": "Name",
                 "specialty": "Specialty",
-                "hospital": "Hospital",
+                "hospital": "Clinic",
                 "status": "Status",
                 "actions": "Actions"
             },
             "form": {
                 "name": "Name",
                 "specialty": "Specialty",
-                "hospital": "Hospital",
+                "hospital": "Clinic",
                 "bio": "Bio",
                 "image_url": "Image URL",
                 "rating": "Rating (0-5)",

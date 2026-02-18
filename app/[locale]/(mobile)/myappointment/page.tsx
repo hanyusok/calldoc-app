@@ -137,7 +137,7 @@ export default async function MyAppointmentPage() {
                                     <div className="flex justify-between items-start mb-1">
                                         <div>
                                             <h3 className="font-bold text-gray-900 leading-none">{apt.doctor.name}</h3>
-                                            <p className="text-xs text-gray-500 mt-1">{apt.doctor.hospital}</p>
+                                            <p className="text-xs text-gray-500 mt-1">{apt.doctor.clinic?.name || 'Clinic'}</p>
                                         </div>
                                     </div>
                                     <StatusProgressBar status={apt.status} />

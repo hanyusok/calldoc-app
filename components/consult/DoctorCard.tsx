@@ -9,7 +9,7 @@ interface Doctor {
     id: string;
     name: string;
     specialty: string;
-    hospital: string;
+    clinic?: { name: string } | null;
     rating: number;
     imageUrl: string | null;
     isAvailable: boolean;
@@ -49,7 +49,7 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
 
                     <div className="mt-2 flex items-center gap-1 text-gray-500 text-xs">
                         <MapPin size={12} />
-                        <span className="truncate">{doctor.hospital}</span>
+                        <span className="truncate">{doctor.clinic?.name || "Unknown Clinic"}</span>
                     </div>
 
                     <p className="mt-2 text-xs text-gray-400 line-clamp-2 leading-relaxed">

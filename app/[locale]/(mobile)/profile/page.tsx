@@ -36,7 +36,8 @@ export default async function ProfilePage({
     });
 
     if (!user) {
-        return <div>User not found</div>;
+        redirect({ href: '/login', locale });
+        return null; // Satisfy TS
     }
 
     return (

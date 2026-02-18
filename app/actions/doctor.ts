@@ -13,7 +13,7 @@ export async function getDoctors(page = 1, limit = 10, search = "") {
             where.OR = [
                 { name: { contains: search, mode: 'insensitive' } },
                 { specialty: { contains: search, mode: 'insensitive' } },
-                { hospital: { contains: search, mode: 'insensitive' } },
+                { clinic: { name: { contains: search, mode: 'insensitive' } } },
             ];
         }
 
@@ -24,6 +24,7 @@ export async function getDoctors(page = 1, limit = 10, search = "") {
                 take: limit,
                 orderBy: { name: 'asc' },
                 include: {
+                    clinic: true,
                     _count: {
                         select: { appointments: true }
                     }
@@ -51,7 +52,7 @@ export async function createDoctor(data: any) {
             data: {
                 name: data.name,
                 specialty: data.specialty,
-                hospital: data.hospital,
+                clinicId: data.clinicId,
                 bio: data.bio,
                 imageUrl: data.imageUrl,
                 rating: data.rating ? parseFloat(data.rating) : 5.0,
@@ -76,7 +77,7 @@ export async function updateDoctor(doctorId: string, data: any) {
             data: {
                 name: data.name,
                 specialty: data.specialty,
-                hospital: data.hospital,
+                clinicId: data.clinicId,
                 bio: data.bio,
                 imageUrl: data.imageUrl,
                 rating: data.rating ? parseFloat(data.rating) : undefined,
@@ -105,5 +106,17 @@ export async function deleteDoctor(doctorId: string) {
     } catch (error) {
         console.error("Error deleting doctor:", error);
         return { success: false, error: "Failed to delete doctor" };
+    }
+}
+
+export async function getClinicsForSelect() {
+    try {
+        return await prisma.clinic.findMany({
+            select: { id: true, name: true },
+            orderBy: { name: 'asc' }
+        });
+    } catch (error) {
+        console.error("Error fetching clinics:", error);
+        return [];
     }
 }

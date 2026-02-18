@@ -26,7 +26,9 @@ export default async function DashboardPage() {
 
     const notifications = await getUserNotifications(5); // Fetch latest 5 for dashboard
 
-    if (!user) return <div>User not found</div>;
+    if (!user) {
+        redirect('/login');
+    }
 
     return (
         <div className="bg-gray-50 min-h-screen pb-24">

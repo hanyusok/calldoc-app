@@ -39,7 +39,7 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
                         <p className="text-primary-600 font-medium">{doctor.specialty}</p>
                         <div className="flex items-center gap-1 mt-2 text-gray-500 text-sm">
                             <MapPin size={14} />
-                            <span>{doctor.hospital}</span>
+                            <span>{doctor.clinic?.name || 'Unknown Clinic'}</span>
                         </div>
                     </div>
 
