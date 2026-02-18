@@ -27,20 +27,36 @@ const handleCallback = async (req: NextRequest) => {
 
         let data: any = {};
 
-        // 1. Parse Data (GET vs POST)
+        // 1. Parse Data (GET vs POST) with EUC-KR support
         if (method === 'GET') {
             const { searchParams } = new URL(req.url);
             searchParams.forEach((value, key) => {
                 data[key] = value;
             });
         } else {
-            // POST
+            // POST - Handle EUC-KR Encoding specifically for Kiwoom
             const contentType = req.headers.get("content-type") || "";
+            const buffer = await req.arrayBuffer();
+            const iconv = require('iconv-lite');
+
+            // Try decoding as EUC-KR first which is standard for Kiwoom
+            const decodedBody = iconv.decode(Buffer.from(buffer), 'euc-kr');
+            console.log("Raw Body (EUC-KR Decoded):", decodedBody);
+
             if (contentType.includes("application/json")) {
-                data = await req.json();
+                try {
+                    data = JSON.parse(decodedBody);
+                } catch (e) {
+                    // Fallback to UTF-8 if JSON parse fails
+                    console.log("JSON parse failed with EUC-KR, trying UTF-8");
+                    const utf8Body = new TextDecoder().decode(buffer);
+                    data = JSON.parse(utf8Body);
+                }
             } else {
-                const formData = await req.formData();
-                formData.forEach((value, key) => {
+                // Form Data parsing from decoded string
+                // URLSearchParams can parse the decoded string
+                const params = new URLSearchParams(decodedBody);
+                params.forEach((value, key) => {
                     data[key] = value;
                 });
             }

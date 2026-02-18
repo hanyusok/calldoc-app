@@ -8,7 +8,7 @@ import { authConfig } from "./auth.config"
 import { z } from "zod"
 import bcrypt from "bcryptjs"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const config = {
     adapter: PrismaAdapter(prisma),
     // Actually, for Edge compatibility, middleware should use authConfig.
     // auth.ts uses the adapter.
@@ -95,4 +95,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return session;
         }
     }
-})
+}
+
+export const { handlers, auth, signIn, signOut } = NextAuth(config)

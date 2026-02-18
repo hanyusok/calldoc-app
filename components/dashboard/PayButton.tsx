@@ -85,11 +85,17 @@ export default function PayButton({ appointmentId, price }: PayButtonProps) {
             const baseUrl = window.location.origin;
             const successUrl = `${baseUrl}/${locale}/payment/success?orderId=${paymentId}&amount=${amount}`;
             const failUrl = `${baseUrl}/${locale}/payment/fail`;
+            // Add notification URL for server-to-server callback
+            const notificationUrl = `${baseUrl}/api/payment/callback`;
 
-            addField("ReturnUrl", successUrl);
+            addField("ReturnUrl", successUrl); // Client redirect
             addField("Ret_URL", successUrl);
             addField("HOMEURL", successUrl);
             addField("StopUrl", failUrl);
+
+            // Critical for server update:
+            addField("NotificationURL", notificationUrl);
+            addField("NotiUrl", notificationUrl); // Alternate name sometimes used
 
             document.body.appendChild(form);
             form.submit();
