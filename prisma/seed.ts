@@ -210,6 +210,72 @@ async function main() {
         }
     }
 
+    // 4. Seed Posts
+    const postsData = [
+        {
+            title: "겨울철 독감 예방 가이드",
+            content: "겨울철 독감을 예방하기 위해서는 손 씻기와 마스크 착용이 필수입니다...",
+            imageUrl: "https://images.unsplash.com/photo-1584634731339-252c581abfc5?auto=format&fit=crop&q=80&w=1000",
+            category: "건강 정보",
+            author: "Dr. Kim",
+            locale: "ko"
+        },
+        {
+            title: "Flu Prevention Guide",
+            content: "To prevent flu in winter, washing hands and wearing masks are essential...",
+            imageUrl: "https://images.unsplash.com/photo-1584634731339-252c581abfc5?auto=format&fit=crop&q=80&w=1000",
+            category: "Health Tips",
+            author: "Dr. Kim",
+            locale: "en"
+        },
+        {
+            title: "스트레스 관리법",
+            content: "현대인의 만성 질환, 스트레스를 관리하는 5가지 방법을 소개합니다.",
+            imageUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1000",
+            category: "정신 건강",
+            author: "Dr. Lee",
+            locale: "ko"
+        },
+        {
+            title: "Stress Management Tips",
+            content: "Here are 5 ways to manage stress, the chronic disease of modern people.",
+            imageUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1000",
+            category: "Mental Health",
+            author: "Dr. Lee",
+            locale: "en"
+        },
+        {
+            title: "올바른 영양제 섭취법",
+            content: "영양제, 언제 어떻게 먹어야 가장 효과적일까요?",
+            imageUrl: "https://images.unsplash.com/photo-1512069772995-ec65ed45afd0?auto=format&fit=crop&q=80&w=1000",
+            category: "영양 관리",
+            author: "Dr. Park",
+            locale: "ko"
+        },
+        {
+            title: "How to Take Supplements Correctly",
+            content: "When and how should you take supplements for maximum effect?",
+            imageUrl: "https://images.unsplash.com/photo-1512069772995-ec65ed45afd0?auto=format&fit=crop&q=80&w=1000",
+            category: "Nutrition",
+            author: "Dr. Park",
+            locale: "en"
+        }
+    ];
+
+    for (const post of postsData) {
+        // Check duplication by title AND locale
+        const existingPost = await prisma.post.findFirst({
+            where: {
+                title: post.title,
+                locale: post.locale
+            }
+        });
+
+        if (!existingPost) {
+            await prisma.post.create({ data: post });
+        }
+    }
+
     console.log('Seeding finished.')
 }
 

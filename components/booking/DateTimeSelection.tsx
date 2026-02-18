@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-import { getAvailableSlots } from '@/app/actions/doctor-availability';
+import { getAvailableSlots } from '@/app/actions/doctor';
 
 export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
     const router = useRouter();

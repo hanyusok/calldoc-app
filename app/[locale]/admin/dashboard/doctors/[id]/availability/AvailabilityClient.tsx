@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { updateDoctorSchedule, createDoctorException, deleteDoctorException, getAvailableSlots } from "@/app/actions/doctor-availability";
+import { updateDoctorSchedule, createDoctorException, deleteDoctorException, getAvailableSlots } from "@/app/actions/doctor";
 import { Calendar, Clock, Plus, Trash2 } from "lucide-react";
 
 const DAYS_OF_WEEK = [0, 1, 2, 3, 4, 5, 6]; // Sunday to Saturday

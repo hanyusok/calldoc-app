@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { checkNewPaidAppointments } from '@/app/actions/payment-admin';
+import { checkNewPaidAppointments } from '@/app/actions/payment';
 import { useRouter } from 'next/navigation';
 import { Bell, CheckCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';

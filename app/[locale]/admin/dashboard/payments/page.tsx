@@ -1,4 +1,4 @@
-import { getAdminPayments } from "@/app/actions/payment-admin";
+import { getAdminPayments } from "@/app/actions/payment";
 import PaymentsClient from "./PaymentsClient";
 
 export default async function PaymentsPage({
