@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import AppointmentActions from './AppointmentActions';
+import AppointmentTimeline from './AppointmentTimeline';
 import MeetManager from '@/components/admin/appointments/MeetManager';
 import PrescriptionManager from '@/components/admin/appointments/PrescriptionManager';
 import PriceManager from '@/components/admin/appointments/PriceManager';
@@ -73,6 +74,12 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
             {expanded && (
                 <tr className="bg-gray-50/50">
                     <td colSpan={6} className="p-4 border-t border-gray-100">
+                        {/* Timeline Visualization */}
+                        <div className="mb-6 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                            <h4 className="text-sm font-bold text-gray-900 mb-2">{tDash('timeline_title') || 'Appointment Timeline'}</h4>
+                            <AppointmentTimeline appointment={appointment} />
+                        </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Price Manager for PENDING */}
                             {appointment.status === 'PENDING' && (

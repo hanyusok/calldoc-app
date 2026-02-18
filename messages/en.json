@@ -265,6 +265,7 @@
             "welcome": "Welcome, {name}",
             "search_placeholder": "Search patients, doctors...",
             "new_appointment": "New Appointment",
+            "timeline_title": "Appointment Timeline",
             "all_status": "All Status",
             "empty_state": "No appointments found.",
             "table": {
@@ -659,6 +660,14 @@
             },
             "confirm_delete": "Are you sure you want to delete this post?",
             "update_error": "Failed to update status"
+        },
+        "timeline": {
+            "requested": "Requested",
+            "price_set": "Price Set",
+            "paid": "Paid",
+            "consultation": "Consulted",
+            "script_requested": "Script Req.",
+            "faxed": "Faxed"
         }
     },
     "PharmacySelector": {

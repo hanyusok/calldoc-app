@@ -265,6 +265,7 @@
             "welcome": "{name}님 환영합니다",
             "search_placeholder": "환자, 의사 검색...",
             "new_appointment": "새 예약 생성",
+            "timeline_title": "진료 진행 현황",
             "all_status": "전체 상태",
             "empty_state": "예약이 없습니다.",
             "table": {
@@ -659,6 +660,14 @@
             },
             "confirm_delete": "정말 이 게시글을 삭제하시겠습니까?",
             "update_error": "상태 업데이트 실패"
+        },
+        "timeline": {
+            "requested": "예약 요청",
+            "price_set": "가격 확정",
+            "paid": "결제 완료",
+            "consultation": "진료 완료",
+            "script_requested": "처방 요청",
+            "faxed": "팩스 전송"
         }
     },
     "PharmacySelector": {

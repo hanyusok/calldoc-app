@@ -343,12 +343,14 @@ export async function cancelPayment(paymentId: string, reason: string, cancelAmo
         };
 
         const iconv = require('iconv-lite');
+        const jsonPayload = JSON.stringify(payload);
         // Encode payload to EUC-KR for both requests
-        const eucKrPayload = iconv.encode(JSON.stringify(payload), 'euc-kr');
+        const eucKrPayload = iconv.encode(jsonPayload, 'euc-kr');
 
         // Step 1: Ready Request
         const readyUrl = "https://apitest.kiwoompay.co.kr/pay/ready";
-        console.log("Kiwoom Cancel Ready Payload (JSON):", JSON.stringify(payload));
+        console.log("Kiwoom Cancel Ready Payload (JSON):", jsonPayload);
+        console.log("Kiwoom Cancel Ready Payload (EUC-KR Hex):", eucKrPayload.toString('hex'));
 
         const readyRes = await fetch(readyUrl, {
             method: "POST",
@@ -360,19 +362,22 @@ export async function cancelPayment(paymentId: string, reason: string, cancelAmo
         });
 
         if (!readyRes.ok) {
+            const errorText = await readyRes.text();
+            console.error(`Kiwoom Ready API Failed: ${readyRes.status} ${readyRes.statusText}`, errorText);
             throw new Error(`Kiwoom Ready API Failed: ${readyRes.status}`);
         }
 
         // Decode Ready Response
         const readyBuffer = await readyRes.arrayBuffer();
         const readyDecoded = iconv.decode(Buffer.from(readyBuffer), 'euc-kr');
+        console.log("Kiwoom Ready Response (Decoded):", readyDecoded);
         const readyData = JSON.parse(readyDecoded);
 
-        console.log("Kiwoom Ready Response:", readyData);
+        // console.log("Kiwoom Ready Response:", readyData); // Removed duplicate log
         const { TOKEN, RETURNURL } = readyData;
 
         if (!TOKEN || !RETURNURL) {
-            console.error("Kiwoom Cancel Ready Failed", readyData);
+            console.error("Kiwoom Cancel Ready Failed: Missing TOKEN or RETURNURL", readyData);
             return { success: false, error: "Failed to initialize cancellation" };
         }
 
@@ -390,14 +395,17 @@ export async function cancelPayment(paymentId: string, reason: string, cancelAmo
         });
 
         if (!finalRes.ok) {
+            const errorText = await finalRes.text();
+            console.error(`Kiwoom Final API Failed: ${finalRes.status} ${finalRes.statusText}`, errorText);
             throw new Error(`Kiwoom Final API Failed: ${finalRes.status}`);
         }
 
         // Decode Final Response
         const finalBuffer = await finalRes.arrayBuffer();
         const finalDecoded = iconv.decode(Buffer.from(finalBuffer), 'euc-kr');
+        console.log("Kiwoom Cancel Result (Decoded):", finalDecoded);
         const finalData = JSON.parse(finalDecoded);
-        console.log("Kiwoom Cancel Result:", finalData);
+        // console.log("Kiwoom Cancel Result:", finalData); // Removed duplicate log
 
         // Check RESULTCODE
         if (finalData.RESULTCODE === "0000") {
@@ -405,11 +413,12 @@ export async function cancelPayment(paymentId: string, reason: string, cancelAmo
             await processCancellationSuccess(paymentId, undefined, requestAmount);
             return { success: true }
         } else {
+            console.error("Kiwoom Cancellation Failed:", finalData.ERRORMESSAGE);
             return { success: false, error: finalData.ERRORMESSAGE || "Cancellation Failed" }
         }
 
     } catch (error: any) {
         console.error("Cancel Payment Error:", error);
-        return { success: false, error: "Internal Server Error" };
+        return { success: false, error: error.message || "Internal Server Error" };
     }
 }

@@ -122,6 +122,12 @@ export async function sendFax(formData: FormData) {
             return { error: `Fax Failed with Code: ${result}` };
         }
 
+        // Update Prescription Status
+        await prisma.prescription.update({
+            where: { id: prescriptionId },
+            data: { status: 'ISSUED' } // or 'SENT' if added to enum. Using ISSUED for now as it means "Done"
+        });
+
         // Notify Success
         await createNotification({
             userId: prescription.appointment.userId,
