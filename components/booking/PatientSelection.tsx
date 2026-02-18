@@ -31,6 +31,7 @@ export default function PatientSelection({ user, doctorId }: PatientSelectionPro
     const t = useTranslations('BookingPatient');
     const [selectedPatientId, setSelectedPatientId] = useState<string>(user.id);
     const [patientType, setPatientType] = useState<'myself' | 'family'>('myself');
+    const [symptoms, setSymptoms] = useState("");
 
     const handleSelect = (id: string, type: 'myself' | 'family') => {
         setSelectedPatientId(id);
@@ -42,6 +43,9 @@ export default function PatientSelection({ user, doctorId }: PatientSelectionPro
         const params = new URLSearchParams(searchParams.toString());
         params.set('patientId', selectedPatientId);
         params.set('patientType', patientType);
+        if (symptoms) {
+            params.set('symptoms', symptoms);
+        }
 
         // If family member, we might want their name too for easier display later
         if (patientType === 'family') {
@@ -129,6 +133,20 @@ export default function PatientSelection({ user, doctorId }: PatientSelectionPro
                         </div>
                     ))
                 )}
+            </div>
+
+            {/* Symptom Memo */}
+            <div className="pt-2">
+                <h3 className="text-sm font-bold text-gray-800 mb-2">
+                    {t('symptoms_memo') || "Symptoms / Reason for visit"}
+                </h3>
+                <textarea
+                    className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-sm"
+                    rows={3}
+                    placeholder={t('symptoms_placeholder') || "Please describe your symptoms or reason for visit..."}
+                    value={symptoms}
+                    onChange={(e) => setSymptoms(e.target.value)}
+                />
             </div>
 
             {/* Next Button */}

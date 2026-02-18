@@ -23,6 +23,7 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar }: AdminSideba
         { href: "/admin/dashboard/patients", label: t('patients'), icon: Users },
         { href: "/admin/dashboard/appointments", label: t('appointments'), icon: Calendar },
         { href: "/admin/dashboard/payments", label: t('payments'), icon: CreditCard },
+        { href: "/admin/dashboard/clinics", label: t('clinics') || "Clinics", icon: Building2 }, // Fallback label if translation missing
         { href: "/admin/dashboard/pharmacies", label: t('pharmacies'), icon: Building2 },
         { href: "/admin/dashboard/vaccinations", label: t('vaccinations'), icon: Syringe },
         { href: "/admin/dashboard/posts", label: t('posts'), icon: FileText },

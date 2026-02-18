@@ -8,6 +8,28 @@ const prisma = new PrismaClient()
 async function main() {
     console.log('Start seeding ...')
 
+    // 0. Seed Admin User
+    const adminEmail = 'admin@test.com';
+    const adminPassword = await bcrypt.hash('password', 10);
+
+    await prisma.user.upsert({
+        where: { email: adminEmail },
+        update: {
+            role: Role.ADMIN, // Ensure role is ADMIN if user exists
+        },
+        create: {
+            email: adminEmail,
+            name: 'Admin User',
+            password: adminPassword,
+            role: Role.ADMIN,
+            phoneNumber: '010-0000-0000',
+            residentNumber: '800101-1000000',
+            age: 40,
+            gender: 'male',
+            emailVerified: new Date(),
+        }
+    });
+
     // 1. Seed Test User (Patient)
     const email = 'test@test.com';
     const hashedPassword = await bcrypt.hash('password', 10);

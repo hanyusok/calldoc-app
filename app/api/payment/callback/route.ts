@@ -65,7 +65,8 @@ const handleCallback = async (req: NextRequest) => {
 
             if (payment) {
                 const { processCancellationSuccess } = await import("@/app/actions/payment");
-                await processCancellationSuccess(payment.id, DAOUTRX);
+                const amountInt = parseInt(AMOUNT || "0");
+                await processCancellationSuccess(payment.id, DAOUTRX, amountInt > 0 ? amountInt : undefined);
 
                 return new NextResponse("OK", { status: 200 });
             } else {

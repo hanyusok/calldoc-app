@@ -181,10 +181,10 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
 }
 
 // Helper for consistent cancellation processing (used by Action and Callback)
-export async function processCancellationSuccess(paymentId: string, paymentKey?: string) {
-    console.log(`Processing cancellation success for payment ${paymentId}`);
+export async function processCancellationSuccess(paymentId: string, paymentKey?: string, cancelAmount?: number) {
+    console.log(`Processing cancellation success for payment ${paymentId}, amount: ${cancelAmount}`);
 
-    // Fetch payment to get appointmentId
+    // Fetch payment to get details
     const payment = await prisma.payment.findUnique({
         where: { id: paymentId },
         include: {
@@ -198,18 +198,49 @@ export async function processCancellationSuccess(paymentId: string, paymentKey?:
         throw new Error(`Payment ${paymentId} not found during cancellation processing`);
     }
 
+    const currentRefunded = payment.refundedAmount || 0;
+    const refundAmount = cancelAmount || payment.amount; // Default to full if not specified
+
+    // Idempotency: If already fully refunded, don't process again (especially for callbacks)
+    if (currentRefunded >= payment.amount) {
+        console.log(`Payment ${paymentId} already fully refunded. Skipping update.`);
+        return { success: true };
+    }
+
+    // Cap the new refund amount at the total payment amount to prevent over-refund
+    let newRefundedTotal = currentRefunded + refundAmount;
+    if (newRefundedTotal > payment.amount) {
+        console.warn(`Refund amount exceeds total. Capping at full amount. (${newRefundedTotal} > ${payment.amount})`);
+        newRefundedTotal = payment.amount;
+    }
+
+    // Determine if fully cancelled
+    // Allow for small floating point errors if needed, but we use integer logic mostly
+    const isFullyRefunded = newRefundedTotal >= payment.amount;
+
+    // Status update logic:
+    // If fully refunded -> CANCELLED
+    // If partially -> keep COMPLETED but update refunded amount (or add PARTIAL_REFUNDED status if schema supported)
+    // For now, let's keep it simple: if fully refunded, mark CANCELLED.
+    const newStatus = isFullyRefunded ? 'CANCELLED' : 'COMPLETED';
+    const apptStatus = isFullyRefunded ? 'CANCELLED' : 'CONFIRMED'; // Keep appt confirmed if partial?
+
     await prisma.$transaction([
         prisma.payment.update({
             where: { id: paymentId },
             data: {
-                status: 'CANCELLED', // Note: Using CANCELLED to match typical status
+                status: newStatus,
+                refundedAmount: newRefundedTotal,
                 ...(paymentKey ? { paymentKey } : {})
             }
         }),
-        prisma.appointment.update({
-            where: { id: payment.appointmentId },
-            data: { status: 'CANCELLED' }
-        })
+        // Only cancel appointment if full refund
+        ...(isFullyRefunded ? [
+            prisma.appointment.update({
+                where: { id: payment.appointmentId },
+                data: { status: apptStatus }
+            })
+        ] : [])
     ]);
 
     // Notify the Patient User
@@ -218,8 +249,11 @@ export async function processCancellationSuccess(paymentId: string, paymentKey?:
             await createNotification({
                 userId: payment.appointment.userId,
                 type: 'PAYMENT_CANCELLED',
-                message: `Your payment has been cancelled and refunded.`,
-                key: 'Notifications.payment_cancelled',
+                message: isFullyRefunded
+                    ? `Your payment has been fully cancelled and refunded.`
+                    : `A partial refund of ${refundAmount.toLocaleString()} KRW has been processed.`,
+                key: isFullyRefunded ? 'Notifications.payment_cancelled' : 'Notifications.payment_partially_refunded',
+                params: isFullyRefunded ? undefined : { amount: refundAmount.toLocaleString() },
                 link: `/myappointment`
             });
         }
@@ -235,9 +269,12 @@ export async function processCancellationSuccess(paymentId: string, paymentKey?:
     return { success: true };
 }
 
-export async function cancelPayment(paymentId: string, reason: string) {
+export async function cancelPayment(paymentId: string, reason: string, cancelAmount?: number) {
     const session = await auth();
+    console.log("cancelPayment session:", JSON.stringify(session, null, 2));
+
     if (!session?.user || (session.user as any).role !== 'ADMIN') {
+        console.log("cancelPayment Unauthorized: Role is", (session?.user as any)?.role);
         return { success: false, error: "Unauthorized" }
     }
 
@@ -249,7 +286,26 @@ export async function cancelPayment(paymentId: string, reason: string) {
         return { success: false, error: "Payment not found" }
     }
 
-    // Kiwoom Pay Cancellation Logic
+    // Special handling for PENDING payments (void/cancel without PG refund)
+    if (payment.status === 'PENDING') {
+        console.log(`Cancelling PENDING payment ${paymentId} (Void)`);
+
+        await prisma.$transaction([
+            prisma.payment.update({
+                where: { id: paymentId },
+                data: { status: 'CANCELLED' }
+            }),
+            prisma.appointment.update({
+                where: { id: payment.appointmentId },
+                data: { status: 'CANCELLED' }
+            })
+        ]);
+
+        revalidatePath('/admin/dashboard');
+        return { success: true };
+    }
+
+    // Kiwoom Pay Cancellation Logic (for COMPLETED payments)
     const KIWOOM_MID = process.env.NEXT_PUBLIC_KIWOOM_MID;
     const AUTH_KEY = process.env.KIWOOM_AUTH_KEY; // Secret Key
 
@@ -257,10 +313,21 @@ export async function cancelPayment(paymentId: string, reason: string) {
         return { success: false, error: "NO_PAYMENT_KEY" }
     }
 
+    const currentRefunded = payment.refundedAmount || 0;
+    const refundableAmount = payment.amount - currentRefunded;
+    const requestAmount = cancelAmount || refundableAmount;
+
+    if (requestAmount > refundableAmount) {
+        return { success: false, error: "REFUND_AMOUNT_EXCEEDS_LIMIT" };
+    }
+    if (requestAmount <= 0) {
+        return { success: false, error: "INVALID_REFUND_AMOUNT" };
+    }
+
     // Bypass Kiwoom API for simulated test transactions
     if (payment.paymentKey.startsWith("TX_SIM_")) {
         console.log("Simulated payment cancellation - bypassing gateway");
-        await processCancellationSuccess(paymentId, payment.paymentKey);
+        await processCancellationSuccess(paymentId, payment.paymentKey, requestAmount);
         return { success: true };
     }
 
@@ -268,7 +335,7 @@ export async function cancelPayment(paymentId: string, reason: string) {
         const payload = {
             CPID: KIWOOM_MID,
             PAYMETHOD: "CARD", // Assuming Card for now, in real app might need dynamic method
-            AMOUNT: payment.amount.toString(),
+            AMOUNT: requestAmount.toString(),
             CANCELREQ: "Y",
             TRXID: payment.paymentKey,
             CANCELREASON: reason,
@@ -296,7 +363,11 @@ export async function cancelPayment(paymentId: string, reason: string) {
             throw new Error(`Kiwoom Ready API Failed: ${readyRes.status}`);
         }
 
-        const readyData = await readyRes.json();
+        // Decode Ready Response
+        const readyBuffer = await readyRes.arrayBuffer();
+        const readyDecoded = iconv.decode(Buffer.from(readyBuffer), 'euc-kr');
+        const readyData = JSON.parse(readyDecoded);
+
         console.log("Kiwoom Ready Response:", readyData);
         const { TOKEN, RETURNURL } = readyData;
 
@@ -322,13 +393,16 @@ export async function cancelPayment(paymentId: string, reason: string) {
             throw new Error(`Kiwoom Final API Failed: ${finalRes.status}`);
         }
 
-        const finalData = await finalRes.json();
+        // Decode Final Response
+        const finalBuffer = await finalRes.arrayBuffer();
+        const finalDecoded = iconv.decode(Buffer.from(finalBuffer), 'euc-kr');
+        const finalData = JSON.parse(finalDecoded);
         console.log("Kiwoom Cancel Result:", finalData);
 
         // Check RESULTCODE
         if (finalData.RESULTCODE === "0000") {
             // Success - Use shared helper
-            await processCancellationSuccess(paymentId);
+            await processCancellationSuccess(paymentId, undefined, requestAmount);
             return { success: true }
         } else {
             return { success: false, error: finalData.ERRORMESSAGE || "Cancellation Failed" }

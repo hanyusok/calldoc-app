@@ -233,6 +233,7 @@
             "appointments": "예약 관리",
             "patients": "환자 관리",
             "pharmacies": "약국 관리",
+            "clinics": "병원 관리",
             "doctors": "의사 관리",
             "vaccinations": "예방접종 관리",
             "posts": "게시글 관리",
@@ -510,11 +511,27 @@
             },
             "empty": "결제 내역이 없습니다.",
             "actions": {
-                "cancel": "결제 취소",
+                "cancel": "취소/환불",
                 "cancelConfirm": "정말 이 결제를 취소하시겠습니까? 결제 금액이 환불됩니다.",
                 "cancelSuccess": "결제가 성공적으로 취소되었습니다.",
                 "cancelFailed": "취소 실패: ",
-                "error": "오류가 발생했습니다."
+                "error": "오류가 발생했습니다.",
+                "cancelPayment": "결제 취소",
+                "totalAmount": "총 결제 금액",
+                "refundedAmount": "환불된 금액",
+                "refundableAmount": "환불 가능 금액",
+                "fullRefund": "전액 환불",
+                "partialRefund": "부분 환불",
+                "refundAmount": "환불 금액",
+                "invalidAmount": "올바른 금액을 입력해주세요",
+                "exceedsAmount": "환불 가능 금액을 초과했습니다",
+                "partialCancelConfirm": "{amount}원을 환불하시겠습니까?",
+                "confirmRefund": "환불 확정",
+                "processing": "처리 중...",
+                "cancelPendingTitle": "대기 결제 취소",
+                "cancelPendingDescription": "아직 결제가 완료되지 않은 건입니다. 취소 시 결제 내역이 무효화되고 예약이 취소됩니다.",
+                "cancelPendingConfirm": "정말 이 대기 중인 결제와 예약을 취소하시겠습니까?",
+                "confirmCancel": "취소 확정"
             },
             "pagination": {
                 "showing": "표시 중",
@@ -652,6 +669,52 @@
         "loading": "로딩 중...",
         "no_results": "검색된 약국이 없습니다"
     },
+    "Clinics": {
+        "title": "병원 관리",
+        "add_new": "새 병원 추가",
+        "search_placeholder": "병원 검색...",
+        "no_clinics": "병원이 없습니다",
+        "table": {
+            "name": "병원명",
+            "address": "주소",
+            "phone": "전화번호",
+            "visibility": "노출 여부",
+            "actions": "관리"
+        },
+        "form": {
+            "edit_title": "병원 정보 수정",
+            "new_title": "새 병원 등록",
+            "name": "병원명",
+            "address": "주소",
+            "city": "도시",
+            "phone": "전화번호",
+            "description": "설명",
+            "image_url": "이미지 URL",
+            "rating": "평점 (0-5)",
+            "visible": "공개 여부",
+            "cancel": "취소",
+            "save": "저장",
+            "saving": "저장 중..."
+        },
+        "alerts": {
+            "create_success": "병원이 성공적으로 생성되었습니다",
+            "create_error": "병원 생성 중 오류가 발생했습니다",
+            "update_success": "병원이 성공적으로 수정되었습니다",
+            "update_error": "병원 수정 중 오류가 발생했습니다",
+            "delete_confirm": "정말로 이 병원을 삭제하시겠습니까?",
+            "delete_success": "병원이 성공적으로 삭제되었습니다",
+            "delete_error": "병원 삭제 중 오류가 발생했습니다",
+            "visibility_error": "공개 상태 변경 실패",
+            "error": "오류가 발생했습니다"
+        },
+        "pagination": {
+            "showing": "표시 중",
+            "of": "/",
+            "page": "페이지",
+            "previous": "이전",
+            "next": "다음"
+        }
+    },
     "BookingPatient": {
         "title": "환자 선택",
         "step": "2 / 3 단계",
@@ -659,12 +722,15 @@
         "family_members": "가족 구성원",
         "add_new": "가족 추가",
         "no_family": "등록된 가족이 없습니다.",
+        "symptoms_memo": "증상 / 방문 사유",
+        "symptoms_placeholder": "증상이나 방문 사유를 자세히 적어주세요...",
         "review_confirm": "예약 확인"
     },
     "BookingReview": {
         "title": "예약 확인",
         "step": "3 / 3 단계",
         "appointment_details": "예약 상세 정보",
+        "symptoms_memo": "증상 / 방문 사유",
         "date_time": "날짜 및 시간",
         "patient": "환자",
         "self": "본인",
@@ -693,7 +759,8 @@
         "meet_ready": "화상 진료 준비 완료",
         "pharmacy_updated": "약국이 {name}(으)로 변경되었습니다",
         "fax_sent": "{name}님에게 팩스가 발송되었습니다.",
-        "fax_failed": "팩스 전송에 실패했습니다. 코드: {error}"
+        "fax_failed": "팩스 전송에 실패했습니다. 코드: {error}",
+        "no_notifications": "새로운 알림이 없습니다"
     },
     "PaymentSuccess": {
         "title": "결제 성공!",

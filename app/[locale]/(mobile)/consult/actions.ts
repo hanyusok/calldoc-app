@@ -23,8 +23,7 @@ export async function getDoctors({
             { specialty: { contains: query, mode: 'insensitive' } },
             // Search in Clinic name as well
             { clinic: { name: { contains: query, mode: 'insensitive' } } },
-            // Legacy fallback
-            { hospital: { contains: query, mode: 'insensitive' } },
+            // Legacy fallback removed
             { bio: { contains: query, mode: 'insensitive' } },
         ];
     }
@@ -155,6 +154,7 @@ export async function createAppointment(formData: FormData) {
     const patientId = formData.get('patientId') as string; // Can be userId or familyMemberId
     const dateStr = formData.get('date') as string;
     const timeStr = formData.get('time') as string;
+    const symptoms = formData.get('symptoms') as string;
 
     if (!userId || !doctorId || !dateStr || !timeStr) {
         throw new Error("Missing required fields");
@@ -184,6 +184,7 @@ export async function createAppointment(formData: FormData) {
             familyMemberId,
             date: date,
             status: "PENDING", // Wait for doctor to set price
+            symptoms: symptoms || null,
         },
         include: { user: true } // Include user to get name for notification
     });

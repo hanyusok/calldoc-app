@@ -102,13 +102,34 @@ export default function DoctorsClient({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // setLoading(true); // Loading state not strictly defined in this scope but used in button. Let's add it back if missing or just use local var? 
-        // usage suggests 'loading' state exists. checking state... yes it was removed in previous edit?
-        // Wait, loading state DECLARATION was removed in previous edit too? 
-        // Let's check the file content again.
-        // Line 24: const [doctors, setDoctors] = useState(initialDoctors);
-        // Line 25: // ... existing search logic ... -> THIS MIGHT HAVE REMOVED 'loading' state!
-        // I need to restore loading state too.
+        setLoading(true);
+
+        try {
+            if (isEditing && currentDoctor) {
+                const res = await updateDoctor(currentDoctor.id, formData);
+                if (res.success) {
+                    alert(t('save_success') || "Doctor saved successfully");
+                    router.refresh();
+                    closeModal();
+                } else {
+                    alert(t('save_error') || "Error saving doctor");
+                }
+            } else {
+                const res = await createDoctor(formData);
+                if (res.success) {
+                    alert(t('create_success') || "Doctor created successfully");
+                    router.refresh();
+                    closeModal();
+                } else {
+                    alert(t('create_error') || "Error creating doctor");
+                }
+            }
+        } catch (e) {
+            console.error(e);
+            alert(t('error') || "An error occurred");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Re-implementing with assumed state existence, but I better check if I need to restore state first.
@@ -149,7 +170,7 @@ export default function DoctorsClient({
                             <tr>
                                 <th className="p-4">{t('table.name')}</th>
                                 <th className="p-4">{t('table.specialty')}</th>
-                                <th className="p-4">{t('table.hospital')}</th> {/* Keeping translation key for 'Hospital/Clinic' header */}
+                                <th className="p-4">{t('table.hospital')}</th>
                                 <th className="p-4">{t('table.status')}</th>
                                 <th className="p-4 text-right">{t('table.actions')}</th>
                             </tr>

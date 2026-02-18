@@ -15,7 +15,7 @@ export default async function BookingReviewPage({
     searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
     const { id } = await params;
-    const { date, time, patientId, patientName, patientType } = await searchParams;
+    const { date, time, patientId, patientName, patientType, symptoms } = await searchParams;
     const doctor = await getDoctorById(id);
     const session = await auth();
     const t = await getTranslations('BookingReview');
@@ -106,6 +106,15 @@ export default async function BookingReviewPage({
                     </div>
                 </div>
 
+
+
+                {symptoms && (
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 className="font-bold text-gray-800 text-sm mb-2">{t('symptoms_memo') || "Symptoms / Reason for visit"}</h3>
+                        <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">{symptoms}</p>
+                    </div>
+                )}
+
                 {/* Payment Breakdown (Visual Only) */}
                 <div className="bg-white p-4 rounded-xl border border-gray-100">
                     <div className="flex justify-between items-center text-sm mb-2">
@@ -131,6 +140,7 @@ export default async function BookingReviewPage({
                     <input type="hidden" name="patientId" value={patientId} />
                     <input type="hidden" name="date" value={date} />
                     <input type="hidden" name="time" value={time} />
+                    <input type="hidden" name="symptoms" value={symptoms || ''} />
                     {/* Note: Schema might need a datetime, we'll combine them in the action */}
 
                     <button
@@ -141,6 +151,6 @@ export default async function BookingReviewPage({
                     </button>
                 </form>
             </div>
-        </div>
+        </div >
     );
 }
