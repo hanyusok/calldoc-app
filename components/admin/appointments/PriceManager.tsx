@@ -4,6 +4,7 @@ import { useState } from "react";
 import { updateAppointment } from "@/app/actions/appointment";
 import { Loader2, DollarSign, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { AppointmentStatus } from "@prisma/client";
 
 export default function PriceManager({
     appointmentId,
@@ -30,7 +31,7 @@ export default function PriceManager({
             // Updating price and setting status to AWAITING_PAYMENT
             await updateAppointment(appointmentId, {
                 price: Number(price),
-                status: 'AWAITING_PAYMENT'
+                status: AppointmentStatus.AWAITING_PAYMENT
             });
             alert(t('success_request'));
         } catch (error) {

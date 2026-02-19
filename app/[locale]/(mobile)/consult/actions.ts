@@ -2,6 +2,7 @@
 
 import { prisma } from "@/app/lib/prisma";
 import type { Doctor } from "@prisma/client";
+import { AppointmentStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
@@ -183,7 +184,7 @@ export async function createAppointment(formData: FormData) {
             doctorId,
             familyMemberId,
             date: date,
-            status: "PENDING", // Wait for doctor to set price
+            status: AppointmentStatus.PENDING, // Wait for doctor to set price,
             symptoms: symptoms || null,
         },
         include: { user: true } // Include user to get name for notification

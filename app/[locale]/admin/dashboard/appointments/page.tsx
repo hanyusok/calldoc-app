@@ -2,6 +2,7 @@ import { getAppointments } from '@/app/actions/appointment';
 import { getVaccinationReservations } from '@/app/actions/vaccination-booking';
 import AppointmentsClient from './AppointmentsClient';
 import PageContainer from '@/components/admin/shared/PageContainer';
+import { AppointmentStatus } from '@prisma/client';
 
 export default async function AppointmentsPage({
     searchParams,
@@ -15,7 +16,7 @@ export default async function AppointmentsPage({
     const tab = params?.tab || "consultations";
 
     const [consultData, vacData] = await Promise.all([
-        getAppointments(search, status, page, 10),
+        getAppointments(search, status as AppointmentStatus | "ALL", page, 10),
         getVaccinationReservations(search, status, page, 10)
     ]);
 

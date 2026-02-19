@@ -3,6 +3,7 @@
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth, config as authOptions } from "@/auth";
+import { AppointmentStatus } from "@prisma/client";
 // import { getServerSession } from "next-auth"; // Not available in v5 (beta)
 
 import { createMeeting } from "./meet";
@@ -123,7 +124,7 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
             prisma.appointment.update({
                 where: { id: payment.appointmentId },
                 data: {
-                    status: 'CONFIRMED',
+                    status: AppointmentStatus.CONFIRMED,
                     // Save meeting link atomically with confirmation
                     ...(meetingLink ? { meetingLink } : {})
                 }
@@ -224,7 +225,7 @@ export async function processCancellationSuccess(paymentId: string, paymentKey?:
     // If partially -> keep COMPLETED but update refunded amount (or add PARTIAL_REFUNDED status if schema supported)
     // For now, let's keep it simple: if fully refunded, mark CANCELLED.
     const newStatus = isFullyRefunded ? 'CANCELLED' : 'COMPLETED';
-    const apptStatus = isFullyRefunded ? 'CANCELLED' : 'CONFIRMED'; // Keep appt confirmed if partial?
+    const apptStatus = isFullyRefunded ? AppointmentStatus.CANCELLED : AppointmentStatus.CONFIRMED; // Keep appt confirmed if partial?
 
     await prisma.$transaction([
         prisma.payment.update({
@@ -307,7 +308,7 @@ export async function cancelPayment(paymentId: string, reason: string, cancelAmo
             }),
             prisma.appointment.update({
                 where: { id: payment.appointmentId },
-                data: { status: 'CANCELLED' }
+                data: { status: AppointmentStatus.CANCELLED }
             })
         ]);
 
@@ -476,7 +477,7 @@ export async function syncPaymentStatus(paymentId: string, manualPaymentKey?: st
         }),
         prisma.appointment.update({
             where: { id: payment.appointmentId },
-            data: { status: 'CONFIRMED' }
+            data: { status: AppointmentStatus.CONFIRMED }
         })
     ]);
 

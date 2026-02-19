@@ -2,6 +2,7 @@
 
 import { Check, Circle, Clock, ArrowRight } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
+import { AppointmentStatus } from '@prisma/client';
 
 interface AppointmentTimelineProps {
     appointment: any;
@@ -18,7 +19,7 @@ export default function AppointmentTimeline({ appointment }: AppointmentTimeline
             label: t('requested'),
             date: appointment.createdAt,
             isCompleted: true, // Always true if it exists
-            isCurrent: appointment.status === 'PENDING' && !appointment.price
+            isCurrent: appointment.status === AppointmentStatus.PENDING && !appointment.price
         },
         {
             id: 'price_set',
@@ -26,28 +27,28 @@ export default function AppointmentTimeline({ appointment }: AppointmentTimeline
             // We don't track exact "price set" date in schema, so use updatedAt/createdAt or infer
             date: appointment.price ? appointment.updatedAt : null,
             isCompleted: !!appointment.price && appointment.price > 0,
-            isCurrent: appointment.status === 'PENDING' || appointment.status === 'AWAITING_PAYMENT'
+            isCurrent: appointment.status === AppointmentStatus.PENDING || appointment.status === AppointmentStatus.AWAITING_PAYMENT
         },
         {
             id: 'paid',
             label: t('paid'),
             date: appointment.payment?.approvedAt || appointment.payment?.requestedAt,
             isCompleted: appointment.payment?.status === 'COMPLETED',
-            isCurrent: appointment.status === 'CONFIRMED'
+            isCurrent: appointment.status === AppointmentStatus.CONFIRMED
         },
         {
             id: 'consultation',
             label: t('consultation'),
             date: appointment.date,
-            isCompleted: ['COMPLETED', 'CONFIRMED'].includes(appointment.status) && new Date(appointment.date) < new Date(),
-            isCurrent: appointment.status === 'CONFIRMED' && new Date(appointment.date) >= new Date()
+            isCompleted: [AppointmentStatus.COMPLETED, AppointmentStatus.CONFIRMED].includes(appointment.status) && new Date(appointment.date) < new Date(),
+            isCurrent: appointment.status === AppointmentStatus.CONFIRMED && new Date(appointment.date) >= new Date()
         },
         {
             id: 'script_requested',
             label: t('script_requested'),
             date: appointment.prescription?.createdAt,
             isCompleted: !!appointment.prescription,
-            isCurrent: appointment.status === 'COMPLETED' && !appointment.prescription
+            isCurrent: appointment.status === AppointmentStatus.COMPLETED && !appointment.prescription
         },
         {
             id: 'faxed',

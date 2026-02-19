@@ -8,24 +8,25 @@ import PrescriptionManager from '@/components/admin/appointments/PrescriptionMan
 import PriceManager from '@/components/admin/appointments/PriceManager';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { AppointmentStatus } from '@prisma/client';
 
 function StatusBadge({ status }: { status: string }) {
     const t = useTranslations('Admin.status');
     const styles: Record<string, string> = {
-        PENDING: 'bg-amber-50 text-amber-700 border-amber-100',
-        AWAITING_PAYMENT: 'bg-blue-50 text-blue-700 border-blue-100',
-        CONFIRMED: 'bg-green-50 text-green-700 border-green-100',
-        COMPLETED: 'bg-gray-100 text-gray-700 border-gray-200',
-        CANCELLED: 'bg-red-50 text-red-700 border-red-100',
+        [AppointmentStatus.PENDING]: 'bg-amber-50 text-amber-700 border-amber-100',
+        [AppointmentStatus.AWAITING_PAYMENT]: 'bg-blue-50 text-blue-700 border-blue-100',
+        [AppointmentStatus.CONFIRMED]: 'bg-green-50 text-green-700 border-green-100',
+        [AppointmentStatus.COMPLETED]: 'bg-gray-100 text-gray-700 border-gray-200',
+        [AppointmentStatus.CANCELLED]: 'bg-red-50 text-red-700 border-red-100',
     };
 
     // Fallback if status key not found
-    const label = ['PENDING', 'AWAITING_PAYMENT', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].includes(status)
+    const label = Object.values(AppointmentStatus).includes(status as AppointmentStatus)
         ? t(status as any)
         : status;
 
     return (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium border ${styles[status] || styles.PENDING}`}>
+        <span className={`px-2 py-1 rounded-full text-xs font-medium border ${styles[status] || styles[AppointmentStatus.PENDING]}`}>
             {label}
         </span>
     );

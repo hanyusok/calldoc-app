@@ -178,13 +178,21 @@ model DoctorException {
   @@unique([doctorId, date])
 }
 
+enum AppointmentStatus {
+  PENDING
+  AWAITING_PAYMENT
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
 model Appointment {
   id            String   @id @default(cuid())
   userId        String
   doctorId      String
   familyMemberId String?
   date          DateTime
-  status        String   @default("PENDING") // PENDING, AWAITING_PAYMENT, CONFIRMED, COMPLETED, CANCELLED
+  status        AppointmentStatus @default(PENDING)
   price         Float?
   meetingLink   String?
   symptoms      String?

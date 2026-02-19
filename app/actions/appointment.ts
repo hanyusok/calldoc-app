@@ -2,8 +2,9 @@
 
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { AppointmentStatus } from "@prisma/client";
 
-export async function getAppointments(search?: string, status?: string, page = 1, limit = 10) {
+export async function getAppointments(search?: string, status?: AppointmentStatus | 'ALL', page = 1, limit = 10) {
     try {
         const skip = (page - 1) * limit;
         const whereClause: any = {};
@@ -58,7 +59,7 @@ export async function createAppointment(data: {
     userId: string;
     doctorId: string;
     date: Date;
-    status?: string;
+    status?: AppointmentStatus;
     price?: number;
 }) {
     try {
@@ -67,7 +68,7 @@ export async function createAppointment(data: {
                 userId: data.userId,
                 doctorId: data.doctorId,
                 date: data.date,
-                status: data.status || 'PENDING',
+                status: data.status || AppointmentStatus.PENDING,
                 price: data.price,
             },
         });
@@ -81,13 +82,13 @@ export async function createAppointment(data: {
 
 export async function updateAppointment(id: string, data: {
     date?: Date;
-    status?: string;
+    status?: AppointmentStatus;
     price?: number;
 }) {
     try {
         // If price is being set and status is PENDING, auto-promote to AWAITING_PAYMENT
-        if (data.price && data.price > 0 && data.status === 'PENDING') {
-            data.status = 'AWAITING_PAYMENT';
+        if (data.price && data.price > 0 && (!data.status || data.status === AppointmentStatus.PENDING)) {
+            data.status = AppointmentStatus.AWAITING_PAYMENT;
         }
 
         const appointment = await prisma.appointment.update({
@@ -124,7 +125,7 @@ export async function completeAppointment(id: string) {
     try {
         const appointment = await prisma.appointment.update({
             where: { id },
-            data: { status: 'COMPLETED' },
+            data: { status: AppointmentStatus.COMPLETED },
             include: { doctor: true, user: true }
         });
 

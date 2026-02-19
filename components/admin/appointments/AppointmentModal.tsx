@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import { X, Save, Trash2, Plus } from 'lucide-react';
 import { createAppointment, updateAppointment, deleteAppointment, getUsersAndDoctors } from '@/app/actions/appointment';
+import { AppointmentStatus } from '@prisma/client';
 
 interface Appointment {
     id: string;
     userId: string;
     doctorId: string;
     date: Date | string;
-    status: string;
+    status: AppointmentStatus;
     price: number | null;
 }
 
@@ -22,7 +23,7 @@ interface Props {
 export default function AppointmentModal({ appointment: initialData, onClose, isOpen }: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState<Partial<Appointment>>({
-        status: 'PENDING',
+        status: AppointmentStatus.PENDING,
         date: new Date().toISOString().slice(0, 16),
         price: 0,
     });
@@ -43,7 +44,7 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
                 });
             } else {
                 setFormData({
-                    status: 'PENDING',
+                    status: AppointmentStatus.PENDING,
                     date: new Date().toISOString().slice(0, 16),
                     price: 0,
                 });
@@ -165,7 +166,7 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
                             <select
                                 className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                 value={formData.status}
-                                onChange={e => setFormData({ ...formData, status: e.target.value })}
+                                onChange={e => setFormData({ ...formData, status: e.target.value as AppointmentStatus })}
                             >
                                 <option value="PENDING">Pending</option>
                                 <option value="AWAITING_PAYMENT">Awaiting Payment</option>
@@ -184,8 +185,8 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
                                 onChange={e => {
                                     const val = parseFloat(e.target.value);
                                     let newStatus = formData.status;
-                                    if (val > 0 && formData.status === 'PENDING') {
-                                        newStatus = 'AWAITING_PAYMENT';
+                                    if (val > 0 && formData.status === AppointmentStatus.PENDING) {
+                                        newStatus = AppointmentStatus.AWAITING_PAYMENT;
                                     }
                                     setFormData({ ...formData, price: val, status: newStatus });
                                 }}

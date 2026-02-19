@@ -1,8 +1,9 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { AppointmentStatus } from '@prisma/client';
 
-type Status = 'PENDING' | 'AWAITING_PAYMENT' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
+type Status = AppointmentStatus;
 
 interface StatusProgressBarProps {
     status: string;
@@ -12,13 +13,13 @@ const StatusProgressBar = ({ status }: StatusProgressBarProps) => {
     const t = useTranslations('MyAppointmentPage.status');
 
     const steps = [
-        { id: 'PENDING', label: t('requested'), key: 'requested' },
-        { id: 'AWAITING_PAYMENT', label: t('payment_required'), key: 'payment_required' },
-        { id: 'CONFIRMED', label: t('confirmed'), key: 'confirmed' },
-        { id: 'COMPLETED', label: t('completed'), key: 'completed' },
+        { id: AppointmentStatus.PENDING, label: t('requested'), key: 'requested' },
+        { id: AppointmentStatus.AWAITING_PAYMENT, label: t('payment_required'), key: 'payment_required' },
+        { id: AppointmentStatus.CONFIRMED, label: t('confirmed'), key: 'confirmed' },
+        { id: AppointmentStatus.COMPLETED, label: t('completed'), key: 'completed' },
     ];
 
-    if (status === 'CANCELLED') {
+    if (status === AppointmentStatus.CANCELLED) {
         return (
             <div className="w-full bg-red-50 py-2 px-4 rounded-lg border border-red-100 mt-2">
                 <p className="text-xs font-bold text-red-600 flex items-center gap-2">
@@ -61,8 +62,8 @@ const StatusProgressBar = ({ status }: StatusProgressBarProps) => {
                         <div key={step.id} className="flex flex-col items-center gap-2 relative z-10 w-1/4">
                             <div
                                 className={`w-6 h-6 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${isCompleted ? 'bg-primary-500 border-primary-500 text-white' :
-                                        isActive ? 'bg-white border-primary-500 ring-4 ring-primary-50' :
-                                            'bg-white border-gray-100 text-gray-300'
+                                    isActive ? 'bg-white border-primary-500 ring-4 ring-primary-50' :
+                                        'bg-white border-gray-100 text-gray-300'
                                     }`}
                             >
                                 {isCompleted ? (
@@ -73,8 +74,8 @@ const StatusProgressBar = ({ status }: StatusProgressBarProps) => {
                             </div>
                             <span
                                 className={`text-[10px] font-bold text-center leading-tight transition-colors duration-300 ${isActive ? 'text-primary-600' :
-                                        isCompleted ? 'text-gray-900' :
-                                            'text-gray-300'
+                                    isCompleted ? 'text-gray-900' :
+                                        'text-gray-300'
                                     }`}
                             >
                                 {step.label}

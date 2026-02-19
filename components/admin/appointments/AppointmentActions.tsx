@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Edit2, DollarSign, CheckCircle } from 'lucide-react';
-import { Appointment } from '@prisma/client';
+import { Appointment, AppointmentStatus } from '@prisma/client';
 import AppointmentModal from '@/components/admin/appointments/AppointmentModal';
 import { useTranslations } from 'next-intl';
 
@@ -17,7 +17,7 @@ export default function AppointmentActions({ appointment }: AppointmentActionsPr
     return (
         <>
             <div className="flex gap-2">
-                {appointment.status === 'CONFIRMED' && (
+                {appointment.status === AppointmentStatus.CONFIRMED && (
                     <button
                         onClick={async () => {
                             if (window.confirm(t('confirm_complete'))) {

@@ -10,6 +10,7 @@ import PayButton from '@/components/dashboard/PayButton';
 import { getTranslations } from 'next-intl/server';
 import VaccinationReservationCard from '@/components/myappointment/VaccinationReservationCard';
 import StatusProgressBar from '@/components/myappointment/StatusProgressBar';
+import { AppointmentStatus } from '@prisma/client';
 
 export default async function MyAppointmentPage() {
     const session = await auth();
@@ -21,39 +22,39 @@ export default async function MyAppointmentPage() {
     const appointments = await getUserAppointments();
     const vaccinations = await getMyVaccinationReservations();
 
-    const pending = appointments.filter(a => a.status === 'PENDING');
-    const awaitingPayment = appointments.filter(a => a.status === 'AWAITING_PAYMENT');
+    const pending = appointments.filter(a => a.status === AppointmentStatus.PENDING);
+    const awaitingPayment = appointments.filter(a => a.status === AppointmentStatus.AWAITING_PAYMENT);
     // Active appointments (CONFIRMED) are always shown in the main list until completed
-    const upcoming = appointments.filter(a => a.status === 'CONFIRMED');
+    const upcoming = appointments.filter(a => a.status === AppointmentStatus.CONFIRMED);
 
     // Past appointments are those that are marked COMPLETED
-    const past = appointments.filter(a => a.status === 'COMPLETED');
+    const past = appointments.filter(a => a.status === AppointmentStatus.COMPLETED);
 
     // IDs that are already confirmed when the page loads
     const initialConfirmedIds = awaitingPayment.map(a => a.id);
 
-    const StatusBadge = ({ status }: { status: string }) => {
+    const StatusBadge = ({ status }: { status: AppointmentStatus | string }) => {
         let label = status;
         let className = "text-gray-500 bg-gray-50 px-2.5 py-1 rounded-full text-xs font-medium";
 
         switch (status) {
-            case 'PENDING':
+            case AppointmentStatus.PENDING:
                 label = t('status.requested');
                 className = "text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full text-xs font-bold border border-amber-100";
                 break;
-            case 'AWAITING_PAYMENT':
+            case AppointmentStatus.AWAITING_PAYMENT:
                 label = t('status.payment_required');
                 className = "text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full text-xs font-bold border border-blue-100";
                 break;
-            case 'CONFIRMED':
+            case AppointmentStatus.CONFIRMED:
                 label = t('status.confirmed');
                 className = "text-green-600 bg-green-50 px-2.5 py-1 rounded-full text-xs font-bold border border-green-100";
                 break;
-            case 'COMPLETED':
+            case AppointmentStatus.COMPLETED:
                 label = t('status.completed');
                 className = "text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full text-xs font-bold border border-gray-200";
                 break;
-            case 'CANCELLED':
+            case AppointmentStatus.CANCELLED:
                 label = t('status.CANCELLED');
                 className = "text-red-600 bg-red-50 px-2.5 py-1 rounded-full text-xs font-bold border border-red-100";
                 break;
