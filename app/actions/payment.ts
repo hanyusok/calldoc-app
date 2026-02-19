@@ -321,13 +321,15 @@ export async function cancelPayment(paymentId: string, reason: string, cancelAmo
     const KIWOOM_MID = process.env.NEXT_PUBLIC_KIWOOM_MID;
     const AUTH_KEY = process.env.KIWOOM_AUTH_KEY; // Secret Key
 
-    if (!payment.paymentKey) {
-        return { success: false, error: "NO_PAYMENT_KEY" }
-    }
-
     const currentRefunded = payment.refundedAmount || 0;
     const refundableAmount = payment.amount - currentRefunded;
     const requestAmount = cancelAmount || refundableAmount;
+
+    if (!payment.paymentKey) {
+        console.warn(`Payment ${paymentId} has no paymentKey. Force cancelling locally (DB only).`);
+        await processCancellationSuccess(paymentId, undefined, requestAmount);
+        return { success: true };
+    }
 
     if (requestAmount > refundableAmount) {
         return { success: false, error: "REFUND_AMOUNT_EXCEEDS_LIMIT" };

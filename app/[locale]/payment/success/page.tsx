@@ -5,15 +5,46 @@ import { useTranslations, useLocale } from "next-intl";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import PopupCloseHandler from "@/components/payment/PopupCloseHandler";
+import { useEffect, useRef } from "react";
+import { confirmPayment } from "@/app/actions/payment";
 
 export default function PaymentSuccessPage() {
     const t = useTranslations('PaymentSuccess');
     const locale = useLocale();
     const searchParams = useSearchParams();
-    const orderId = searchParams.get('orderId');
-    const amount = searchParams.get('amount');
+    const orderId = searchParams.get('orderId') || searchParams.get('ORDERNO');
+    const amount = searchParams.get('amount') || searchParams.get('AMOUNT');
+    const authNo = searchParams.get('AUTHNO');
+    const daoutrx = searchParams.get('DAOUTRX');
+    const resCd = searchParams.get('RES_CD');
+
+    const confirmedRef = useRef(false);
 
     const redirectUrl = `/${locale}/myappointment`;
+
+    // Fallback: confirm payment from client side in case server-to-server callback didn't arrive
+    useEffect(() => {
+        if (confirmedRef.current) return;
+        if (!orderId) return;
+
+        const isSuccess = resCd === '0000' || !!authNo;
+        if (!isSuccess && resCd) return; // Explicit failure
+
+        confirmedRef.current = true;
+
+        const paymentKey = daoutrx || authNo || '';
+        const amountInt = parseInt(amount || '0');
+
+        confirmPayment(paymentKey, orderId, amountInt, authNo || undefined)
+            .then(result => {
+                if (result.success) {
+                    console.log('Payment confirmed (fallback from success page)');
+                } else {
+                    console.warn('Payment confirm fallback:', result.error);
+                }
+            })
+            .catch(err => console.error('Payment confirm fallback error:', err));
+    }, [orderId, amount, authNo, daoutrx, resCd]);
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">

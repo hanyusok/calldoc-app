@@ -78,14 +78,14 @@ export const config = {
     trustHost: true,
     callbacks: {
         ...authConfig.callbacks,
-        async jwt({ token, user }) {
+        async jwt({ token, user }: { token: any; user: any }) {
             if (user) {
                 token.role = user.role;
                 token.sub = user.id;
             }
             return token;
         },
-        async session({ session, token }) {
+        async session({ session, token }: { session: any; token: any }) {
             if (session.user && token.sub) {
                 session.user.id = token.sub;
             }

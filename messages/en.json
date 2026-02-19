@@ -542,7 +542,12 @@
                 "cancelPendingTitle": "Cancel Pending Payment",
                 "cancelPendingDescription": "This payment has not provided yet. Cancelling this will void the payment record and cancel the appointment.",
                 "cancelPendingConfirm": "Are you sure you want to cancel this pending payment and appointment?",
-                "confirmCancel": "Confirm Cancel"
+                "confirmCancel": "Confirm Cancel",
+                "errors": {
+                    "NO_PAYMENT_KEY": "Missing Payment Key. Force cancelling locally.",
+                    "REFUND_AMOUNT_EXCEEDS_LIMIT": "Refund amount cannot exceed payment amount.",
+                    "INVALID_REFUND_AMOUNT": "Invalid refund amount."
+                }
             },
             "pagination": {
                 "showing": "Showing",
@@ -784,8 +789,9 @@
     },
     "Notifications": {
         "payment_confirmed": "Payment successful. Your consultation with {doctor} is confirmed.",
-        "payment_cancelled": "Your payment has been cancelled and refunded.",
-        "appointment_confirmed": "Your appointment with {doctor} has been confirmed.",
+        "payment_cancelled": "Payment has been cancelled and refunded.",
+        "payment_partially_refunded": "Partial refund processed: {amount} KRW",
+        "appointment_confirmed": "Appointment with {doctor} is confirmed.",
         "enter_room": "Enter Room",
         "action_required": "Action Required",
         "appointment_completed": "Your consultation with {doctor} has been completed.",

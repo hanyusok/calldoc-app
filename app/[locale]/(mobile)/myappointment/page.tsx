@@ -27,11 +27,11 @@ export default async function MyAppointmentPage() {
     // Active appointments (CONFIRMED) are always shown in the main list until completed
     const upcoming = appointments.filter(a => a.status === AppointmentStatus.CONFIRMED);
 
-    // Past appointments are those that are marked COMPLETED
-    const past = appointments.filter(a => a.status === AppointmentStatus.COMPLETED);
-
-    // IDs that are already confirmed when the page loads
-    const initialConfirmedIds = awaitingPayment.map(a => a.id);
+    // Past appointments are those that are marked COMPLETED or CANCELLED
+    const past = appointments.filter(a =>
+        a.status === AppointmentStatus.COMPLETED ||
+        a.status === AppointmentStatus.CANCELLED
+    );
 
     const StatusBadge = ({ status }: { status: AppointmentStatus | string }) => {
         let label = status;
@@ -239,9 +239,15 @@ export default async function MyAppointmentPage() {
                         <div className="space-y-3 opacity-60 grayscale-[0.5]">
                             {past.map(apt => (
                                 <div key={apt.id} className="bg-white p-4 rounded-xl border border-gray-100">
-                                    <div className="flex justify-between items-center">
-                                        <h3 className="font-bold text-gray-900">{apt.doctor.name}</h3>
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-gray-900">{apt.doctor.name}</h3>
+                                            <StatusBadge status={apt.status} />
+                                        </div>
                                         <span className="text-xs font-medium text-gray-500">{new Date(apt.date).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="text-xs text-gray-400">
+                                        {apt.doctor.clinic?.name || 'Clinic'}
                                     </div>
                                 </div>
                             ))}

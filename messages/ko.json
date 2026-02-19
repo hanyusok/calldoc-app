@@ -542,7 +542,12 @@
                 "cancelPendingTitle": "대기 결제 취소",
                 "cancelPendingDescription": "아직 결제가 완료되지 않은 건입니다. 취소 시 결제 내역이 무효화되고 예약이 취소됩니다.",
                 "cancelPendingConfirm": "정말 이 대기 중인 결제와 예약을 취소하시겠습니까?",
-                "confirmCancel": "취소 확정"
+                "confirmCancel": "취소 확정",
+                "errors": {
+                    "NO_PAYMENT_KEY": "결제 키(거래번호)가 없어 PG사 취소가 불가능합니다. 강제 취소(DB만 업데이트)됩니다.",
+                    "REFUND_AMOUNT_EXCEEDS_LIMIT": "환불 금액이 결제 금액을 초과할 수 없습니다.",
+                    "INVALID_REFUND_AMOUNT": "환불 금액이 유효하지 않습니다."
+                }
             },
             "pagination": {
                 "showing": "표시 중",
@@ -785,6 +790,7 @@
     "Notifications": {
         "payment_confirmed": "결제가 완료되었습니다. {doctor}님과의 진료가 확정되었습니다.",
         "payment_cancelled": "결제가 취소되고 환불되었습니다.",
+        "payment_partially_refunded": "부분 환불이 처리되었습니다: {amount}원",
         "appointment_confirmed": "{doctor}님과의 예약이 확정되었습니다.",
         "enter_room": "진료실 입장",
         "action_required": "조치 필요",
