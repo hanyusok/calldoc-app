@@ -122,7 +122,7 @@ export default function AppointmentsClient({
                         }`}
                 >
                     <Stethoscope size={18} />
-                    Consultations
+                    {tDash('tab_consultations')}
                 </button>
                 <button
                     onClick={() => setActiveTab('vaccinations')}
@@ -132,7 +132,7 @@ export default function AppointmentsClient({
                         }`}
                 >
                     <Syringe size={18} />
-                    Vaccinations
+                    {tDash('tab_vaccinations')}
                 </button>
             </div>
 
@@ -174,7 +174,7 @@ export default function AppointmentsClient({
                             <tr>
                                 <th className="p-4">{tDash('table.patient')}</th>
                                 <th className="p-4">{tDash('table.date')}</th>
-                                <th className="p-4">{isConsultations ? tDash('table.doctor') : 'Vaccine'}</th>
+                                <th className="p-4">{isConsultations ? tDash('table.doctor') : tDash('vaccine')}</th>
                                 <th className="p-4 text-center">{tDash('table.status')}</th>
                                 <th className="p-4 text-right">{tDash('table.price')}</th>
                                 <th className="p-4 text-center">{tDash('table.actions')}</th>
@@ -213,7 +213,7 @@ export default function AppointmentsClient({
                 {totalPages > 1 && (
                     <div className="flex items-center justify-between bg-white px-6 py-4 border-t border-gray-100">
                         <div className="text-sm text-gray-600">
-                            {tDash('pagination') ? tDash('pagination.showing') : 'Showing'} {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, activeTab === 'consultations' ? consultTotal : vacTotal)} {tDash('pagination') ? tDash('pagination.of') : 'of'} {activeTab === 'consultations' ? consultTotal : vacTotal}
+                            {tDash('pagination.showing')} {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, activeTab === 'consultations' ? consultTotal : vacTotal)} {tDash('pagination.of')} {activeTab === 'consultations' ? consultTotal : vacTotal}
                         </div>
                         <div className="flex items-center gap-2">
                             <button
@@ -222,17 +222,17 @@ export default function AppointmentsClient({
                                 className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
                             >
                                 <ChevronLeft size={18} />
-                                {tDash('pagination') ? tDash('pagination.previous') : 'Previous'}
+                                {tDash('pagination.previous')}
                             </button>
                             <div className="text-sm text-gray-600 px-3">
-                                {tDash('pagination') ? tDash('pagination.page') : 'Page'} {currentPage} {tDash('pagination') ? tDash('pagination.of') : 'of'} {totalPages}
+                                {tDash('pagination.page')} {currentPage} {tDash('pagination.of')} {totalPages}
                             </div>
                             <button
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === totalPages}
                                 className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
                             >
-                                {tDash('pagination') ? tDash('pagination.next') : 'Next'}
+                                {tDash('pagination.next')}
                                 <ChevronRight size={18} />
                             </button>
                         </div>

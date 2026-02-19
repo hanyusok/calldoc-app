@@ -7,6 +7,7 @@ import DashboardClient from '@/components/admin/dashboard/DashboardClient';
 import { prisma } from "@/app/lib/prisma";
 import PageContainer from "@/components/admin/shared/PageContainer";
 import PageHeader from "@/components/admin/shared/PageHeader";
+import { AppointmentStatus } from "@prisma/client";
 
 export default async function AdminDashboardPage() {
     const session = await auth();
@@ -19,7 +20,7 @@ export default async function AdminDashboardPage() {
     // Fetch simple stats
     const [totalAppointments, pendingAppointments, todayAppointments] = await Promise.all([
         prisma.appointment.count(),
-        prisma.appointment.count({ where: { status: 'PENDING' } }),
+        prisma.appointment.count({ where: { status: AppointmentStatus.PENDING } }),
         prisma.appointment.count({
             where: {
                 date: {

@@ -208,6 +208,7 @@ model Appointment {
 model Payment {
   id            String      @id @default(cuid())
   paymentKey    String?     @unique // DAOUTRX or AUTHNO
+  authNo        String?     // 승인번호 (Authorization Number)
   amount        Int
   method        String?     // CARD, etc.
   status        String      @default("PENDING") // PENDING, COMPLETED, CANCELLED, FAILED

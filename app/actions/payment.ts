@@ -52,12 +52,12 @@ export async function initiatePayment(appointmentId: string) {
         amount: payment.amount,
         customerName: appointment.user.name || "Guest",
         customerEmail: appointment.user.email,
-        productName: `Medical Consultation: ${appointment.doctor.name}`
+        productName: `진료 상담: ${appointment.doctor.name}`
     };
 }
 
-export async function confirmPayment(paymentKey: string, orderId: string, amount: number) {
-    console.log("Processing Kiwoom payment:", { orderId, amount, paymentKey });
+export async function confirmPayment(paymentKey: string, orderId: string, amount: number, authNo?: string) {
+    console.log("Processing Kiwoom payment:", { orderId, amount, paymentKey, authNo });
 
     try {
         // 1. Fetch Payment and Appointment details
@@ -118,7 +118,8 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
                     status: 'COMPLETED',
                     approvedAt: new Date(),
                     method: 'KIWOOM',
-                    paymentKey: paymentKey // Save the Transaction ID (DAOUTRX)
+                    paymentKey: paymentKey, // Save the Transaction ID (DAOUTRX)
+                    authNo: authNo || null  // Save the Authorization Number (승인번호)
                 }
             }),
             prisma.appointment.update({

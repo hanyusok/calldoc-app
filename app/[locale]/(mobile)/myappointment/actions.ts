@@ -2,6 +2,7 @@
 
 import { prisma } from "@/app/lib/prisma";
 import { auth } from "@/auth";
+import { AppointmentStatus } from "@prisma/client";
 
 export async function getUserAppointments() {
     const session = await auth();
@@ -31,7 +32,7 @@ export async function checkAppointmentNotifications(knownIds: string[]) {
     const paymentRequired = await prisma.appointment.findMany({
         where: {
             userId: session.user.id,
-            status: 'AWAITING_PAYMENT',
+            status: AppointmentStatus.AWAITING_PAYMENT,
             id: { notIn: knownIds }
         },
         include: {
@@ -46,7 +47,7 @@ export async function checkAppointmentNotifications(knownIds: string[]) {
     const meetReady = await prisma.appointment.findMany({
         where: {
             userId: session.user.id,
-            status: { in: ['CONFIRMED'] }, // Only check CONFIRMED, COMPLETED is history
+            status: { in: [AppointmentStatus.CONFIRMED] }, // Only check CONFIRMED, COMPLETED is history
             // meetingLink: { not: null }, // REMOVED: Allow triggering refresh even without link
             id: { notIn: knownIds },
             updatedAt: { gte: new Date(Date.now() - 1 * 60 * 60 * 1000) } // Only from last 1 hour
@@ -64,7 +65,7 @@ export async function checkAppointmentNotifications(knownIds: string[]) {
     const cancelled = await prisma.appointment.findMany({
         where: {
             userId: session.user.id,
-            status: 'CANCELLED',
+            status: AppointmentStatus.CANCELLED,
             id: { notIn: knownIds },
             updatedAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } // Only show cancellations from last 24h
         },

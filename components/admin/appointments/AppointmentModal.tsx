@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { X, Save, Trash2, Plus } from 'lucide-react';
 import { createAppointment, updateAppointment, deleteAppointment, getUsersAndDoctors } from '@/app/actions/appointment';
 import { AppointmentStatus } from '@prisma/client';
+import { useTranslations } from 'next-intl';
 
 interface Appointment {
     id: string;
@@ -21,6 +22,8 @@ interface Props {
 }
 
 export default function AppointmentModal({ appointment: initialData, onClose, isOpen }: Props) {
+    const t = useTranslations('Admin.appointment_modal');
+    const tStatus = useTranslations('Admin.status');
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState<Partial<Appointment>>({
         status: AppointmentStatus.PENDING,
@@ -108,7 +111,7 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
                 <div className="flex items-center justify-between p-4 border-b border-gray-100">
                     <h2 className="text-lg font-bold text-gray-900">
-                        {initialData ? 'Edit Appointment' : 'New Appointment'}
+                        {initialData ? t('edit_title') : t('new_title')}
                     </h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600">
                         <X size={20} />
@@ -119,28 +122,28 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
                     {!initialData && (
                         <>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Patient</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('patient')}</label>
                                 <select
                                     className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                     value={formData.userId || ''}
                                     onChange={e => setFormData({ ...formData, userId: e.target.value })}
                                     required
                                 >
-                                    <option value="">Select Patient</option>
+                                    <option value="">{t('select_patient')}</option>
                                     {users.map(u => (
                                         <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
                                     ))}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('doctor')}</label>
                                 <select
                                     className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                     value={formData.doctorId || ''}
                                     onChange={e => setFormData({ ...formData, doctorId: e.target.value })}
                                     required
                                 >
-                                    <option value="">Select Doctor</option>
+                                    <option value="">{t('select_doctor')}</option>
                                     {doctors.map(d => (
                                         <option key={d.id} value={d.id}>{d.name} - {d.specialty}</option>
                                     ))}
@@ -150,7 +153,7 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Date & Time</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('date_time')}</label>
                         <input
                             type="datetime-local"
                             className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
@@ -162,21 +165,21 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('status')}</label>
                             <select
                                 className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                 value={formData.status}
                                 onChange={e => setFormData({ ...formData, status: e.target.value as AppointmentStatus })}
                             >
-                                <option value="PENDING">Pending</option>
-                                <option value="AWAITING_PAYMENT">Awaiting Payment</option>
-                                <option value="CONFIRMED">Confirmed</option>
-                                <option value="COMPLETED">Completed</option>
-                                <option value="CANCELLED">Cancelled</option>
+                                <option value="PENDING">{tStatus('PENDING')}</option>
+                                <option value="AWAITING_PAYMENT">{tStatus('AWAITING_PAYMENT')}</option>
+                                <option value="CONFIRMED">{tStatus('CONFIRMED')}</option>
+                                <option value="COMPLETED">{tStatus('COMPLETED')}</option>
+                                <option value="CANCELLED">{tStatus('CANCELLED')}</option>
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('price')}</label>
                             <input
                                 type="number"
                                 step="0.01"
@@ -202,7 +205,7 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
                                 className="px-4 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg font-medium text-sm transition-colors flex items-center gap-2"
                                 disabled={isLoading}
                             >
-                                <Trash2 size={16} /> Delete
+                                <Trash2 size={16} /> {t('delete')}
                             </button>
                         ) : <div />}
 
@@ -212,16 +215,16 @@ export default function AppointmentModal({ appointment: initialData, onClose, is
                                 onClick={onClose}
                                 className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium text-sm transition-colors"
                             >
-                                Cancel
+                                {t('cancel')}
                             </button>
                             <button
                                 type="submit"
                                 disabled={isLoading}
                                 className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm shadow-md hover:bg-blue-700 transition-colors flex items-center gap-2"
                             >
-                                {isLoading ? 'Saving...' : (
+                                {isLoading ? t('saving') : (
                                     <>
-                                        <Save size={16} /> Save Changes
+                                        <Save size={16} /> {t('save')}
                                     </>
                                 )}
                             </button>

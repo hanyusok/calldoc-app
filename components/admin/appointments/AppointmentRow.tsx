@@ -83,7 +83,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Price Manager for PENDING */}
-                            {appointment.status === 'PENDING' && (
+                            {appointment.status === AppointmentStatus.PENDING && (
                                 <PriceManager
                                     appointmentId={appointment.id}
                                     currentPrice={appointment.price}
@@ -91,7 +91,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                             )}
 
                             {/* Meet Manager only if confirmed or active */}
-                            {['CONFIRMED', 'COMPLETED'].includes(appointment.status) && (
+                            {(appointment.status === AppointmentStatus.CONFIRMED || appointment.status === AppointmentStatus.COMPLETED) && (
                                 <MeetManager
                                     appointmentId={appointment.id}
                                     patientName={appointment.user.name || tDash('patient_fallback')}
@@ -103,7 +103,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                             )}
 
                             {/* Prescription Manager */}
-                            {['CONFIRMED', 'COMPLETED'].includes(appointment.status) && (
+                            {(appointment.status === AppointmentStatus.CONFIRMED || appointment.status === AppointmentStatus.COMPLETED) && (
                                 <PrescriptionManager
                                     appointmentId={appointment.id}
                                     prescription={appointment.prescription}

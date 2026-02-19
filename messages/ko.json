@@ -296,7 +296,17 @@
             "patient_fallback": "환자",
             "edit": "수정",
             "complete": "진료 완료",
-            "confirm_complete": "이 예약을 완료 처리하시겠습니까?"
+            "confirm_complete": "이 예약을 완료 처리하시겠습니까?",
+            "tab_consultations": "진료 예약",
+            "tab_vaccinations": "예방접종 예약",
+            "vaccine": "백신",
+            "pagination": {
+                "showing": "표시 중",
+                "of": "/",
+                "page": "페이지",
+                "previous": "이전",
+                "next": "다음"
+            }
         },
         "status": {
             "PENDING": "대기중",
@@ -668,6 +678,21 @@
             "consultation": "진료 완료",
             "script_requested": "처방 요청",
             "faxed": "팩스 전송"
+        },
+        "appointment_modal": {
+            "edit_title": "예약 수정",
+            "new_title": "새 예약",
+            "patient": "환자",
+            "select_patient": "환자 선택",
+            "doctor": "의사",
+            "select_doctor": "의사 선택",
+            "date_time": "날짜 및 시간",
+            "status": "상태",
+            "price": "진료비 (원)",
+            "delete": "삭제",
+            "cancel": "취소",
+            "save": "저장",
+            "saving": "저장 중..."
         }
     },
     "PharmacySelector": {

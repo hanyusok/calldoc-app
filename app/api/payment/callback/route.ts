@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 const allowedIPs = [
     '27.102.213.200', '27.102.213.201', '27.102.213.202', '27.102.213.203', // Production
@@ -84,6 +85,9 @@ const handleCallback = async (req: NextRequest) => {
                 const amountInt = parseInt(AMOUNT || "0");
                 await processCancellationSuccess(payment.id, DAOUTRX, amountInt > 0 ? amountInt : undefined);
 
+                // Revalidate paths to ensure UI updates
+                revalidatePath('/', 'layout');
+
                 return new NextResponse("OK", { status: 200 });
             } else {
                 console.error("Payment not found for cancellation:", { ORDERNO, DAOUTRX });
@@ -100,9 +104,12 @@ const handleCallback = async (req: NextRequest) => {
 
             const { confirmPayment } = await import("@/app/actions/payment");
 
-            const result = await confirmPayment(paymentKey, ORDERNO, amountInt);
+            const result = await confirmPayment(paymentKey, ORDERNO, amountInt, AUTHNO);
 
             if (result.success) {
+                // Revalidate paths to ensure UI updates
+                revalidatePath('/', 'layout');
+
                 return new NextResponse("OK", { status: 200 });
             } else {
                 console.error("Callback Confirmation Failed:", result.error);

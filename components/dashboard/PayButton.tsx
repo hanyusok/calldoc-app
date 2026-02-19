@@ -78,15 +78,16 @@ export default function PayButton({ appointmentId, price }: PayButtonProps) {
             addField("KIWOOM_ENC", hashResult.KIWOOM_ENC);
 
             // Additional required fields
-            addField("PRODUCTNAME", initResult.productName || "Medical Consultation");
+            addField("PRODUCTNAME", initResult.productName || "진료 상담");
             addField("PRODUCTTYPE", "2"); // Service
             addField("USERID", customerName);
 
             const baseUrl = window.location.origin;
             const successUrl = `${baseUrl}/${locale}/payment/success?orderId=${paymentId}&amount=${amount}`;
             const failUrl = `${baseUrl}/${locale}/payment/fail`;
-            // Add notification URL for server-to-server callback
-            const notificationUrl = `${baseUrl}/api/payment/callback`;
+            // Server-to-server callback must use public URL (not localhost)
+            const publicUrl = process.env.NEXT_PUBLIC_APP_URL || baseUrl;
+            const notificationUrl = `${publicUrl}/api/payment/callback`;
 
             addField("ReturnUrl", successUrl); // Client redirect
             addField("Ret_URL", successUrl);

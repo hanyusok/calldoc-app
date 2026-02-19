@@ -296,7 +296,17 @@
             "patient_fallback": "Patient",
             "edit": "Edit",
             "complete": "Complete",
-            "confirm_complete": "Are you sure you want to mark this appointment as completed?"
+            "confirm_complete": "Are you sure you want to mark this appointment as completed?",
+            "tab_consultations": "Consultations",
+            "tab_vaccinations": "Vaccinations",
+            "vaccine": "Vaccine",
+            "pagination": {
+                "showing": "Showing",
+                "of": "of",
+                "page": "Page",
+                "previous": "Previous",
+                "next": "Next"
+            }
         },
         "status": {
             "PENDING": "Pending",
@@ -668,6 +678,21 @@
             "consultation": "Consulted",
             "script_requested": "Script Req.",
             "faxed": "Faxed"
+        },
+        "appointment_modal": {
+            "edit_title": "Edit Appointment",
+            "new_title": "New Appointment",
+            "patient": "Patient",
+            "select_patient": "Select Patient",
+            "doctor": "Doctor",
+            "select_doctor": "Select Doctor",
+            "date_time": "Date & Time",
+            "status": "Status",
+            "price": "Price ($)",
+            "delete": "Delete",
+            "cancel": "Cancel",
+            "save": "Save Changes",
+            "saving": "Saving..."
         }
     },
     "PharmacySelector": {
