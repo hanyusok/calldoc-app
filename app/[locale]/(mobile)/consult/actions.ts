@@ -5,6 +5,7 @@ import type { Doctor } from "@prisma/client";
 import { AppointmentStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { createKSTDate } from "@/app/lib/date";
 
 export async function getDoctors({
     query,
@@ -161,12 +162,9 @@ export async function createAppointment(formData: FormData) {
         throw new Error("Missing required fields");
     }
 
-    // Combine date and time into a single DateTime object
-    // Assuming dateStr is ISO string "2026-02-15T..."
-    // and timeStr is "14:30"
-    const date = new Date(dateStr);
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    date.setHours(hours, minutes, 0, 0);
+    // Combine date and time into a single DateTime object (KST -> UTC)
+    // dateStr is "YYYY-MM-DD", timeStr is "HH:mm"
+    const date = createKSTDate(dateStr, timeStr);
 
     // Determine if booking is for a family member
     const familyMemberId = patientId !== userId ? patientId : null;

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Search, MapPin, Bell } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import LocaleSwitcher from './LocaleSwitcher';
 
 const Header = () => {
     const t = useTranslations('Header');
@@ -21,7 +22,8 @@ const Header = () => {
                 <div className="flex items-center gap-1">
                     <span className="text-xl font-bold text-primary-500">콜닥</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                    <LocaleSwitcher />
                     <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full">
                         <MapPin size={20} />
                     </button>

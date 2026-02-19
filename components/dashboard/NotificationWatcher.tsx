@@ -102,25 +102,25 @@ export default function NotificationWatcher({ initialConfirmedIds = [], messages
             borderColor = 'border-gray-500';
             iconBg = 'bg-gray-50 text-gray-500';
             Icon = FileText;
-            title = t('appointment_completed');
+            title = t('appointment_completed_title');
             break;
         case 'PHARMACY_UPDATED':
             borderColor = 'border-purple-500';
             iconBg = 'bg-purple-50 text-purple-500';
             Icon = Building2;
-            title = t('pharmacy_updated');
+            title = t('pharmacy_updated_title');
             break;
         case 'FAX_SENT':
             borderColor = 'border-indigo-500';
             iconBg = 'bg-indigo-50 text-indigo-500';
             Icon = Send;
-            title = t('fax_sent');
+            title = t('fax_sent_title');
             break;
         case 'FAX_FAILED':
             borderColor = 'border-red-500';
             iconBg = 'bg-red-50 text-red-500';
             Icon = AlertCircle;
-            title = t('fax_failed');
+            title = t('fax_failed_title');
             break;
         default:
             borderColor = 'border-blue-500';

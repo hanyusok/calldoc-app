@@ -5,6 +5,7 @@ import BottomNav from '@/components/BottomNav';
 import { Bell, History, ChevronRight } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import LocaleSwitcher from '@/components/LocaleSwitcher';
 import PharmacySelector from "@/components/profile/PharmacySelector";
 import { updatePharmacy } from "@/app/[locale]/(mobile)/profile/actions";
 import { prisma } from "@/app/lib/prisma";
@@ -35,10 +36,13 @@ export default async function DashboardPage() {
             {/* Header */}
             <div className="bg-white sticky top-0 z-10 px-4 py-4 shadow-sm flex items-center justify-between">
                 <h1 className="text-xl font-bold text-gray-900">{t('title')}</h1>
-                <button className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full">
-                    <Bell size={22} />
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
+                <div className="flex items-center gap-2">
+                    <LocaleSwitcher />
+                    <button className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full">
+                        <Bell size={22} />
+                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                </div>
             </div>
 
             <div className="px-4 py-6 space-y-6">

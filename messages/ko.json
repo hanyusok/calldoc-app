@@ -795,11 +795,15 @@
         "enter_room": "진료실 입장",
         "action_required": "조치 필요",
         "appointment_completed": "{doctor}님과의 진료가 완료되었습니다.",
+        "appointment_completed_title": "진료 완료",
         "notification": "알림",
         "meet_ready": "화상 진료 준비 완료",
         "pharmacy_updated": "약국이 {name}(으)로 변경되었습니다",
+        "pharmacy_updated_title": "약국 변경",
         "fax_sent": "{name}님에게 팩스가 발송되었습니다.",
+        "fax_sent_title": "팩스 전송 완료",
         "fax_failed": "팩스 전송에 실패했습니다. 코드: {error}",
+        "fax_failed_title": "팩스 전송 실패",
         "no_notifications": "새로운 알림이 없습니다"
     },
     "PaymentSuccess": {

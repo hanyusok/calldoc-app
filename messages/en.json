@@ -795,11 +795,15 @@
         "enter_room": "Enter Room",
         "action_required": "Action Required",
         "appointment_completed": "Your consultation with {doctor} has been completed.",
+        "appointment_completed_title": "Consultation Completed",
         "notification": "Notification",
         "meet_ready": "Video Consultation Ready",
         "pharmacy_updated": "Pharmacy has been updated to {name}",
+        "pharmacy_updated_title": "Pharmacy Updated",
         "fax_sent": "Fax sent successfully to {name}",
-        "fax_failed": "Fax transmission failed. Code: {error}"
+        "fax_sent_title": "Fax Sent",
+        "fax_failed": "Fax transmission failed. Code: {error}",
+        "fax_failed_title": "Fax Failed"
     },
     "PaymentSuccess": {
         "title": "Payment Successful!",

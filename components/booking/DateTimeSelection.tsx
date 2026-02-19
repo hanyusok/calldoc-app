@@ -82,7 +82,12 @@ export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
 
     const handleNext = () => {
         if (selectedDate && selectedTime) {
-            const dateStr = selectedDate.toISOString();
+            // Format as YYYY-MM-DD explicitly based on the selected local date
+            const year = selectedDate.getFullYear();
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            const day = String(selectedDate.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+
             router.push(`/doctor/${doctorId}/book/patient?date=${dateStr}&time=${selectedTime}`);
         }
     };

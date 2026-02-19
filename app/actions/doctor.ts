@@ -2,6 +2,7 @@
 
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getKSTDayRangeInUTC, formatKSTTime } from "@/app/lib/date";
 
 export async function getDoctors(page = 1, limit = 10, search = "") {
     try {
@@ -271,17 +272,44 @@ export async function deleteDoctorException(exceptionId: string) {
 
 // ===== AVAILABLE SLOTS CALCULATION =====
 
-export async function getAvailableSlots(doctorId: string, date: Date) {
+export async function getAvailableSlots(doctorId: string, dateInput: Date | string) {
     try {
-        const dayOfWeek = date.getDay();
-        const dateStr = date.toISOString().split('T')[0];
+        // Ensure we work with a Date object for dayOfWeek
+        const dateObj = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+        const dayOfWeek = dateObj.getDay();
 
-        // Check for exception on this date
-        const exception = await prisma.doctorException.findUnique({
+        // If it's a date object from client, it might be in local time (UTC if serialized)
+        // We want the YYYY-MM-DD string representation that the user SELECTED.
+        // If passed as string "2026-02-15", use it.
+        // If passed as Date, convert to KST string or ISO date string part carefully.
+        let dateStr: string;
+        if (typeof dateInput === 'string') {
+            // Expecting "YYYY-MM-DD" or ISO
+            dateStr = dateInput.split('T')[0];
+        } else {
+            // It's a Date object. Assuming the client sends a date that represents 00:00 local time
+            // We need to be careful. The safest is if the client sends YYYY-MM-DD string.
+            const year = dateInput.getFullYear();
+            const month = String(dateInput.getMonth() + 1).padStart(2, '0');
+            const day = String(dateInput.getDate()).padStart(2, '0');
+            dateStr = `${year}-${month}-${day}`;
+        }
+
+        // Check for exception on this date (KST Date)
+        // Use the KST date string to query exceptions if you store them as YYYY-MM-DD or specific Dates
+        // NOTE: Your DoctorException model stores `date` as DateTime @db.Date.
+        // Prisma usually handles @db.Date by ignoring time, but checks against UTC? 
+        // Let's stick to the range query just to be safe or use the string if Prisma adapter handles it.
+        // Better: Query exception by range of that KST day.
+
+        const { start: startOfDay, end: endOfDay } = getKSTDayRangeInUTC(dateStr);
+
+        const exception = await prisma.doctorException.findFirst({
             where: {
-                doctorId_date: {
-                    doctorId,
-                    date: new Date(dateStr)
+                doctorId,
+                date: {
+                    gte: startOfDay,
+                    lte: endOfDay
                 }
             }
         });
@@ -320,12 +348,6 @@ export async function getAvailableSlots(doctorId: string, date: Date) {
             schedule.breakEndTime || undefined
         );
 
-        // Get existing appointments for this date
-        const startOfDay = new Date(dateStr);
-        startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date(dateStr);
-        endOfDay.setHours(23, 59, 59, 999);
-
         const appointments = await prisma.appointment.findMany({
             where: {
                 doctorId,
@@ -343,11 +365,9 @@ export async function getAvailableSlots(doctorId: string, date: Date) {
         });
 
         // Filter out booked slots
+        // Convert DB UTC times to KST "HH:mm" to match the generated slots
         const bookedTimes = new Set(
-            appointments.map(apt => {
-                const time = apt.date.toTimeString().slice(0, 5);
-                return time;
-            })
+            appointments.map(apt => formatKSTTime(apt.date))
         );
 
         const availableSlots = slots.filter(slot => !bookedTimes.has(slot));

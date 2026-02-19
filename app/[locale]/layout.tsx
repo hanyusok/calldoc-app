@@ -4,7 +4,6 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '../../i18n/routing';
 import "../globals.css";
-import LocaleSwitcher from '../../components/LocaleSwitcher';
 
 export const metadata: Metadata = {
     title: "콜닥-마트의원",
@@ -32,9 +31,6 @@ export default async function RootLayout({
         <html lang={locale}>
             <body className="antialiased bg-gray-50 text-gray-900 pb-20">
                 <NextIntlClientProvider messages={messages}>
-                    <div className="fixed top-4 right-4 z-50 bg-white shadow-md rounded p-1">
-                        <LocaleSwitcher />
-                    </div>
                     {children}
                 </NextIntlClientProvider>
             </body>
