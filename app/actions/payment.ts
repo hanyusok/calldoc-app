@@ -75,8 +75,27 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
 
         if (!payment) return { success: false, error: "Payment record not found" };
 
-        // 2. Idempotency Check
+        // 2. Idempotency & Partial Update Check
         if (payment.status === 'COMPLETED') {
+            // Check if we need to backfill missing keys (Client-side success page might have finished first without keys)
+            // Only update if we HAVE a key to save, and the DB currently HAS NONE
+            const incomingKey = paymentKey && paymentKey.trim() !== '' ? paymentKey : null;
+            const incomingAuth = authNo && authNo.trim() !== '' ? authNo : null;
+
+            const needsKeyUpdate = (!payment.paymentKey && incomingKey) || (!payment.authNo && incomingAuth);
+
+            if (needsKeyUpdate) {
+                console.log(`Payment ${orderId} already completed, but backfilling missing keys:`, { paymentKey: incomingKey, authNo: incomingAuth });
+                await prisma.payment.update({
+                    where: { id: orderId },
+                    data: {
+                        paymentKey: incomingKey || payment.paymentKey, // Keep existing if incoming is null
+                        authNo: incomingAuth || payment.authNo
+                    }
+                });
+                return { success: true, message: "Keys updated" };
+            }
+
             console.log(`Payment ${orderId} already completed.`);
             return { success: true, message: "Already completed" };
         }
@@ -118,7 +137,7 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
                     status: 'COMPLETED',
                     approvedAt: new Date(),
                     method: 'KIWOOM',
-                    paymentKey: paymentKey, // Save the Transaction ID (DAOUTRX)
+                    paymentKey: paymentKey || null, // Ensure empty string becomes null
                     authNo: authNo || null  // Save the Authorization Number (승인번호)
                 }
             }),

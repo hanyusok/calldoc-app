@@ -58,12 +58,21 @@ const handleCallback = async (req: NextRequest) => {
                 // URLSearchParams can parse the decoded string
                 const params = new URLSearchParams(decodedBody);
                 params.forEach((value, key) => {
-                    data[key] = value;
+                    data[key.toUpperCase()] = value; // Normalize to UpperCase
                 });
             }
         }
 
-        console.log(`Kiwoom Callback (${method}) Received:`, data);
+        // Also normalize GET params if they weren't already
+        if (method === 'GET') {
+            const { searchParams } = new URL(req.url);
+            searchParams.forEach((value, key) => {
+                data[key.toUpperCase()] = value;
+            });
+        }
+
+        console.log(`Kiwoom Callback (${method}) Received Keys:`, Object.keys(data));
+        console.log(`Kiwoom Callback Data (Normalized):`, data);
 
         const { RES_CD, ORDERNO, AUTHNO, AMOUNT, DAOUTRX, PAYMETHOD, RES_MSG } = data;
 

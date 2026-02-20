@@ -798,12 +798,13 @@
         "appointment_completed_title": "Consultation Completed",
         "notification": "Notification",
         "meet_ready": "Video Consultation Ready",
-        "pharmacy_updated": "Pharmacy has been updated to {name}",
+        "meet_ready_msg": "The doctor is ready. Please join the video consultation.",
         "pharmacy_updated_title": "Pharmacy Updated",
-        "fax_sent": "Fax sent successfully to {name}",
+        "pharmacy_updated": "Pharmacy has been updated to {name}",
         "fax_sent_title": "Fax Sent",
-        "fax_failed": "Fax transmission failed. Code: {error}",
-        "fax_failed_title": "Fax Failed"
+        "fax_sent": "Prescription faxed successfully to {name}",
+        "fax_failed_title": "Fax Failed",
+        "fax_failed": "Fax transmission failed. Code: {error}"
     },
     "PaymentSuccess": {
         "title": "Payment Successful!",

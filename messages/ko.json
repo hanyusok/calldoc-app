@@ -798,13 +798,13 @@
         "appointment_completed_title": "진료 완료",
         "notification": "알림",
         "meet_ready": "화상 진료 준비 완료",
-        "pharmacy_updated": "약국이 {name}(으)로 변경되었습니다",
-        "pharmacy_updated_title": "약국 변경",
-        "fax_sent": "{name}님에게 팩스가 발송되었습니다.",
+        "meet_ready_msg": "의사가 진료 준비를 마쳤습니다. 화상 진료에 참여해주세요.",
+        "pharmacy_updated_title": "약국 정보 업데이트",
+        "pharmacy_updated": "제휴 약국이 {name}(으)로 변경되었습니다.",
         "fax_sent_title": "팩스 전송 완료",
-        "fax_failed": "팩스 전송에 실패했습니다. 코드: {error}",
+        "fax_sent": "{name}으로 처방전을 성공적으로 전송했습니다.",
         "fax_failed_title": "팩스 전송 실패",
-        "no_notifications": "새로운 알림이 없습니다"
+        "fax_failed": "팩스 전송에 실패했습니다. (오류 코드: {error})"
     },
     "PaymentSuccess": {
         "title": "결제 성공!",
