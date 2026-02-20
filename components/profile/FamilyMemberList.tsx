@@ -18,11 +18,13 @@ interface FamilyListProps {
     members: FamilyMember[];
     onAdd: (data: any) => Promise<void>;
     onRemove: (id: string) => Promise<void>;
+    onUpdate: (data: any) => Promise<void>;
 }
 
-export default function FamilyMemberList({ members, onAdd, onRemove }: FamilyListProps) {
+export default function FamilyMemberList({ members, onAdd, onRemove, onUpdate }: FamilyListProps) {
     const t = useTranslations('Family');
     const [isAdding, setIsAdding] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         relation: 'child',
@@ -32,6 +34,8 @@ export default function FamilyMemberList({ members, onAdd, onRemove }: FamilyLis
         phoneNumber: ''
     });
     const [loading, setLoading] = useState(false);
+
+    // ... (calculateAgeAndGender and handleRINChange functions remain same)
 
     const calculateAgeAndGender = (rin: string) => {
         const cleanRin = rin.replace(/-/g, '');
@@ -89,18 +93,44 @@ export default function FamilyMemberList({ members, onAdd, onRemove }: FamilyLis
         setFormData(newState);
     };
 
+    const startEditing = (member: FamilyMember) => {
+        setIsAdding(true);
+        setEditingId(member.id);
+        setFormData({
+            name: member.name,
+            relation: member.relation,
+            age: member.age.toString(),
+            gender: member.gender,
+            residentNumber: member.residentNumber || '',
+            phoneNumber: member.phoneNumber || ''
+        });
+    };
+
+    const cancelEditing = () => {
+        setIsAdding(false);
+        setEditingId(null);
+        setFormData({ name: '', relation: 'child', age: '', gender: 'male', residentNumber: '', phoneNumber: '' });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         try {
-            await onAdd({
-                ...formData,
-                age: parseInt(formData.age)
-            });
-            setIsAdding(false);
-            setFormData({ name: '', relation: 'child', age: '', gender: 'male', residentNumber: '', phoneNumber: '' });
+            if (editingId) {
+                await onUpdate({
+                    id: editingId,
+                    ...formData,
+                    age: parseInt(formData.age)
+                });
+            } else {
+                await onAdd({
+                    ...formData,
+                    age: parseInt(formData.age)
+                });
+            }
+            cancelEditing();
         } catch (error) {
-            console.error("Failed to add family member", error);
+            console.error("Failed to save family member", error);
         } finally {
             setLoading(false);
         }
@@ -114,7 +144,7 @@ export default function FamilyMemberList({ members, onAdd, onRemove }: FamilyLis
                     {t('title')}
                 </h3>
                 <button
-                    onClick={() => setIsAdding(true)}
+                    onClick={() => { setIsAdding(true); setEditingId(null); setFormData({ name: '', relation: 'child', age: '', gender: 'male', residentNumber: '', phoneNumber: '' }); }}
                     className="p-1.5 rounded-full bg-primary-50 text-primary-600 hover:bg-primary-100"
                 >
                     <Plus size={20} />
@@ -124,8 +154,10 @@ export default function FamilyMemberList({ members, onAdd, onRemove }: FamilyLis
             {isAdding && (
                 <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
                     <div className="flex justify-between items-center mb-3">
-                        <h4 className="text-sm font-semibold text-gray-700">{t('add_new')}</h4>
-                        <button onClick={() => setIsAdding(false)} className="text-gray-400 hover:text-gray-600">
+                        <h4 className="text-sm font-semibold text-gray-700">
+                            {editingId ? t('edit_member') : t('add_new')}
+                        </h4>
+                        <button onClick={cancelEditing} className="text-gray-400 hover:text-gray-600">
                             <X size={16} />
                         </button>
                     </div>
@@ -187,7 +219,7 @@ export default function FamilyMemberList({ members, onAdd, onRemove }: FamilyLis
                             disabled={loading}
                             className="w-full py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
                         >
-                            {loading ? t('adding') : t('add')}
+                            {loading ? (editingId ? t('saving') : t('adding')) : (editingId ? t('save') : t('add'))}
                         </button>
                     </form>
                 </div>
@@ -200,7 +232,10 @@ export default function FamilyMemberList({ members, onAdd, onRemove }: FamilyLis
                     </div>
                 )}
                 {members.map((member) => (
-                    <div key={member.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <div key={member.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors"
+                        onClick={() => startEditing(member)}
+                    >
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
                                 {member.name[0]}
@@ -213,8 +248,8 @@ export default function FamilyMemberList({ members, onAdd, onRemove }: FamilyLis
                             </div>
                         </div>
                         <button
-                            onClick={() => onRemove(member.id)}
-                            className="text-gray-400 hover:text-red-500"
+                            onClick={(e) => { e.stopPropagation(); onRemove(member.id); }}
+                            className="text-gray-400 hover:text-red-500 p-2"
                         >
                             <Trash2 size={16} />
                         </button>

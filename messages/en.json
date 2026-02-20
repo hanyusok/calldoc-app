@@ -49,7 +49,10 @@
         "no_results": "No doctors found matching your criteria.",
         "clear_filters": "Clear all filters",
         "clinics_section": "Clinics",
-        "doctors_section": "Doctors"
+        "doctors_section": "Doctors",
+        "call": "Call",
+        "directions": "Directions",
+        "at_front": "Front Pharmacy"
     },
     "MyAppointmentPage": {
         "title": "Appointments",
@@ -89,7 +92,8 @@
         "price": "Price",
         "anseong": "Anseong",
         "pyeongtaek": "Pyeongtaek",
-        "osan": "Osan"
+        "osan": "Osan",
+        "at_front": "Front Pharmacy"
     },
     "DoctorCard": {
         "avail": "Available",
@@ -153,9 +157,12 @@
         "relation_sibling": "Sibling",
         "gender_male": "Male",
         "gender_female": "Female",
-        "add": "Add Member",
+        "add": "Add",
         "adding": "Adding...",
-        "no_members": "No family members added yet."
+        "save": "Save",
+        "saving": "Saving...",
+        "edit_member": "Edit Family Member",
+        "no_members": "No family members registered."
     },
     "Dashboard": {
         "title": "Dashboard",
@@ -559,6 +566,7 @@
         },
         "doctors": {
             "title": "Doctor Management",
+            "description": "Manage and view the list of doctors.",
             "search_placeholder": "Search doctors...",
             "add_new": "Add New Doctor",
             "no_doctors": "No doctors found.",
@@ -791,6 +799,7 @@
         "back_to_home": "Back to Home"
     },
     "Notifications": {
+        "no_notifications": "No new notifications",
         "payment_confirmed": "Payment successful. Your consultation with {doctor} is confirmed.",
         "payment_cancelled": "Payment has been cancelled and refunded.",
         "payment_partially_refunded": "Partial refund processed: {amount} KRW",

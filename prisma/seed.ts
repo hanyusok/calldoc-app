@@ -276,53 +276,100 @@ async function main() {
         }
     }
 
-    // 5. Seed Pharmacies (from JSON)
+    // 5. Seed Pharmacies (from CSV)
     try {
-        const pharmacyFiles = ['anseong_pharm.json', 'pyt.json'];
-        let pharmacyCount = 0;
+        const csvPath = path.join(process.cwd(), 'public/raw/pharmlist.csv');
 
-        for (const file of pharmacyFiles) {
-            const filePath = path.join(process.cwd(), 'public/raw', file);
-            if (fs.existsSync(filePath)) {
-                const content = fs.readFileSync(filePath, 'utf-8');
-                const pharmacies = JSON.parse(content);
+        if (fs.existsSync(csvPath)) {
+            console.log(`Found pharmacy CSV at ${csvPath}`);
+            const content = fs.readFileSync(csvPath, 'utf-8');
+            const lines = content.split('\n');
+            console.log(`Pharmacy CSV has ${lines.length} lines.`);
 
-                for (const p of pharmacies) {
-                    const name = p['약국이름'];
-                    const address = p['주소'];
-                    const phone = p['전화번호'];
+            // Note: We are not deleting existing pharmacies here because we want to preserve data seeded in previous steps or manual data.
+            // But we will use findFirst logic to update or create to avoid duplicates.
+            // Update: User requested to use CSV as source. We will implement deduplication logic.
 
-                    if (name && address) {
-                        // Check for existing pharmacy by name and address to avoid duplicates
-                        const existingPharmacy = await prisma.pharmacy.findFirst({
-                            where: {
-                                name: name,
-                                address: address
-                            }
-                        });
+            let pharmacyCount = 0;
 
-                        if (!existingPharmacy) {
-                            await prisma.pharmacy.create({
-                                data: {
-                                    name,
-                                    address,
-                                    phone,
-                                    isDefault: false
-                                }
-                            });
-                            pharmacyCount++;
-                        }
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                // Skip empty lines or malformed lines
+                if (!line || line.split(',').length < 2) continue;
+
+                // Manual parsing to handle quoted strings (e.g. addresses)
+                const columns: string[] = [];
+                let current = '';
+                let inQuote = false;
+
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    if (char === '"') {
+                        inQuote = !inQuote;
+                    } else if (char === ',' && !inQuote) {
+                        columns.push(current);
+                        current = '';
+                    } else {
+                        current += char;
                     }
                 }
-                console.log(`Imported pharmacies from ${file}.`);
-            } else {
-                console.warn(`Pharmacy file not found: ${filePath}`);
-            }
-        }
-        console.log(`Total new pharmacies seeded: ${pharmacyCount}`);
+                columns.push(current);
 
-    } catch (error) {
-        console.error("Error seeding pharmacies:", error);
+                const name = columns[0]?.trim();
+                const rawAddress = columns[1]?.trim() || "";
+                const address = rawAddress.replace(/^"|"$/g, '').trim();
+                const phone = columns[2]?.trim();
+                const fax = '031-000-0000'; // Enforce default fax as per user request
+                const longitude = parseFloat(columns[4] || '0');
+                const latitude = parseFloat(columns[5] || '0');
+
+                // Designate '제일약국' (Address: 서동대로 4478) as 'atFront'
+                // This is a specific business rule requested by the user.
+                const isTargetPharmacy = name === '제일약국' && address.includes('서동대로 4478');
+                const atFront = isTargetPharmacy;
+
+                if (name && address) {
+                    const existing = await prisma.pharmacy.findFirst({
+                        where: { name, address }
+                    });
+
+                    // Ensure fax is always updated, even if null in DB or CSV doesn't have it
+                    // The 'fax' variable is already set to '031-000-0000' above
+
+                    if (existing) {
+                        await prisma.pharmacy.update({
+                            where: { id: existing.id },
+                            data: {
+                                phone,
+                                fax: fax || existing.fax || '031-000-0000', // Prioritize new fax, then existing, then default
+                                latitude,
+                                longitude,
+                                atFront
+                            }
+                        });
+                    } else {
+                        await prisma.pharmacy.create({
+                            data: {
+                                name,
+                                address,
+                                phone,
+                                fax,
+                                latitude,
+                                longitude,
+                                isDefault: false,
+                                atFront
+                            }
+                        });
+                        pharmacyCount++;
+                    }
+                }
+            }
+            console.log(`Processed ${pharmacyCount} new pharmacies from CSV.`);
+        } else {
+            console.warn(`Pharmacy CSV not found at ${csvPath}`);
+        }
+    } catch (e) {
+        console.error("Error seeding pharmacies:", e);
     }
 
     console.log('Seeding finished.')

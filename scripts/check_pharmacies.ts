@@ -11,7 +11,7 @@ async function main() {
         const pharmacies = await prisma.pharmacy.findMany({ take: 5 });
         console.log('Sample Pharmacies:');
         pharmacies.forEach(p => {
-            console.log(`- ${p.name} (${p.address})`);
+            console.log(`- ${p.name} (${p.address}) [Lat: ${p.latitude}, Lng: ${p.longitude}]`);
         });
     } else {
         console.log('Use "npm run seed" or check your migration scripts if this is unexpected.');

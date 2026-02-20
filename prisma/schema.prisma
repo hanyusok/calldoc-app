@@ -226,9 +226,12 @@ model Pharmacy {
   fax       String?
   phone     String?
   address   String?
+  latitude  Float    @default(0.0)
+  longitude Float    @default(0.0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isDefault Boolean  @default(false)
+  atFront   Boolean  @default(false)
   users     User[]
 }
 

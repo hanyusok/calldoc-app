@@ -93,16 +93,11 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
                 </div>
             </div>
 
-            <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-gray-100 p-4 pb-8 flex items-center justify-between gap-4 z-20">
-                <div className="flex flex-col">
-                    <span className="text-xs text-gray-400">{t('fee_label')}</span>
-                    <span className="text-lg font-bold text-primary-600">
-                        ${((doctor.consultationFee || 5000) / 100).toFixed(2)}
-                    </span>
-                </div>
+            <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-gray-100 p-4 pb-8 z-20">
+
                 <Link
                     href={`/doctor/${id}/book`}
-                    className="flex-1 bg-primary-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-primary-600/30 hover:bg-primary-700 transition-all active:scale-95 text-center"
+                    className="block w-full bg-primary-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-primary-600/30 hover:bg-primary-700 transition-all active:scale-95 text-center"
                 >
                     {t('book_button')}
                 </Link>

@@ -49,7 +49,10 @@
         "no_results": "조건에 맞는 결과를 찾을 수 없습니다.",
         "clear_filters": "필터 초기화",
         "clinics_section": "병원",
-        "doctors_section": "의사"
+        "doctors_section": "의사",
+        "call": "전화",
+        "directions": "길찾기",
+        "at_front": "문전약국"
     },
     "MyAppointmentPage": {
         "title": "진료예약",
@@ -89,7 +92,8 @@
         "price": "가격순",
         "anseong": "안성",
         "pyeongtaek": "평택",
-        "osan": "오산"
+        "osan": "오산",
+        "at_front": "문전약국"
     },
     "DoctorCard": {
         "avail": "진료가능",
@@ -153,9 +157,12 @@
         "relation_sibling": "형제/자매",
         "gender_male": "남성",
         "gender_female": "여성",
-        "add": "가족 추가",
+        "add": "추가하기",
         "adding": "추가 중...",
-        "no_members": "등록된 가족이 없습니다."
+        "save": "저장하기",
+        "saving": "저장 중...",
+        "edit_member": "가족 구성원 수정",
+        "no_members": "등록된 가족 구성원이 없습니다."
     },
     "Dashboard": {
         "title": "대시보드",
@@ -559,6 +566,7 @@
         },
         "doctors": {
             "title": "의사 관리",
+            "description": "의사 목록을 조회하고 관리합니다.",
             "search_placeholder": "의사 검색...",
             "add_new": "의사 추가",
             "no_doctors": "등록된 의사가 없습니다.",
@@ -791,6 +799,7 @@
         "back_to_home": "홈으로 돌아가기"
     },
     "Notifications": {
+        "no_notifications": "새로운 알림이 없습니다",
         "payment_confirmed": "결제가 완료되었습니다. {doctor}님과의 진료가 확정되었습니다.",
         "payment_cancelled": "결제가 취소되고 환불되었습니다.",
         "payment_partially_refunded": "부분 환불이 처리되었습니다: {amount}원",

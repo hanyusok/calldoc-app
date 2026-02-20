@@ -1,5 +1,5 @@
-import React from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 
 const HeroBanner = () => {
     const t = useTranslations('HeroBanner');
@@ -9,9 +9,11 @@ const HeroBanner = () => {
                 <div className="z-10 text-white">
                     <h2 className="text-xl font-bold mb-1">{t('title')}</h2>
                     <p className="text-sm opacity-90 mb-3">{t('subtitle')}</p>
-                    <button className="bg-white text-primary-600 px-4 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-gray-50 transition-colors">
-                        {t('button')}
-                    </button>
+                    <Link href="/consult">
+                        <button className="bg-white text-primary-600 px-4 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-gray-50 transition-colors">
+                            {t('button')}
+                        </button>
+                    </Link>
                 </div>
                 <div className="absolute right-0 bottom-0 opacity-20 transform translate-x-4 translate-y-4">
                     <svg width="120" height="120" viewBox="0 0 24 24" fill="currentColor" className="text-white">

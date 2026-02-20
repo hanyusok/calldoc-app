@@ -148,14 +148,18 @@ export async function getPharmacies({
     }
 
     if (filter && filter !== 'all') {
-        // Map filter ID to Korean city name or part of address
-        const cityMap: Record<string, string> = {
-            'anseong': '안성',
-            'pyeongtaek': '평택',
-            'osan': '오산',
-        };
-        const searchTerm = cityMap[filter] || filter;
-        where.address = { contains: searchTerm };
+        if (filter === 'at_front') {
+            where.atFront = true;
+        } else {
+            // Map filter ID to Korean city name or part of address
+            const cityMap: Record<string, string> = {
+                'anseong': '안성',
+                'pyeongtaek': '평택',
+                'osan': '오산',
+            };
+            const searchTerm = cityMap[filter] || filter;
+            where.address = { contains: searchTerm };
+        }
     }
 
     return await prisma.pharmacy.findMany({

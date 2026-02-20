@@ -101,7 +101,7 @@ export default async function BookingReviewPage({
                         </div>
                         <div>
                             <p className="text-xs text-gray-500">{t('consultation_fee')}</p>
-                            <p className="font-bold text-gray-900">$50.00</p>
+                            <p className="font-bold text-primary-600">{t('to_be_confirmed')}</p>
                         </div>
                     </div>
                 </div>
@@ -120,14 +120,6 @@ export default async function BookingReviewPage({
                     <div className="flex justify-between items-center text-sm mb-2">
                         <span className="text-gray-500">{t('consultation_fee')}</span>
                         <span className="text-gray-900 font-medium">{t('to_be_confirmed')}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm mb-2">
-                        <span className="text-gray-500">{t('service_fee')}</span>
-                        <span className="text-gray-900 font-medium">$2.00</span>
-                    </div>
-                    <div className="border-t border-gray-100 my-2 pt-2 flex justify-between items-center">
-                        <span className="font-bold text-gray-900">{t('estimated_total')}</span>
-                        <span className="font-bold text-primary-600 text-lg">{t('total_guide', { fee: '$2.00' })}</span>
                     </div>
                 </div>
             </div>

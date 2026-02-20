@@ -5,6 +5,7 @@ import { Search, MapPin, Bell } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import LocaleSwitcher from './LocaleSwitcher';
+import NotificationBell from './NotificationBell';
 
 const Header = () => {
     const t = useTranslations('Header');
@@ -27,9 +28,7 @@ const Header = () => {
                     <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full">
                         <MapPin size={20} />
                     </button>
-                    <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full">
-                        <Bell size={20} />
-                    </button>
+                    <NotificationBell />
                 </div>
             </div>
 

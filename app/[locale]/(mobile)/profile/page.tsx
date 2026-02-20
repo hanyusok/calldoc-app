@@ -11,7 +11,8 @@ import {
     updateProfile,
     updateName,
     addFamilyMember,
-    removeFamilyMember
+    removeFamilyMember,
+    updateFamilyMember
 } from "./actions";
 
 export default async function ProfilePage({
@@ -61,6 +62,7 @@ export default async function ProfilePage({
                     members={user.familyMembers}
                     onAdd={addFamilyMember}
                     onRemove={removeFamilyMember}
+                    onUpdate={updateFamilyMember}
                 />
             </div>
 

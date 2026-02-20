@@ -24,6 +24,7 @@ export default function FilterBar({ category }: { category?: string }) {
             { id: 'anseong', label: t('anseong') },
             { id: 'pyeongtaek', label: t('pyeongtaek') },
             { id: 'osan', label: t('osan') },
+            { id: 'at_front', label: t('at_front') },
         ];
     }
 

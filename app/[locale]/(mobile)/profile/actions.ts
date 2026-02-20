@@ -108,6 +108,30 @@ export async function removeFamilyMember(id: string) {
     }
 }
 
+export async function updateFamilyMember(data: any) {
+    const user = await getAuthenticatedUser();
+
+    // Verify ownership
+    const member = await prisma.familyMember.findUnique({
+        where: { id: data.id },
+    });
+
+    if (member?.userId === user.id) {
+        await prisma.familyMember.update({
+            where: { id: data.id },
+            data: {
+                name: data.name,
+                relation: data.relation,
+                age: data.age,
+                gender: data.gender,
+                residentNumber: data.residentNumber,
+                phoneNumber: data.phoneNumber,
+            },
+        });
+        revalidatePath('/profile');
+    }
+}
+
 export async function logout() {
     await signOut();
 }
