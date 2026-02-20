@@ -276,6 +276,55 @@ async function main() {
         }
     }
 
+    // 5. Seed Pharmacies (from JSON)
+    try {
+        const pharmacyFiles = ['anseong_pharm.json', 'pyt.json'];
+        let pharmacyCount = 0;
+
+        for (const file of pharmacyFiles) {
+            const filePath = path.join(process.cwd(), 'public/raw', file);
+            if (fs.existsSync(filePath)) {
+                const content = fs.readFileSync(filePath, 'utf-8');
+                const pharmacies = JSON.parse(content);
+
+                for (const p of pharmacies) {
+                    const name = p['약국이름'];
+                    const address = p['주소'];
+                    const phone = p['전화번호'];
+
+                    if (name && address) {
+                        // Check for existing pharmacy by name and address to avoid duplicates
+                        const existingPharmacy = await prisma.pharmacy.findFirst({
+                            where: {
+                                name: name,
+                                address: address
+                            }
+                        });
+
+                        if (!existingPharmacy) {
+                            await prisma.pharmacy.create({
+                                data: {
+                                    name,
+                                    address,
+                                    phone,
+                                    isDefault: false
+                                }
+                            });
+                            pharmacyCount++;
+                        }
+                    }
+                }
+                console.log(`Imported pharmacies from ${file}.`);
+            } else {
+                console.warn(`Pharmacy file not found: ${filePath}`);
+            }
+        }
+        console.log(`Total new pharmacies seeded: ${pharmacyCount}`);
+
+    } catch (error) {
+        console.error("Error seeding pharmacies:", error);
+    }
+
     console.log('Seeding finished.')
 }
 
