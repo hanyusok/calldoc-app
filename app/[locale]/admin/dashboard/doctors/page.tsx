@@ -1,6 +1,8 @@
 import { getDoctors, getClinicsForSelect } from "@/app/actions/doctor";
 import DoctorsClient from "./DoctorsClient";
 import PageContainer from "@/components/admin/shared/PageContainer";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 
 export default async function DoctorsPage({
     searchParams,
@@ -13,15 +15,18 @@ export default async function DoctorsPage({
 
     const { doctors, total } = await getDoctors(page, 10, search);
     const clinics = await getClinicsForSelect();
+    const messages = await getMessages();
 
     return (
         <PageContainer>
-            <DoctorsClient
-                initialDoctors={doctors}
-                initialTotal={total}
-                initialPage={page}
-                clinics={clinics}
-            />
+            <NextIntlClientProvider messages={messages}>
+                <DoctorsClient
+                    initialDoctors={doctors}
+                    initialTotal={total}
+                    initialPage={page}
+                    clinics={clinics}
+                />
+            </NextIntlClientProvider>
         </PageContainer>
     );
 }

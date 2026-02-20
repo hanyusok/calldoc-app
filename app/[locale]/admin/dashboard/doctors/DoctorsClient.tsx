@@ -189,7 +189,12 @@ export default function DoctorsClient({
                                         <td className="p-4 text-gray-600">{doctor.specialty}</td>
                                         <td className="p-4 text-gray-600">{doctor.clinic?.name || '-'}</td>
                                         <td className="p-4">
-                                            {/* ... status badge ... */}
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${doctor.isAvailable
+                                                    ? 'bg-green-100 text-green-700'
+                                                    : 'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                {doctor.isAvailable ? t('available') : t('unavailable')}
+                                            </span>
                                         </td>
                                         <td className="p-4 text-right flex justify-end gap-2">
                                             <button

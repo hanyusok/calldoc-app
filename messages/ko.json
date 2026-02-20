@@ -23,7 +23,7 @@
     },
     "ServiceGrid": {
         "telemedicine": "비대면 진료",
-        "hospital": "병원 찾기",
+        "clinic": "병원 찾기",
         "pharmacy": "약국 찾기",
         "symptoms": "증상",
         "health_check": "건강검진",
@@ -591,11 +591,14 @@
             "create_success": "의사 정보가 생성되었습니다",
             "create_error": "생성 실패",
             "update_success": "의사 정보가 수정되었습니다",
+            "save_success": "의사 정보가 저장되었습니다",
             "save_error": "저장 실패",
             "error_generic": "오류가 발생했습니다",
             "cancel": "취소",
             "save": "저장",
             "saving": "저장 중...",
+            "available": "진료 가능",
+            "unavailable": "진료 불가",
             "manage_availability": "일정 관리",
             "availability": {
                 "title": "진료 일정 관리",

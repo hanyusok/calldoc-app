@@ -36,8 +36,9 @@ export async function getDoctors({
         // For now, assume category matches specialty loosely or strict
         // Simple mapping for demo:
         const categoryMap: Record<string, string> = {
-            'telemedicine': 'Telemedicine',
-            'hospital': '', // Show all?
+            'telemedicine': '', // Show all specialties for Telemedicine (or filter by specific logic if needed)
+            'clinic': '', // Show all clinics
+            'hospital': '', // Legacy support
             'pharmacy': '', // Maybe show Pharmacists if added?
             'symptoms': '',
             'health-check': 'Family Medicine',
@@ -46,7 +47,11 @@ export async function getDoctors({
             'events': '',
         };
 
-        const mappedSpecialty = categoryMap[category] || category; // Fallback to exact string
+        let mappedSpecialty = category;
+        if (Object.prototype.hasOwnProperty.call(categoryMap, category)) {
+            mappedSpecialty = categoryMap[category];
+        }
+
         if (mappedSpecialty) {
             where.specialty = { contains: mappedSpecialty, mode: 'insensitive' };
         }
@@ -78,6 +83,22 @@ export async function getDoctors({
         orderBy = { patients: 'desc' };
     }
 
+    // Filter out doctors from hidden clinics (if clinic exists)
+    // We need to handle cases where doctor has no clinic (clinicId is null) if that's allowed, 
+    // but usually they belong to one. 
+    // If strict: where.clinic = { isVisible: true };
+    // If loose (allow no clinic): AND not hidden clinic.
+    // Based on schema, clinicId is nullable.
+    // But requirement is "hide invisible clinics", implies doctors of those clinics.
+    // Let's enforce: Only show if clinic is visible OR if they have no clinic (dependent on business logic).
+    // Safest for "hide hidden" is:
+
+    // However, prisma where clause:
+    // where: { ...where, clinic: { isVisible: true } } might filter out doctors with NO clinic if it does an inner join equivalent?
+    // Actually, distinct filter:
+    if (!where.clinic) where.clinic = {};
+    where.clinic.isVisible = true;
+
     const doctors = await prisma.doctor.findMany({
         where,
         orderBy,
@@ -92,7 +113,9 @@ export async function getClinics({
 }: {
     query?: string;
 }) {
-    const where: any = {};
+    const where: any = {
+        isVisible: true, // Only show visible clinics
+    };
 
     if (query) {
         where.OR = [

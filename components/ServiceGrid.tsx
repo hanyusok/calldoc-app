@@ -11,7 +11,7 @@ const ServiceGrid = () => {
 
     const services = [
         { name: t('telemedicine'), icon: Video, color: 'bg-blue-100 text-blue-600', id: 'telemedicine' },
-        { name: t('hospital'), icon: Building2, color: 'bg-green-100 text-green-600', id: 'hospital' },
+        { name: t('clinic'), icon: Building2, color: 'bg-green-100 text-green-600', id: 'clinic' },
         { name: t('pharmacy'), icon: Pill, color: 'bg-orange-100 text-orange-600', id: 'pharmacy' },
         { name: t('symptoms'), icon: Stethoscope, color: 'bg-purple-100 text-purple-600', id: 'symptoms' },
         { name: t('health_check'), icon: Activity, color: 'bg-red-100 text-red-600', id: 'health-check' },

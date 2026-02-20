@@ -23,7 +23,7 @@
     },
     "ServiceGrid": {
         "telemedicine": "Telemedicine",
-        "hospital": "Hospital",
+        "clinic": "Clinic",
         "pharmacy": "Pharmacy",
         "symptoms": "Symptoms",
         "health_check": "Health Check",
@@ -591,11 +591,14 @@
             "create_success": "Doctor created successfully",
             "create_error": "Failed to create doctor",
             "update_success": "Doctor updated successfully",
+            "save_success": "Doctor saved successfully",
             "save_error": "Failed to save doctor",
             "error_generic": "An error occurred",
             "cancel": "Cancel",
             "save": "Save",
             "saving": "Saving...",
+            "available": "Available",
+            "unavailable": "Unavailable",
             "manage_availability": "Manage Availability",
             "availability": {
                 "title": "Availability Management",
