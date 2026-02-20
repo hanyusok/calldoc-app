@@ -97,11 +97,11 @@ export default async function MyAppointmentPage() {
                                         <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
                                             <div className="flex items-center gap-1.5">
                                                 <Calendar size={14} className="text-gray-400" />
-                                                {new Date(apt.date).toLocaleDateString()}
+                                                {new Date(apt.date).toLocaleDateString(undefined, { timeZone: 'Asia/Seoul' })}
                                             </div>
                                             <div className="flex items-center gap-1.5">
                                                 <Clock size={14} className="text-gray-400" />
-                                                {new Date(apt.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                {new Date(apt.date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' })}
                                             </div>
                                         </div>
 
@@ -170,8 +170,8 @@ export default async function MyAppointmentPage() {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-bold text-gray-900">{new Date(apt.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                            <p className="text-xs text-gray-500">{new Date(apt.date).toLocaleDateString()}</p>
+                                            <p className="font-bold text-gray-900">{new Date(apt.date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' })}</p>
+                                            <p className="text-xs text-gray-500">{new Date(apt.date).toLocaleDateString(undefined, { timeZone: 'Asia/Seoul' })}</p>
                                         </div>
                                     </div>
                                     <StatusProgressBar status={apt.status} />
@@ -244,7 +244,7 @@ export default async function MyAppointmentPage() {
                                             <h3 className="font-bold text-gray-900">{apt.doctor.name}</h3>
                                             <StatusBadge status={apt.status} />
                                         </div>
-                                        <span className="text-xs font-medium text-gray-500">{new Date(apt.date).toLocaleDateString()}</span>
+                                        <span className="text-xs font-medium text-gray-500">{new Date(apt.date).toLocaleDateString(undefined, { timeZone: 'Asia/Seoul' })}</span>
                                     </div>
                                     <div className="text-xs text-gray-400">
                                         {apt.doctor.clinic?.name || 'Clinic'}

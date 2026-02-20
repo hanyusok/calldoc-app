@@ -820,7 +820,9 @@
     },
     "PaymentSuccess": {
         "title": "결제 성공!",
+        "verifying_title": "결제 확인 중...",
         "description": "결제가 성공적으로 처리되었습니다.",
+        "verifying_desc": "결제 결과를 확인하고 있습니다. 잠시만 기다려주세요.",
         "order_id": "주문 번호",
         "amount": "결제 금액",
         "return_button": "예약 내역으로 돌아가기",

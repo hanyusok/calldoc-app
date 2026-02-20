@@ -820,7 +820,9 @@
     },
     "PaymentSuccess": {
         "title": "Payment Successful!",
+        "verifying_title": "Verifying Payment...",
         "description": "Your payment has been processed successfully.",
+        "verifying_desc": "Please wait while we verify your payment status.",
         "order_id": "Order ID",
         "amount": "Amount",
         "return_button": "Return to My Appointments",

@@ -56,6 +56,24 @@ export async function initiatePayment(appointmentId: string) {
     };
 }
 
+export async function getPaymentStatus(paymentId: string) {
+    try {
+        const payment = await prisma.payment.findUnique({
+            where: { id: paymentId },
+            select: { status: true }
+        });
+
+        if (!payment) {
+            return { success: false, error: "Payment not found" };
+        }
+
+        return { success: true, status: payment.status };
+    } catch (error) {
+        console.error("Error fetching payment status:", error);
+        return { success: false, error: "Internal Server Error" };
+    }
+}
+
 export async function confirmPayment(paymentKey: string, orderId: string, amount: number, authNo?: string) {
     console.log("Processing Kiwoom payment:", { orderId, amount, paymentKey, authNo });
 
