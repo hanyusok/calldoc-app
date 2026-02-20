@@ -1,2 +1,4 @@
 test-user: test@test.com / password
 admin-user: admin@test.com / password
+
+# 키움페이 기술지원 연동에서 return_url, 해쉬값 일치해야 함

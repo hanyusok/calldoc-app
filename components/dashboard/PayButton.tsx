@@ -87,7 +87,7 @@ export default function PayButton({ appointmentId, price }: PayButtonProps) {
             const failUrl = `${baseUrl}/${locale}/payment/fail`;
             // Server-to-server callback must use public URL (not localhost)
             const publicUrl = process.env.NEXT_PUBLIC_APP_URL || baseUrl;
-            const notificationUrl = `${publicUrl}/api/payment/callback`;
+            const notificationUrl = process.env.NEXT_PUBLIC_KIWOOM_NOTIFICATION_URL || `${publicUrl}/api/payment/callback`;
 
             addField("ReturnUrl", successUrl); // Client redirect
             addField("Ret_URL", successUrl);

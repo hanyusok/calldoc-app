@@ -59,7 +59,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                     <StatusBadge status={appointment.status} />
                 </td>
                 <td className="p-4 text-right font-medium text-gray-900">
-                    {appointment.price ? `$${appointment.price}` : '-'}
+                    {appointment.price ? `${appointment.price} (원)` : '-'}
                 </td>
                 <td className="p-4 flex gap-2 justify-center items-center">
                     <AppointmentActions appointment={appointment} />

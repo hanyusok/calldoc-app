@@ -62,7 +62,9 @@ export default function NotificationList({ notifications }: { notifications: Not
                 const Icon = style.icon;
 
                 let title = t('notification');
-                if (notification.type.includes('PAYMENT')) title = t('action_required'); // Simplified mapping, customize as needed
+                if (notification.type === 'PAYMENT_CONFIRMED') title = t('payment_confirmed_title');
+                else if (notification.type === 'PAYMENT_CANCELLED' || notification.type === 'CANCELLED') title = t('payment_cancelled_title');
+                else if (notification.type.includes('PAYMENT')) title = t('action_required');
                 else if (notification.type.includes('MEET')) title = t('meet_ready');
                 else if (notification.type.includes('FAX')) title = "Fax";
 

@@ -78,9 +78,9 @@ export async function checkAppointmentNotifications(knownIds: string[]) {
 
     // Map to a common structure
     const notifications = [
-        ...paymentRequired.map(apt => ({ ...apt, type: 'PAYMENT_REQUIRED' })),
+        ...paymentRequired.map(apt => ({ ...apt, type: 'PAYMENT_REQUIRED', key: 'Notifications.payment_required_msg' })),
         ...meetReady.map(apt => ({ ...apt, type: 'MEET_READY', key: 'Notifications.meet_ready_msg' })),
-        ...cancelled.map(apt => ({ ...apt, type: 'PAYMENT_CANCELLED' }))
+        ...cancelled.map(apt => ({ ...apt, type: 'PAYMENT_CANCELLED', key: 'Notifications.payment_cancelled' }))
     ];
 
     return notifications;

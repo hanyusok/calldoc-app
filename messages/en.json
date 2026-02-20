@@ -79,7 +79,7 @@
             "details": "Details",
             "waiting_price": "Waiting for doctor to confirm price...",
             "pay_now": "Pay Now",
-            "price_confirmed_msg": "{doctor} has confirmed the price (${price}).",
+            "price_confirmed_msg": "{doctor} has confirmed the price ({price} 원).",
             "vaccination_subtitle": "Vaccination Reservation"
         }
     },
@@ -375,7 +375,7 @@
             "description": "Enter the consultation fee to request payment from the patient.",
             "request_payment": "Request Payment",
             "invalid_price": "Please enter a valid price.",
-            "confirm_request": "Are you sure you want to request ${price}?",
+            "confirm_request": "Are you sure you want to request {price} 원?",
             "success_request": "Payment requested successfully.",
             "error_request": "Failed to request payment."
         },
@@ -704,7 +704,7 @@
             "select_doctor": "Select Doctor",
             "date_time": "Date & Time",
             "status": "Status",
-            "price": "Price ($)",
+            "price": "Price (원)",
             "delete": "Delete",
             "cancel": "Cancel",
             "save": "Save Changes",
@@ -800,12 +800,15 @@
     },
     "Notifications": {
         "no_notifications": "No new notifications",
+        "payment_confirmed_title": "Payment Confirmed",
+        "payment_cancelled_title": "Payment Cancelled",
         "payment_confirmed": "Payment successful. Your consultation with {doctor} is confirmed.",
         "payment_cancelled": "Payment has been cancelled and refunded.",
         "payment_partially_refunded": "Partial refund processed: {amount} KRW",
         "appointment_confirmed": "Appointment with {doctor} is confirmed.",
         "enter_room": "Enter Room",
-        "action_required": "Action Required",
+        "action_required": "Payment Required",
+        "payment_required_msg": "Payment is required for your consultation.",
         "appointment_completed": "Your consultation with {doctor} has been completed.",
         "appointment_completed_title": "Consultation Completed",
         "notification": "Notification",

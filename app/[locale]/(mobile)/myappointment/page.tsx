@@ -112,8 +112,8 @@ export default async function MyAppointmentPage() {
                                                 <div>
                                                     <p className="text-[10px] text-gray-500 font-medium uppercase tracking-tight mb-0.5">{t('card.consultation_fee')}</p>
                                                     <p className="text-lg font-black text-gray-900 leading-none">
-                                                        <span className="text-xs font-medium text-gray-400 mr-1">$</span>
                                                         {(apt as any).price}
+                                                        <span className="text-xs font-medium text-gray-400 ml-1">(원)</span>
                                                     </p>
                                                 </div>
                                                 <div className="flex-shrink-0">

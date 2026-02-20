@@ -82,14 +82,14 @@ export default function NotificationWatcher({ initialConfirmedIds = [], messages
             borderColor = 'border-blue-500';
             iconBg = 'bg-blue-50 text-blue-500';
             Icon = Bell;
-            title = t('action_required');
+            title = t('payment_confirmed_title');
             break;
         case 'PAYMENT_CANCELLED':
         case 'CANCELLED':
             borderColor = 'border-red-500';
             iconBg = 'bg-red-50 text-red-500';
             Icon = CreditCard;
-            title = t('payment_cancelled');
+            title = t('payment_cancelled_title');
             break;
         case 'MEET_READY':
         case 'APPOINTMENT_CONFIRMED':
@@ -133,7 +133,11 @@ export default function NotificationWatcher({ initialConfirmedIds = [], messages
     if (notification.key) {
         try {
             const params = notification.params ? (typeof notification.params === 'string' ? JSON.parse(notification.params) : notification.params) : {};
-            displayMessage = t(notification.key as any, params);
+            let key = notification.key;
+            if (key.startsWith('Notifications.')) {
+                key = key.replace('Notifications.', '');
+            }
+            displayMessage = t(key as any, params);
         } catch (e) {
             console.error("Failed to parse notification params", e);
         }

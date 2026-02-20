@@ -16,6 +16,9 @@ type Pharmacy = {
     createdAt: Date;
     updatedAt: Date;
     isDefault: boolean;
+    latitude: number;
+    longitude: number;
+    atFront: boolean;
 };
 
 export default function PrescriptionManager({
