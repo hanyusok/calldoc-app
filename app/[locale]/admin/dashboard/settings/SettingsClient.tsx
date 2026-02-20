@@ -10,6 +10,7 @@ interface SettingsClientProps {
     initialSettings: {
         siteName: string;
         maintenanceMode: boolean;
+        homePostsCount: number;
     };
 }
 
@@ -27,7 +28,7 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                 alert(t('saved_success'));
                 router.refresh();
             } else {
-                alert(t('saved_error'));
+                alert(res.error || t('saved_error'));
             }
         } catch (error) {
             console.error(error);
@@ -53,6 +54,18 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                             type="text"
                             value={settings.siteName}
                             onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                            className="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            {t('home_posts_count')}
+                        </label>
+                        <input
+                            type="number"
+                            value={settings.homePostsCount ?? 0}
+                            onChange={(e) => setSettings({ ...settings, homePostsCount: parseInt(e.target.value) || 0 })}
                             className="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>

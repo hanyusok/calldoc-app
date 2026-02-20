@@ -25,9 +25,9 @@ const Header = () => {
                 </div>
                 <div className="flex items-center gap-2">
                     <LocaleSwitcher />
-                    <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full">
+                    {/* <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full">
                         <MapPin size={20} />
-                    </button>
+                    </button> */}
                     <NotificationBell />
                 </div>
             </div>

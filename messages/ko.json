@@ -465,6 +465,7 @@
             "maintenance_mode": "점검 모드",
             "maintenance_desc": "사용자에게 점검 중 페이지를 표시합니다",
             "save_changes": "변경사항 저장",
+            "home_posts_count": "홈 화면 게시글 수",
             "saved_success": "설정이 저장되었습니다",
             "saved_error": "설정 저장 실패"
         },

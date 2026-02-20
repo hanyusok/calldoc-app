@@ -465,6 +465,7 @@
             "maintenance_mode": "Maintenance Mode",
             "maintenance_desc": "Enable to show maintenance page to users",
             "save_changes": "Save Changes",
+            "home_posts_count": "Home Tab Posts Count",
             "saved_success": "Settings saved successfully",
             "saved_error": "Failed to save settings"
         },

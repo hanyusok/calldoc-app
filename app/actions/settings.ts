@@ -15,7 +15,8 @@ export async function getSettings() {
                 data: {
                     id: 1,
                     siteName: "CallDoc",
-                    maintenanceMode: false
+                    maintenanceMode: false,
+                    homePostsCount: 5
                 }
             });
         }
@@ -27,32 +28,42 @@ export async function getSettings() {
         return {
             id: 1,
             siteName: "CallDoc",
-            maintenanceMode: false
+            maintenanceMode: false,
+            homePostsCount: 5
         };
     }
 }
 
-export async function updateSettings(data: { siteName: string; maintenanceMode: boolean }) {
+export async function updateSettings(data: { siteName: string; maintenanceMode: boolean; homePostsCount: number }) {
     try {
         // TODO: Auth check (Admin only)
+
+        const homePostsCount = parseInt(data.homePostsCount?.toString()) || 5;
 
         await prisma.appSettings.upsert({
             where: { id: 1 },
             update: {
                 siteName: data.siteName,
-                maintenanceMode: data.maintenanceMode
+                maintenanceMode: data.maintenanceMode,
+                homePostsCount
             },
             create: {
                 id: 1,
                 siteName: data.siteName,
-                maintenanceMode: data.maintenanceMode
+                maintenanceMode: data.maintenanceMode,
+                homePostsCount
             }
         });
 
-        revalidatePath('/admin/dashboard/settings');
+        try {
+            revalidatePath('/admin/dashboard/settings');
+            revalidatePath('/');
+        } catch (e) {
+            console.error("Revalidation error:", e);
+        }
         return { success: true };
     } catch (error) {
         console.error("Failed to update settings:", error);
-        return { success: false, error: "Failed to update settings" };
+        return { success: false, error: error instanceof Error ? error.message : "Failed to update settings" };
     }
 }

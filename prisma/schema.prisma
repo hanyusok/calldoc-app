@@ -263,6 +263,7 @@ model AppSettings {
   id              Int     @id @default(1)
   siteName        String  @default("CallDoc")
   maintenanceMode Boolean @default(false)
+  homePostsCount  Int     @default(3)
 }
 
 model Post {

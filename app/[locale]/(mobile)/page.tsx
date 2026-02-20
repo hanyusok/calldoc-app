@@ -21,9 +21,15 @@ export default async function Home() {
         });
     }
 
-    // Fetch recommended content (limit to 3 for homepage)
+    // Fetch app settings for post count
+    const settings = await prisma.appSettings.findUnique({
+        where: { id: 1 }
+    });
+    const take = settings?.homePostsCount || 5;
+
+    // Fetch recommended content
     const posts = await prisma.post.findMany({
-        take: 3,
+        take,
         orderBy: { createdAt: 'desc' },
         where: { published: true }
     });
