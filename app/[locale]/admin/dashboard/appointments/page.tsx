@@ -1,5 +1,5 @@
 import { getAppointments } from '@/app/actions/appointment';
-import { getVaccinationReservations } from '@/app/actions/vaccination-booking';
+import { getVaccinationReservations } from '@/app/actions/vaccination';
 import AppointmentsClient from './AppointmentsClient';
 import PageContainer from '@/components/admin/shared/PageContainer';
 import { AppointmentStatus } from '@prisma/client';

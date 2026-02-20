@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Syringe, User, Calendar, MapPin, MoreHorizontal, Edit, CheckCircle, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { updateVaccinationReservationStatus } from '@/app/actions/vaccination-booking';
+import { updateVaccinationReservationStatus } from '@/app/actions/vaccination';
 
 interface VaccinationReservationRowProps {
     reservation: any;

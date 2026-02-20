@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, Filter, ChevronLeft, ChevronRight, CreditCard } from 'lucide-react';
 import PaymentRow from '@/components/admin/payments/PaymentRow';
+import DailyIncomeStats from '@/components/admin/payments/DailyIncomeStats';
 import { useTranslations } from 'next-intl';
 
 interface PaymentsClientProps {
@@ -11,13 +12,19 @@ interface PaymentsClientProps {
     initialTotal: number;
     initialPage: number;
     status?: string;
+    dailyStats: any[];
+    today: { total: number; count: number };
+    totalLast30Days: number;
 }
 
 export default function PaymentsClient({
     initialPayments,
     initialTotal,
     initialPage,
-    status
+    status,
+    dailyStats,
+    today,
+    totalLast30Days
 }: PaymentsClientProps) {
     const t = useTranslations('Admin.payments');
     const tStatus = useTranslations('Admin.status');
@@ -59,6 +66,12 @@ export default function PaymentsClient({
                 <h1 className="text-2xl font-bold">{t('title')}</h1>
             </div>
 
+            <DailyIncomeStats
+                stats={dailyStats}
+                today={today}
+                totalLast30Days={totalLast30Days}
+            />
+
             <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-center">
                 <div className="flex items-center gap-2 w-full md:w-auto flex-1">
                     <div className="relative">
@@ -68,7 +81,7 @@ export default function PaymentsClient({
                             value={statusFilter}
                             onChange={(e) => handleStatusChange(e.target.value)}
                         >
-                            <option value="ALL">All Status</option>
+                            <option value="ALL">{tStatus('ALL')}</option>
                             <option value="PENDING">{tStatus('PENDING')}</option>
                             <option value="COMPLETED">{tStatus('COMPLETED')}</option>
                             <option value="CANCELLED">{tStatus('CANCELLED')}</option>

@@ -19,17 +19,20 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar }: AdminSideba
 
     const navItems = [
         { href: "/admin/dashboard", label: t('dashboard'), icon: LayoutDashboard },
+        { type: 'divider' },
+        { href: "/admin/dashboard/appointments", label: t('appointments'), icon: Calendar },
+        { href: "/admin/dashboard/meet", label: t('meet'), icon: Video },
+        { href: "/admin/dashboard/vaccinations", label: t('vaccinations'), icon: Syringe },
+        { href: "/admin/dashboard/fax", label: t('fax'), icon: Printer },
+        { href: "/admin/dashboard/payments", label: t('payments'), icon: CreditCard },
+        { type: 'divider' },
         { href: "/admin/dashboard/users", label: t('users'), icon: Users },
         { href: "/admin/dashboard/patients", label: t('patients'), icon: Users },
-        { href: "/admin/dashboard/appointments", label: t('appointments'), icon: Calendar },
-        { href: "/admin/dashboard/payments", label: t('payments'), icon: CreditCard },
-        { href: "/admin/dashboard/clinics", label: t('clinics') || "Clinics", icon: Building2 }, // Fallback label if translation missing
-        { href: "/admin/dashboard/pharmacies", label: t('pharmacies'), icon: Building2 },
-        { href: "/admin/dashboard/vaccinations", label: t('vaccinations'), icon: Syringe },
-        { href: "/admin/dashboard/posts", label: t('posts'), icon: FileText },
         { href: "/admin/dashboard/doctors", label: t('doctors'), icon: Stethoscope },
-        { href: "/admin/dashboard/meet", label: t('meet'), icon: Video },
-        { href: "/admin/dashboard/fax", label: t('fax'), icon: Printer },
+        { href: "/admin/dashboard/clinics", label: t('clinics') || "Clinics", icon: Building2 },
+        { href: "/admin/dashboard/pharmacies", label: t('pharmacies'), icon: Building2 },
+        { href: "/admin/dashboard/posts", label: t('posts'), icon: FileText },
+        { type: 'divider' },
         { href: "/admin/dashboard/settings", label: t('settings'), icon: Settings },
     ];
 
@@ -62,21 +65,26 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar }: AdminSideba
             </div>
 
             <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-                {navItems.map((item) => {
-                    const Icon = item.icon;
-                    const active = isActive(item.href);
+                {navItems.map((item, index) => {
+                    if ('type' in item && item.type === 'divider') {
+                        return <hr key={`divider-${index}`} className="my-4 border-gray-100" />;
+                    }
+
+                    const navItem = item as { href: string; label: string; icon: any };
+                    const Icon = navItem.icon;
+                    const active = isActive(navItem.href);
                     return (
                         <Link
-                            key={item.href}
-                            href={item.href}
-                            title={isCollapsed ? item.label : undefined}
+                            key={navItem.href}
+                            href={navItem.href}
+                            title={isCollapsed ? navItem.label : undefined}
                             className={`flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-colors ${active
                                 ? "bg-blue-50 text-blue-700"
                                 : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                                 } ${isCollapsed ? "justify-center" : ""}`}
                         >
                             <Icon className={`h-5 w-5 ${active ? "text-blue-700" : "text-gray-400"} ${isCollapsed ? "" : "mr-3"}`} />
-                            {!isCollapsed && <span className="truncate">{item.label}</span>}
+                            {!isCollapsed && <span className="truncate">{navItem.label}</span>}
                         </Link>
                     );
                 })}

@@ -2,8 +2,8 @@
 
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
-import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
+import { hashPassword, validateUserUniqueness } from "@/app/lib/user-service";
 
 export async function getUsers(page = 1, limit = 10, search = "", role?: Role | 'ALL') {
     try {
@@ -59,15 +59,9 @@ export async function createUser(data: any) {
     try {
         const { name, email, password, role, phoneNumber } = data;
 
-        const existingUser = await prisma.user.findUnique({
-            where: { email }
-        });
+        await validateUserUniqueness(email);
 
-        if (existingUser) {
-            return { success: false, error: "User with this email already exists" };
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hashPassword(password);
 
         await prisma.user.create({
             data: {
@@ -100,7 +94,7 @@ export async function updateUser(userId: string, data: any) {
         };
 
         if (password) {
-            updateData.password = await bcrypt.hash(password, 10);
+            updateData.password = await hashPassword(password);
         }
 
         await prisma.user.update({

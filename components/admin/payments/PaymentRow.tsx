@@ -62,10 +62,10 @@ export default function PaymentRow({ payment }: PaymentRowProps) {
                     {getStatusBadge(payment.status)}
                 </td>
                 <td className="p-4 text-right font-bold text-gray-900">
-                    <div>${payment.amount.toLocaleString()}</div>
+                    <div>₩{payment.amount.toLocaleString()}</div>
                     {payment.refundedAmount > 0 && (
                         <div className="text-xs text-red-500">
-                            -{payment.refundedAmount.toLocaleString()} (Refunded)
+                            -{payment.refundedAmount.toLocaleString()} ({t('stats.refunded_label')})
                         </div>
                     )}
                 </td>

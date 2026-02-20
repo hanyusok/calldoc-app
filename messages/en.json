@@ -1,10 +1,10 @@
 {
     "HomePage": {
-        "title": "Call Doctor",
-        "welcome": "Welcome to Call Doctor",
-        "welcome_user": "Welcome back, {name}!",
-        "profile_verified": " (Profile Verified)",
-        "profile_pending": " (Profile Pending)"
+        "title": "CallDoc",
+        "greeting": "Hello, {name}! 👋",
+        "verified": "Verified",
+        "pending": "Pending",
+        "complete_profile": "Complete Profile"
     },
     "HeroBanner": {
         "title": "Cold & Flu Season?",
@@ -172,7 +172,7 @@
         "no_notifications": "No new notifications",
         "new_count": "{count} new",
         "view_all": "View All",
-        "nearby_pharmacy": "Nearby Pharmacy"
+        "nearby_pharmacy": "Select Pharmacy"
     },
     "LoginPage": {
         "title": "CallDoc",
@@ -320,7 +320,8 @@
             "AWAITING_PAYMENT": "Awaiting Payment",
             "CONFIRMED": "Confirmed",
             "COMPLETED": "Completed",
-            "CANCELLED": "Cancelled"
+            "CANCELLED": "Cancelled",
+            "ALL": "All Status"
         },
         "pharmacy": {
             "title": "Pharmacy Management",
@@ -538,6 +539,7 @@
                 "totalAmount": "Total Amount",
                 "refundedAmount": "Refunded Amount",
                 "refundableAmount": "Refundable Amount",
+                "reason": "Cancellation Reason",
                 "fullRefund": "Full Refund",
                 "partialRefund": "Partial Refund",
                 "refundAmount": "Refund Amount",
@@ -555,6 +557,16 @@
                     "REFUND_AMOUNT_EXCEEDS_LIMIT": "Refund amount cannot exceed payment amount.",
                     "INVALID_REFUND_AMOUNT": "Invalid refund amount."
                 }
+            },
+            "stats": {
+                "today_income": "Today's Income",
+                "last_30_days": "Last 30 Days",
+                "recent_daily_income": "Recent Daily Income",
+                "last_7_days": "Last 7 Days",
+                "payments_count": "{count} payments",
+                "no_data": "No recent data",
+                "refunded_label": "Refunded",
+                "unit_k": "k"
             },
             "pagination": {
                 "showing": "Showing",
@@ -712,7 +724,7 @@
         }
     },
     "PharmacySelector": {
-        "title": "Nearby Pharmacy",
+        "title": "Prescription Fax",
         "select": "Select Pharmacy",
         "change": "Change",
         "search_placeholder": "Search pharmacy...",

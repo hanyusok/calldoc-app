@@ -1,10 +1,10 @@
 {
     "HomePage": {
         "title": "콜닥",
-        "welcome": "콜닥에 오신 것을 환영합니다",
-        "welcome_user": "{name}님, 환영합니다!",
-        "profile_verified": " (프로필 인증됨)",
-        "profile_pending": " (프로필 대기중)"
+        "greeting": "{name}님, 안녕하세요! 👋",
+        "verified": "프로필 인증됨",
+        "pending": "프로필 대기중",
+        "complete_profile": "프로필 완성하기"
     },
     "HeroBanner": {
         "title": "환절기 독감 시즌인가요?",
@@ -172,7 +172,7 @@
         "no_notifications": "새로운 알림이 없습니다",
         "new_count": "{count}개의 새 알림",
         "view_all": "전체 보기",
-        "nearby_pharmacy": "내 주변 약국"
+        "nearby_pharmacy": "약국 선택하기"
     },
     "LoginPage": {
         "title": "콜닥",
@@ -320,7 +320,8 @@
             "AWAITING_PAYMENT": "결제 대기",
             "CONFIRMED": "확정됨",
             "COMPLETED": "완료됨",
-            "CANCELLED": "취소됨"
+            "CANCELLED": "취소됨",
+            "ALL": "전체 상태"
         },
         "pharmacy": {
             "title": "약국 관리",
@@ -534,7 +535,7 @@
                 "cancelSuccess": "결제가 성공적으로 취소되었습니다.",
                 "cancelFailed": "취소 실패: ",
                 "error": "오류가 발생했습니다.",
-                "cancelPayment": "결제 취소",
+                "reason": "취소 사유",
                 "totalAmount": "총 결제 금액",
                 "refundedAmount": "환불된 금액",
                 "refundableAmount": "환불 가능 금액",
@@ -545,6 +546,7 @@
                 "exceedsAmount": "환불 가능 금액을 초과했습니다",
                 "partialCancelConfirm": "{amount}원을 환불하시겠습니까?",
                 "confirmRefund": "환불 확정",
+                "cancelPayment": "결제 취소",
                 "processing": "처리 중...",
                 "cancelPendingTitle": "대기 결제 취소",
                 "cancelPendingDescription": "아직 결제가 완료되지 않은 건입니다. 취소 시 결제 내역이 무효화되고 예약이 취소됩니다.",
@@ -555,6 +557,16 @@
                     "REFUND_AMOUNT_EXCEEDS_LIMIT": "환불 금액이 결제 금액을 초과할 수 없습니다.",
                     "INVALID_REFUND_AMOUNT": "환불 금액이 유효하지 않습니다."
                 }
+            },
+            "stats": {
+                "today_income": "오늘의 수익",
+                "last_30_days": "최근 30일",
+                "recent_daily_income": "일별 수익 현황",
+                "last_7_days": "최근 7일",
+                "payments_count": "{count} 건",
+                "no_data": "데이터 없음",
+                "refunded_label": "환불됨",
+                "unit_k": "천"
             },
             "pagination": {
                 "showing": "표시 중",
@@ -712,7 +724,7 @@
         }
     },
     "PharmacySelector": {
-        "title": "내 주변 약국",
+        "title": "처방전Fax",
         "select": "약국 선택",
         "change": "변경",
         "search_placeholder": "약국 검색...",

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { generateAndSaveMeetingLink, saveMeetingLink } from "@/app/actions/meet";
-import { getMeetPresets } from "@/app/actions/meet-preset";
+import { generateAndSaveMeetingLink, saveMeetingLink, getMeetPresets } from "@/app/actions/meet";
 import { Loader2, Video, Settings } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";

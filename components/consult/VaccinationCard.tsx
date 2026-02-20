@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { Syringe, MapPin, Clock, Check } from 'lucide-react';
-import { reserveVaccination } from '@/app/actions/vaccination-booking';
+import { reserveVaccination } from '@/app/actions/vaccination';
 import { useRouter } from 'next/navigation';
 
 interface Vaccination {
@@ -98,8 +98,8 @@ const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
                     onClick={handleReserve}
                     disabled={isReserving || isReserved}
                     className={`text-xs px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 ${isReserved
-                            ? "bg-green-100 text-green-700"
-                            : "bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
                         }`}
                 >
                     {isReserved ? (

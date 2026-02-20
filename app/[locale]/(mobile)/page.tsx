@@ -8,6 +8,8 @@ import { prisma } from "@/app/lib/prisma";
 
 import { getTranslations } from "next-intl/server";
 
+import HomeWelcome from "@/components/HomeWelcome";
+
 export default async function Home() {
     const session = await auth();
     const t = await getTranslations('HomePage');
@@ -30,10 +32,12 @@ export default async function Home() {
         <div className="bg-white min-h-screen pb-20">
             <Header />
             {session?.user && (
-                <div className="bg-green-100 p-4 text-center text-green-800">
-                    {t('welcome_user', { name: session.user.name || "User" })}
-                    {userProfile ? t('profile_verified') : t('profile_pending')}
-                </div>
+                <HomeWelcome
+                    user={{
+                        name: session.user.name || null,
+                        isVerified: !!userProfile?.phoneNumber && !!userProfile?.residentNumber
+                    }}
+                />
             )}
             <HeroBanner />
             <ServiceGrid />

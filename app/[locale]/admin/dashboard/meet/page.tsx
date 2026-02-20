@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getMeetPresets, createMeetPreset, deleteMeetPreset, toggleDefaultPreset } from "@/app/actions/meet-preset";
+import { getMeetPresets, createMeetPreset, deleteMeetPreset, toggleDefaultPreset } from "@/app/actions/meet";
 import { Plus, Trash2, Star, Link as LinkIcon, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 

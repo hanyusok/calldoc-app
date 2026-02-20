@@ -2,9 +2,9 @@
 
 import { z } from 'zod';
 import { prisma } from '@/app/lib/prisma';
-import bcrypt from 'bcryptjs';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
+import { hashPassword, validateUserUniqueness } from '@/app/lib/user-service';
 
 const RegisterSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -29,17 +29,9 @@ export async function registerUser(prevState: unknown, formData: FormData) {
     const { name, email, password } = validatedFields.data;
 
     try {
-        const existingUser = await prisma.user.findUnique({
-            where: { email },
-        });
+        await validateUserUniqueness(email);
 
-        if (existingUser) {
-            return {
-                message: 'Email already in use.',
-            };
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hashPassword(password);
 
         await prisma.user.create({
             data: {

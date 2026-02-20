@@ -8,7 +8,7 @@ import { AppointmentStatus } from "@prisma/client";
 
 import { createMeeting } from "./meet";
 import { createNotification } from "./notification";
-// import { getTranslations } from "next-intl/server";
+import { kiwoomCancelPayment } from "./kiwoom";
 
 export async function initiatePayment(appointmentId: string) {
     // 1. Fetch Appointment to get price and user details
@@ -383,89 +383,17 @@ export async function cancelPayment(paymentId: string, reason: string, cancelAmo
     }
 
     try {
-        const payload = {
-            CPID: KIWOOM_MID,
-            PAYMETHOD: "CARD", // Assuming Card for now, in real app might need dynamic method
-            AMOUNT: requestAmount.toString(),
-            CANCELREQ: "Y",
+        const result = await kiwoomCancelPayment({
             TRXID: payment.paymentKey,
-            CANCELREASON: reason,
-            TAXFREEAMT: "0"
-        };
-
-        const iconv = require('iconv-lite');
-        const jsonPayload = JSON.stringify(payload);
-        // Encode payload to EUC-KR for both requests
-        const eucKrPayload = iconv.encode(jsonPayload, 'euc-kr');
-
-        // Step 1: Ready Request
-        const readyUrl = "https://apitest.kiwoompay.co.kr/pay/ready";
-        console.log("Kiwoom Cancel Ready Payload (JSON):", jsonPayload);
-        console.log("Kiwoom Cancel Ready Payload (EUC-KR Hex):", eucKrPayload.toString('hex'));
-
-        const readyRes = await fetch(readyUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json;charset=EUC-KR",
-                "Authorization": AUTH_KEY || ""
-            },
-            body: eucKrPayload
+            AMOUNT: requestAmount.toString(),
+            CANCELREASON: reason
         });
 
-        if (!readyRes.ok) {
-            const errorText = await readyRes.text();
-            console.error(`Kiwoom Ready API Failed: ${readyRes.status} ${readyRes.statusText}`, errorText);
-            throw new Error(`Kiwoom Ready API Failed: ${readyRes.status}`);
-        }
-
-        // Decode Ready Response
-        const readyBuffer = await readyRes.arrayBuffer();
-        const readyDecoded = iconv.decode(Buffer.from(readyBuffer), 'euc-kr');
-        console.log("Kiwoom Ready Response (Decoded):", readyDecoded);
-        const readyData = JSON.parse(readyDecoded);
-
-        // console.log("Kiwoom Ready Response:", readyData); // Removed duplicate log
-        const { TOKEN, RETURNURL } = readyData;
-
-        if (!TOKEN || !RETURNURL) {
-            console.error("Kiwoom Cancel Ready Failed: Missing TOKEN or RETURNURL", readyData);
-            return { success: false, error: "Failed to initialize cancellation" };
-        }
-
-        // Step 2: Final Request
-        console.log("Kiwoom Cancel Final Request to:", RETURNURL);
-
-        const finalRes = await fetch(RETURNURL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json;charset=EUC-KR",
-                "Authorization": AUTH_KEY || "",
-                "TOKEN": TOKEN
-            },
-            body: eucKrPayload
-        });
-
-        if (!finalRes.ok) {
-            const errorText = await finalRes.text();
-            console.error(`Kiwoom Final API Failed: ${finalRes.status} ${finalRes.statusText}`, errorText);
-            throw new Error(`Kiwoom Final API Failed: ${finalRes.status}`);
-        }
-
-        // Decode Final Response
-        const finalBuffer = await finalRes.arrayBuffer();
-        const finalDecoded = iconv.decode(Buffer.from(finalBuffer), 'euc-kr');
-        console.log("Kiwoom Cancel Result (Decoded):", finalDecoded);
-        const finalData = JSON.parse(finalDecoded);
-        // console.log("Kiwoom Cancel Result:", finalData); // Removed duplicate log
-
-        // Check RESULTCODE
-        if (finalData.RESULTCODE === "0000") {
-            // Success - Use shared helper
+        if (result.success) {
             await processCancellationSuccess(paymentId, undefined, requestAmount);
-            return { success: true }
+            return { success: true };
         } else {
-            console.error("Kiwoom Cancellation Failed:", finalData.ERRORMESSAGE);
-            return { success: false, error: finalData.ERRORMESSAGE || "Cancellation Failed" }
+            return { success: false, error: result.error || "Cancellation Failed" };
         }
 
     } catch (error: any) {
@@ -599,4 +527,55 @@ export async function checkNewPaidAppointments(knownPaymentIds: string[]) {
         return [];
     }
 }
+export async function getDailyStats() {
+    try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        thirtyDaysAgo.setHours(0, 0, 0, 0);
 
+        const payments = await prisma.payment.findMany({
+            where: {
+                status: 'COMPLETED',
+                approvedAt: { gte: thirtyDaysAgo }
+            },
+            select: {
+                amount: true,
+                approvedAt: true
+            },
+            orderBy: { approvedAt: 'asc' }
+        });
+
+        const statsMap = new Map<string, { total: number, count: number }>();
+
+        payments.forEach(p => {
+            if (!p.approvedAt) return;
+            const dateKey = p.approvedAt.toISOString().split('T')[0];
+            const existing = statsMap.get(dateKey) || { total: 0, count: 0 };
+            statsMap.set(dateKey, {
+                total: existing.total + p.amount,
+                count: existing.count + 1
+            });
+        });
+
+        const dailyStats = Array.from(statsMap.entries()).map(([date, data]) => ({
+            date,
+            ...data
+        }));
+
+        // Calculate today specifically
+        const todayKey = new Date().toISOString().split('T')[0];
+        const todayData = statsMap.get(todayKey) || { total: 0, count: 0 };
+
+        const totalLast30Days = dailyStats.reduce((sum, d) => sum + d.total, 0);
+
+        return {
+            success: true,
+            dailyStats,
+            today: todayData,
+            totalLast30Days
+        };
+    } catch (error) {
+        console.error("Error fetching daily stats:", error);
+        return { success: false, error: "Failed to fetch stats" };
+    }
+}
