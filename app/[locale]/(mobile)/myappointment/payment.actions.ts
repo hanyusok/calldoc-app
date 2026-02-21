@@ -58,7 +58,7 @@ export async function getPaymentLink(appointmentId: string) {
         PAYMETHOD: 'CARD', // Must match the hash param
         TYPE: 'P',         // Must match the hash param
         // Use the configured notification/callback URL if available
-        RETURN_URL: process.env.NEXT_PUBLIC_KIWOOM_NOTIFICATION_URL || "https://calldoctor.co.kr/api/payment/callback"
+        RETURN_URL: process.env.NEXT_PUBLIC_KIWOOM_NOTIFICATION_URL || "https://calldoc.co.kr/api/payment/callback"
     });
 
     return `${baseUrl}?${queryParams.toString()}`;

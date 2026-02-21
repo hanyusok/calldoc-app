@@ -66,6 +66,8 @@ export default function NotificationList({ notifications }: { notifications: Not
                 else if (notification.type === 'PAYMENT_CANCELLED' || notification.type === 'CANCELLED') title = t('payment_cancelled_title');
                 else if (notification.type.includes('PAYMENT')) title = t('action_required');
                 else if (notification.type.includes('MEET')) title = t('meet_ready');
+                else if (notification.type === 'FAX_SENT') title = t('fax_sent_title');
+                else if (notification.type === 'FAX_FAILED') title = t('fax_failed_title');
                 else if (notification.type.includes('FAX')) title = "Fax";
 
                 // Resolve Message

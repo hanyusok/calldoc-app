@@ -63,6 +63,8 @@
         "reserved": "Reserved",
         "reserving": "Reserving...",
         "reserve_button": "Reserve",
+        "vaccine_label": "Vaccine",
+        "select_vaccine": "Select Vaccine",
         "error_message": "An error occurred while reserving."
     },
     "MyAppointmentPage": {
@@ -316,6 +318,8 @@
             "additional_actions": "Additional actions available after confirmation.",
             "patient_fallback": "Patient",
             "edit": "Edit",
+            "manage": "Manage",
+            "close": "Close",
             "complete": "Complete",
             "confirm_complete": "Are you sure you want to mark this appointment as completed?",
             "tab_consultations": "Consultations",
@@ -739,7 +743,10 @@
             "delete": "Delete",
             "cancel": "Cancel",
             "save": "Save Changes",
-            "saving": "Saving..."
+            "saving": "Saving...",
+            "error_save": "Failed to save reservation",
+            "error_select": "Please select both user and vaccination",
+            "error_delete": "Failed to delete reservation"
         }
     },
     "PharmacySelector": {

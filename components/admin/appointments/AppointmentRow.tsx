@@ -116,7 +116,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                                     type="number"
                                     value={price === 0 && !isPending ? '' : price}
                                     onChange={(e) => setPrice(Number(e.target.value))}
-                                    placeholder="Price"
+                                    placeholder={tDash('table.price')}
                                     className="w-20 px-2 py-1 text-right text-sm border border-gray-200 rounded focus:ring-1 focus:ring-blue-500 outline-none"
                                 />
                                 <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] text-gray-300 pointer-events-none">원</span>
@@ -150,7 +150,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                                 className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-bold rounded-lg border border-green-100 hover:bg-green-100 transition-colors flex items-center gap-1.5"
                             >
                                 {isPending ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
-                                <span className="hidden sm:inline">COMPLETE</span>
+                                <span className="hidden sm:inline">{tDash('complete')}</span>
                             </button>
                         )}
 
@@ -160,7 +160,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                                 className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-colors flex items-center gap-1.5 ${expanded ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100'}`}
                             >
                                 <Video size={14} />
-                                <span className="hidden sm:inline">{expanded ? 'CLOSE' : 'MANAGE'}</span>
+                                <span className="hidden sm:inline">{expanded ? tDash('close') : tDash('manage')}</span>
                             </button>
                         )}
 

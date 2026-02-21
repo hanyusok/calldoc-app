@@ -23,6 +23,7 @@ export default function VaccinationReservationModal({ reservation: initialData, 
     const t = useTranslations('Admin.appointment_modal'); // Reusing some keys
     const tVac = useTranslations('VaccinationCard');
     const tStatus = useTranslations('Admin.status');
+    const tDash = useTranslations('Admin.dashboard');
 
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState<Partial<VaccinationReservation>>({
@@ -65,7 +66,7 @@ export default function VaccinationReservationModal({ reservation: initialData, 
                 });
             } else {
                 if (!formData.userId || !formData.vaccinationId) {
-                    alert('Please select both user and vaccination');
+                    alert(t('error_select'));
                     setIsLoading(false);
                     return;
                 }
@@ -79,21 +80,21 @@ export default function VaccinationReservationModal({ reservation: initialData, 
             onClose();
         } catch (error) {
             console.error('Failed to save reservation', error);
-            alert('Failed to save reservation');
+            alert(t('error_save'));
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleDelete = async () => {
-        if (!initialData || !confirm('Are you sure you want to delete this reservation?')) return;
+        if (!initialData || !confirm(tDash('confirm_delete') || 'Are you sure you want to delete this reservation?')) return;
         setIsLoading(true);
         try {
             await deleteVaccinationReservation(initialData.id);
             onClose();
         } catch (error) {
             console.error('Failed to delete', error);
-            alert('Failed to delete reservation');
+            alert(t('error_delete'));
         } finally {
             setIsLoading(false);
         }
@@ -131,14 +132,14 @@ export default function VaccinationReservationModal({ reservation: initialData, 
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">{tVac('vaccine_label') || 'Vaccination'}</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{tVac('vaccine_label')}</label>
                                 <select
                                     className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                     value={formData.vaccinationId || ''}
                                     onChange={e => setFormData({ ...formData, vaccinationId: e.target.value })}
                                     required
                                 >
-                                    <option value="">{tVac('select_vaccine') || 'Select Vaccination'}</option>
+                                    <option value="">{tVac('select_vaccine')}</option>
                                     {vaccinations.map(v => (
                                         <option key={v.id} value={v.id}>{v.name} ({v.category})</option>
                                     ))}

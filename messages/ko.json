@@ -63,6 +63,8 @@
         "reserved": "예약 완료",
         "reserving": "예약 중...",
         "reserve_button": "예약하기",
+        "vaccine_label": "백신",
+        "select_vaccine": "백신 선택",
         "error_message": "예약 중 오류가 발생했습니다."
     },
     "MyAppointmentPage": {
@@ -316,6 +318,8 @@
             "additional_actions": "예약 확정 후 추가 기능을 사용할 수 있습니다.",
             "patient_fallback": "환자",
             "edit": "수정",
+            "manage": "관리",
+            "close": "닫기",
             "complete": "진료 완료",
             "confirm_complete": "이 예약을 완료 처리하시겠습니까?",
             "tab_consultations": "진료 예약",
@@ -739,7 +743,10 @@
             "delete": "삭제",
             "cancel": "취소",
             "save": "저장",
-            "saving": "저장 중..."
+            "saving": "저장 중...",
+            "error_save": "저장 실패",
+            "error_select": "환자와 백신을 모두 선택해주세요",
+            "error_delete": "삭제 실패"
         }
     },
     "PharmacySelector": {

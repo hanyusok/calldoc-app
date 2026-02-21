@@ -13,6 +13,7 @@ interface VaccinationReservationRowProps {
 
 export default function VaccinationReservationRow({ reservation, onEdit }: VaccinationReservationRowProps) {
     const tStatus = useTranslations('Admin.status');
+    const tDash = useTranslations('Admin.dashboard');
     const format = useFormatter();
     const router = useRouter();
     const [status, setStatus] = useState(reservation.status);
@@ -31,7 +32,7 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
     };
 
     const handleDelete = async () => {
-        if (!confirm('Are you sure you want to delete this reservation?')) return;
+        if (!confirm(tDash('confirm_delete') || 'Are you sure you want to delete this reservation?')) return;
         setLoading(true);
         try {
             const result = await deleteVaccinationReservation(reservation.id);
@@ -120,7 +121,7 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
                         onClick={() => handleStatusUpdate('CONFIRMED')}
                         disabled={loading || status === 'CONFIRMED'}
                         className="p-1.5 rounded-lg text-green-600 hover:bg-green-50 disabled:opacity-30 border border-transparent hover:border-green-100 transition-colors"
-                        title="Confirm"
+                        title={tStatus('CONFIRMED')}
                     >
                         <CheckCircle size={14} />
                     </button>
@@ -128,7 +129,7 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
                         onClick={() => handleStatusUpdate('COMPLETED')}
                         disabled={loading || status === 'COMPLETED'}
                         className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 disabled:opacity-30 border border-transparent hover:border-blue-100 transition-colors"
-                        title="Complete"
+                        title={tStatus('COMPLETED')}
                     >
                         <CheckCircle size={14} />
                     </button>
@@ -136,7 +137,7 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
                         onClick={() => handleStatusUpdate('CANCELLED')}
                         disabled={loading || status === 'CANCELLED'}
                         className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 disabled:opacity-30 border border-transparent hover:border-red-100 transition-colors"
-                        title="Cancel"
+                        title={tStatus('CANCELLED')}
                     >
                         <XCircle size={14} />
                     </button>
@@ -145,7 +146,7 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
                         onClick={() => onEdit(reservation)}
                         disabled={loading}
                         className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-colors"
-                        title="Edit"
+                        title={tDash('edit')}
                     >
                         <Edit size={14} />
                     </button>
@@ -153,7 +154,7 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
                         onClick={handleDelete}
                         disabled={loading}
                         className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 border border-transparent hover:border-red-100 transition-colors"
-                        title="Delete"
+                        title={tDash('delete')}
                     >
                         <Trash2 size={14} />
                     </button>

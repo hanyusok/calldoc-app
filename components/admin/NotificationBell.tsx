@@ -9,6 +9,8 @@ import { useTranslations } from 'next-intl';
 interface Notification {
     id: string;
     message: string;
+    key?: string | null;
+    params?: string | null;
     isRead: boolean;
     link?: string | null;
     createdAt: Date;
@@ -19,7 +21,8 @@ export default function NotificationBell() {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const t = useTranslations('Dashboard');
+    const tDefault = useTranslations('Dashboard');
+    const tNotif = useTranslations('Notifications');
 
     // Simple click outside handler
     useEffect(() => {
@@ -73,14 +76,14 @@ export default function NotificationBell() {
             {isOpen && (
                 <div className="absolute left-full ml-2 top-0 w-80 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-200">
                     <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
-                        <h3 className="font-bold text-sm text-gray-900">{t('notifications')}</h3>
-                        <span className="text-xs text-gray-500">{t('new_count', { count: notifications.length })}</span>
+                        <h3 className="font-bold text-sm text-gray-900">{tDefault('notifications')}</h3>
+                        <span className="text-xs text-gray-500">{tDefault('new_count', { count: notifications.length })}</span>
                     </div>
 
                     <div className="max-h-80 overflow-y-auto">
                         {notifications.length === 0 ? (
                             <div className="p-8 text-center text-gray-400 text-sm">
-                                {t('no_notifications')}
+                                {tDefault('no_notifications')}
                             </div>
                         ) : (
                             <ul className="divide-y divide-gray-50">
@@ -91,7 +94,23 @@ export default function NotificationBell() {
                                             className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex gap-3"
                                         >
                                             <div className="flex-1">
-                                                <p className="text-sm text-gray-800 line-clamp-2">{notification.message}</p>
+                                                <p className="text-sm text-gray-800 line-clamp-2">
+                                                    {(() => {
+                                                        if (notification.key) {
+                                                            try {
+                                                                const params = notification.params ? JSON.parse(notification.params) : {};
+                                                                let key = notification.key;
+                                                                if (key.startsWith('Notifications.')) {
+                                                                    key = key.replace('Notifications.', '');
+                                                                }
+                                                                return tNotif(key as any, params);
+                                                            } catch (e) {
+                                                                console.error("Failed to translate notification", e);
+                                                            }
+                                                        }
+                                                        return notification.message;
+                                                    })()}
+                                                </p>
                                                 <p className="text-xs text-gray-400 mt-1">
                                                     {new Date(notification.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </p>

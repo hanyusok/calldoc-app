@@ -92,11 +92,16 @@ export default function NotificationWatcher({ initialConfirmedIds = [], messages
             title = t('payment_cancelled_title');
             break;
         case 'MEET_READY':
-        case 'APPOINTMENT_CONFIRMED':
             borderColor = 'border-green-500';
             iconBg = 'bg-green-50 text-green-500';
             Icon = Video;
-            title = t('meet_ready'); // Ensure key exists or use fallback
+            title = t('meet_ready');
+            break;
+        case 'APPOINTMENT_CONFIRMED':
+            borderColor = 'border-green-500';
+            iconBg = 'bg-green-50 text-green-500';
+            Icon = Bell;
+            title = t('payment_confirmed_title');
             break;
         case 'APPOINTMENT_COMPLETED':
             borderColor = 'border-gray-500';

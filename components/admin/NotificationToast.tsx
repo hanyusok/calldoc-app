@@ -9,6 +9,8 @@ import { Bell, X, CheckCircle, ExternalLink } from 'lucide-react';
 interface Notification {
     id: string;
     message: string;
+    key?: string | null;
+    params?: string | null;
     isRead: boolean;
     link?: string | null;
     createdAt: Date;
@@ -22,6 +24,7 @@ export default function NotificationToast() {
     const [isInitialized, setIsInitialized] = useState(false);
     const router = useRouter();
     const t = useTranslations('Admin.toast');
+    const tNotif = useTranslations('Notifications');
 
     const fetchNotifications = async () => {
         try {
@@ -101,15 +104,31 @@ export default function NotificationToast() {
                             {t('just_now')}
                         </span>
                     </div>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                        {currentNotification.type === 'APPOINTMENT_REQUEST'
-                            ? (() => {
+                    <p className="text-gray-600 text-sm leading-relaxed text-left">
+                        {(() => {
+                            if (currentNotification.key) {
+                                try {
+                                    const params = currentNotification.params ? JSON.parse(currentNotification.params) : {};
+                                    let key = currentNotification.key;
+                                    if (key.startsWith('Notifications.')) {
+                                        key = key.replace('Notifications.', '');
+                                    }
+                                    return tNotif(key as any, params);
+                                } catch (e) {
+                                    console.error("Failed to translate notification toast", e);
+                                }
+                            }
+
+                            // Fallback to existing logic if no key
+                            if (currentNotification.type === 'APPOINTMENT_REQUEST') {
                                 // Try to extract name: "New appointment request from {Name}"
-                                const match = currentNotification.message.match(/New appointment request from (.*)/);
+                                const match = currentNotification.message.match(/New appointment request from (.*)/) ||
+                                    currentNotification.message.match(/(.*)님의 새 예약 요청/); // Handle if already partially translated in DB
                                 const name = match ? match[1] : 'User';
                                 return t('message_appointment_request', { name });
-                            })()
-                            : currentNotification.message}
+                            }
+                            return currentNotification.message;
+                        })()}
                     </p>
                     {currentNotification.link && (
                         <div className="mt-2 text-xs font-bold text-blue-600 group-hover:underline flex items-center gap-1">

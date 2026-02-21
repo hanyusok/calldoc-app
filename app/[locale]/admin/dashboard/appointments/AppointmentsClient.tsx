@@ -117,7 +117,7 @@ export default function AppointmentsClient({
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
                     >
                         <Plus size={20} />
-                        {isConsultations ? tDash('new_appointment') : 'New Vaccination Res.'}
+                        {isConsultations ? tDash('new_appointment') : tDash('new_vaccination_reservation')}
                     </button>
                 }
             />
