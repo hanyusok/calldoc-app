@@ -1,9 +1,9 @@
-
 "use server";
 
 import { prisma } from "@/app/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { createKSTDate } from "@/app/lib/date";
 
 export async function getVaccinations({
     query,
@@ -42,6 +42,12 @@ export async function getVaccinations({
         total,
         totalPages: Math.ceil(total / limit)
     };
+}
+
+export async function getVaccinationById(id: string) {
+    return prisma.vaccination.findUnique({
+        where: { id }
+    });
 }
 
 export async function createVaccination(formData: FormData) {
@@ -155,23 +161,27 @@ export async function deleteVaccination(id: string) {
 
 // ===== RESERVATIONS =====
 
-export async function reserveVaccination(vaccinationId: string) {
+export async function reserveVaccination(vaccinationId: string, dateStr: string, timeStr: string) {
     const session = await auth();
     if (!session?.user?.id) {
         throw new Error("Authentication required");
     }
 
     try {
+        const date = createKSTDate(dateStr, timeStr);
+
         const reservation = await prisma.vaccinationReservation.create({
             data: {
                 userId: session.user.id,
                 vaccinationId: vaccinationId,
+                date: date,
                 status: "PENDING",
             }
         });
 
         revalidatePath("/myappointment");
         revalidatePath("/dashboard");
+        revalidatePath("/admin/dashboard/appointments");
 
         return { success: true, reservationId: reservation.id };
     } catch (error) {
@@ -189,6 +199,21 @@ export async function getMyVaccinationReservations() {
         include: { vaccination: true },
         orderBy: { createdAt: 'desc' }
     });
+}
+
+export async function getVaccinationAvailableSlots(vaccinationId: string, dateStr: string) {
+    // For now, we return a fixed set of slots for vaccinations
+    // In a real app, this could check clinic hours or vaccine availability
+    const slots = [
+        "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+        "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
+        "16:00", "16:30", "17:00", "17:30"
+    ];
+
+    // Optional: Filter out already reserved slots if needed
+    // const reservations = await prisma.vaccinationReservation.findMany(...)
+
+    return { success: true, slots };
 }
 
 export async function getVaccinationReservations(search?: string, status?: string, page = 1, limit = 10) {
@@ -248,5 +273,83 @@ export async function updateVaccinationReservationStatus(id: string, status: str
     } catch (error) {
         console.error("Error updating vaccination reservation:", error);
         throw new Error("Failed to update reservation");
+    }
+}
+
+export async function createVaccinationReservation(data: {
+    userId: string;
+    vaccinationId: string;
+    date: Date;
+    status: string;
+}) {
+    try {
+        const reservation = await prisma.vaccinationReservation.create({
+            data: {
+                userId: data.userId,
+                vaccinationId: data.vaccinationId,
+                date: data.date,
+                status: data.status,
+            }
+        });
+
+        revalidatePath("/admin/dashboard/appointments");
+        revalidatePath("/myappointment");
+
+        return { success: true, reservation };
+    } catch (error) {
+        console.error("Error creating vaccination reservation:", error);
+        return { success: false, error: "Failed to create reservation" };
+    }
+}
+
+export async function updateVaccinationReservation(id: string, data: {
+    date: Date;
+    status: string;
+}) {
+    try {
+        const reservation = await prisma.vaccinationReservation.update({
+            where: { id },
+            data: {
+                date: data.date,
+                status: data.status,
+            }
+        });
+
+        revalidatePath("/admin/dashboard/appointments");
+        revalidatePath("/myappointment");
+
+        return { success: true, reservation };
+    } catch (error) {
+        console.error("Error updating vaccination reservation:", error);
+        return { success: false, error: "Failed to update reservation" };
+    }
+}
+
+export async function deleteVaccinationReservation(id: string) {
+    try {
+        await prisma.vaccinationReservation.delete({
+            where: { id }
+        });
+
+        revalidatePath("/admin/dashboard/appointments");
+        revalidatePath("/myappointment");
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting vaccination reservation:", error);
+        return { success: false, error: "Failed to delete reservation" };
+    }
+}
+
+export async function getUsersAndVaccinations() {
+    try {
+        const [users, vaccinations] = await Promise.all([
+            prisma.user.findMany({ select: { id: true, name: true, email: true } }),
+            prisma.vaccination.findMany({ select: { id: true, name: true, category: true } }),
+        ]);
+        return { users, vaccinations };
+    } catch (error) {
+        console.error("Error fetching users and vaccinations:", error);
+        throw new Error("Failed to fetch data");
     }
 }

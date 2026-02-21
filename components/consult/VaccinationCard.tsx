@@ -1,21 +1,28 @@
-
 "use client";
 
 import React, { useState } from 'react';
 import { Syringe, MapPin, Clock, Check } from 'lucide-react';
 import { reserveVaccination } from '@/app/actions/vaccination';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface Vaccination {
     id: string;
     name: string;
+    nameEn?: string | null;
     price: number;
     description: string | null;
+    descriptionEn?: string | null;
     visitTime: string | null;
+    visitTimeEn?: string | null;
     location: string | null;
+    locationEn?: string | null;
     category: string | null;
+    categoryEn?: string | null;
     manufacturer: string | null;
+    manufacturerEn?: string | null;
     targetDisease: string | null;
+    targetDiseaseEn?: string | null;
     minAge: number | null;
     maxAge: number | null;
 }
@@ -24,25 +31,22 @@ const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
     const [isReserving, setIsReserving] = useState(false);
     const [isReserved, setIsReserved] = useState(false);
     const router = useRouter();
+    const t = useTranslations('VaccinationCard');
+    const locale = useLocale();
+    const isEn = locale === 'en';
 
-    const handleReserve = async () => {
-        setIsReserving(true);
-        try {
-            const result = await reserveVaccination(vaccination.id);
-            if (result.success) {
-                setIsReserved(true);
-                // Redirect to dashboard after success
-                setTimeout(() => {
-                    router.push('/dashboard');
-                }, 1500);
-            } else {
-                alert(result.error);
-            }
-        } catch (error) {
-            alert("An error occurred while reserving.");
-        } finally {
-            setIsReserving(false);
-        }
+    const displayData = {
+        name: isEn ? (vaccination.nameEn || vaccination.name) : vaccination.name,
+        description: isEn ? (vaccination.descriptionEn || vaccination.description) : vaccination.description,
+        visitTime: isEn ? (vaccination.visitTimeEn || vaccination.visitTime) : vaccination.visitTime,
+        location: isEn ? (vaccination.locationEn || vaccination.location) : vaccination.location,
+        category: isEn ? (vaccination.categoryEn || vaccination.category) : vaccination.category,
+        manufacturer: isEn ? (vaccination.manufacturerEn || vaccination.manufacturer) : vaccination.manufacturer,
+        targetDisease: isEn ? (vaccination.targetDiseaseEn || vaccination.targetDisease) : vaccination.targetDisease,
+    };
+
+    const handleReserve = () => {
+        router.push(`/${locale}/vaccination/${vaccination.id}/book`);
     };
 
     return (
@@ -51,17 +55,17 @@ const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
                 <div>
                     <div className="flex items-center gap-2 mb-1">
                         <span className="inline-flex items-center text-[10px] font-bold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">
-                            {vaccination.category || "Vaccine"}
+                            {displayData.category || t('category_fallback')}
                         </span>
                         {vaccination.minAge !== null && (
                             <span className="inline-flex items-center text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                                Age: {vaccination.minAge}+
+                                {t('age_label', { age: vaccination.minAge })}
                             </span>
                         )}
                     </div>
-                    <h3 className="font-bold text-gray-900">{vaccination.name}</h3>
-                    {vaccination.manufacturer && (
-                        <p className="text-xs text-blue-600 font-medium">{vaccination.manufacturer}</p>
+                    <h3 className="font-bold text-gray-900">{displayData.name}</h3>
+                    {displayData.manufacturer && (
+                        <p className="text-xs text-blue-600 font-medium">{displayData.manufacturer}</p>
                     )}
                 </div>
                 <div className="bg-yellow-100 p-2 rounded-full text-yellow-600">
@@ -69,30 +73,32 @@ const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
                 </div>
             </div>
 
-            <p className="text-xs text-gray-500 line-clamp-2">{vaccination.description}</p>
+            <p className="text-xs text-gray-500 line-clamp-2">{displayData.description}</p>
 
-            {vaccination.targetDisease && (
-                <p className="text-xs text-gray-400 mt-1">Target: {vaccination.targetDisease}</p>
+            {displayData.targetDisease && (
+                <p className="text-xs text-gray-400 mt-1">
+                    {t('target_label', { disease: displayData.targetDisease })}
+                </p>
             )}
 
             <div className="flex flex-col gap-1 mt-2 text-xs text-gray-600">
-                {vaccination.location && (
+                {displayData.location && (
                     <div className="flex items-center gap-1.5">
                         <MapPin size={14} className="text-gray-400" />
-                        <span>{vaccination.location}</span>
+                        <span>{displayData.location}</span>
                     </div>
                 )}
-                {vaccination.visitTime && (
+                {displayData.visitTime && (
                     <div className="flex items-center gap-1.5">
                         <Clock size={14} className="text-gray-400" />
-                        <span>Rec. Visit: {vaccination.visitTime}</span>
+                        <span>{t('visit_label', { time: displayData.visitTime })}</span>
                     </div>
                 )}
             </div>
 
             <div className="mt-2 pt-2 border-t border-gray-50 flex justify-between items-center">
                 <span className="font-bold text-blue-600">
-                    {vaccination.price === 0 ? "Free" : `₩${vaccination.price.toLocaleString()}`}
+                    {vaccination.price === 0 ? t('free') : `₩${vaccination.price.toLocaleString()}`}
                 </span>
                 <button
                     onClick={handleReserve}
@@ -105,10 +111,10 @@ const VaccinationCard = ({ vaccination }: { vaccination: Vaccination }) => {
                     {isReserved ? (
                         <>
                             <Check size={14} />
-                            Reserved
+                            {t('reserved')}
                         </>
                     ) : (
-                        isReserving ? "Reserving..." : "Reserve"
+                        isReserving ? t('reserving') : t('reserve_button')
                     )}
                 </button>
             </div>

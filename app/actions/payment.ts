@@ -195,6 +195,11 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
                         userId: admin.id,
                         type: 'PAYMENT_CONFIRMED',
                         message: `Payment confirmed for ${payment.appointment.user.name || 'Patient'}. Doctor: ${payment.appointment.doctor.name}`,
+                        key: 'Notifications.payment_confirmed_admin',
+                        params: JSON.stringify({
+                            user: payment.appointment.user.name || 'Patient',
+                            doctor: payment.appointment.doctor.name
+                        }),
                         link: `/admin/dashboard/payments?highlight=${orderId}`,
                     }))
                 });

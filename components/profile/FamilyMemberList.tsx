@@ -106,14 +106,43 @@ export default function FamilyMemberList({ members, onAdd, onRemove, onUpdate }:
         });
     };
 
+    const [errors, setErrors] = useState<{ phoneNumber?: string }>({});
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let val = e.target.value.replace(/[^0-9]/g, ''); // Only numbers
+
+        if (val.length > 11) val = val.substring(0, 11);
+
+        let formattedVal = val;
+        if (val.length > 3 && val.length <= 7) {
+            formattedVal = `${val.substring(0, 3)}-${val.substring(3)}`;
+        } else if (val.length > 7) {
+            formattedVal = `${val.substring(0, 3)}-${val.substring(3, 7)}-${val.substring(7)}`;
+        }
+
+        setFormData({ ...formData, phoneNumber: formattedVal });
+        if (errors.phoneNumber) setErrors({ ...errors, phoneNumber: undefined });
+    };
+
     const cancelEditing = () => {
         setIsAdding(false);
         setEditingId(null);
         setFormData({ name: '', relation: 'child', age: '', gender: 'male', residentNumber: '', phoneNumber: '' });
+        setErrors({});
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Phone Validation (Optional for family members maybe? but let's be consistent)
+        if (formData.phoneNumber) {
+            const phoneRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+            if (!phoneRegex.test(formData.phoneNumber)) {
+                setErrors({ phoneNumber: t('phone_invalid') });
+                return;
+            }
+        }
+
         setLoading(true);
         try {
             if (editingId) {
@@ -207,13 +236,18 @@ export default function FamilyMemberList({ members, onAdd, onRemove, onUpdate }:
                             <option value="male">{t('gender_male')}</option>
                             <option value="female">{t('gender_female')}</option>
                         </select>
-                        <input
-                            type="tel"
-                            placeholder={t('phone_placeholder')}
-                            className="w-full p-2 text-sm rounded-lg border border-gray-200"
-                            value={formData.phoneNumber}
-                            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                        />
+                        <div>
+                            <input
+                                type="tel"
+                                placeholder={t('phone_placeholder')}
+                                className={`w-full p-2 text-sm rounded-lg border ${errors.phoneNumber ? 'border-red-500 ring-1 ring-red-100' : 'border-gray-200'} focus:outline-none focus:ring-2 focus:ring-primary-100`}
+                                value={formData.phoneNumber}
+                                onChange={handlePhoneChange}
+                            />
+                            {errors.phoneNumber && (
+                                <p className="text-[10px] text-red-500 mt-1">{errors.phoneNumber}</p>
+                            )}
+                        </div>
                         <button
                             type="submit"
                             disabled={loading}

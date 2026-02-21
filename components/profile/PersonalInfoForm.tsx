@@ -28,6 +28,24 @@ export default function PersonalInfoForm({ user, onUpdate }: PersonalInfoProps) 
     });
     const [loading, setLoading] = useState(false);
 
+    const [errors, setErrors] = useState<{ phoneNumber?: string }>({});
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let val = e.target.value.replace(/[^0-9]/g, ''); // Only numbers
+
+        if (val.length > 11) val = val.substring(0, 11);
+
+        let formattedVal = val;
+        if (val.length > 3 && val.length <= 7) {
+            formattedVal = `${val.substring(0, 3)}-${val.substring(3)}`;
+        } else if (val.length > 7) {
+            formattedVal = `${val.substring(0, 3)}-${val.substring(3, 7)}-${val.substring(7)}`;
+        }
+
+        setFormData({ ...formData, phoneNumber: formattedVal });
+        if (errors.phoneNumber) setErrors({ ...errors, phoneNumber: undefined });
+    };
+
     const calculateAgeAndGender = (rin: string) => {
         // Simple regex for YYMMDD-XXXXXXX or just YYMMDDXXXXXXX
         const cleanRin = rin.replace(/-/g, '');
@@ -91,6 +109,18 @@ export default function PersonalInfoForm({ user, onUpdate }: PersonalInfoProps) 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validation
+        const phoneRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+        if (!formData.phoneNumber) {
+            setErrors({ phoneNumber: t('phone_required') });
+            return;
+        }
+        if (!phoneRegex.test(formData.phoneNumber)) {
+            setErrors({ phoneNumber: t('phone_invalid') });
+            return;
+        }
+
         setLoading(true);
         try {
             await onUpdate({
@@ -100,6 +130,7 @@ export default function PersonalInfoForm({ user, onUpdate }: PersonalInfoProps) 
                 residentNumber: formData.residentNumber,
             });
             setIsEditing(false);
+            setErrors({});
         } catch (error) {
             console.error("Failed to update profile", error);
         } finally {
@@ -170,10 +201,13 @@ export default function PersonalInfoForm({ user, onUpdate }: PersonalInfoProps) 
                         <input
                             type="tel"
                             value={formData.phoneNumber}
-                            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                            className="w-full p-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-100"
+                            onChange={handlePhoneChange}
+                            className={`w-full p-2 rounded-xl border ${errors.phoneNumber ? 'border-red-500 ring-1 ring-red-100' : 'border-gray-200'} focus:outline-none focus:ring-2 focus:ring-primary-100`}
                             placeholder={t('phone_placeholder')}
                         />
+                        {errors.phoneNumber && (
+                            <p className="text-[10px] text-red-500 mt-1">{errors.phoneNumber}</p>
+                        )}
                     </div>
                     <div className="flex gap-2 pt-2">
                         <button

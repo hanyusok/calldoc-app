@@ -14,7 +14,7 @@ export default function LoginForm() {
         <div className="w-full flex flex-col gap-4">
             {/* Social Login Buttons First */}
             <button
-                onClick={() => signIn("kakao", { callbackUrl: `/${locale}/profile` })}
+                onClick={() => signIn("kakao", { callbackUrl: `/${locale}/auth/callback` })}
                 className="w-full flex items-center justify-center gap-2 bg-[#FEE500] hover:bg-[#FDD835] text-[#191919] font-medium py-3 px-4 rounded-xl transition-colors"
                 type="button"
             >
@@ -25,7 +25,7 @@ export default function LoginForm() {
             </button>
 
             <button
-                onClick={() => signIn("google", { callbackUrl: `/${locale}/profile` })}
+                onClick={() => signIn("google", { callbackUrl: `/${locale}/auth/callback` })}
                 className="w-full flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors border border-gray-300"
                 type="button"
             >
@@ -39,7 +39,7 @@ export default function LoginForm() {
             </button>
 
             <button
-                onClick={() => signIn("naver", { callbackUrl: `/${locale}/profile` })}
+                onClick={() => signIn("naver", { callbackUrl: `/${locale}/auth/callback` })}
                 style={{ backgroundColor: '#03C75A' }}
                 className="w-full flex items-center justify-center gap-2 hover:opacity-90 text-white font-medium py-3 px-4 rounded-xl transition-all"
                 type="button"
@@ -50,13 +50,6 @@ export default function LoginForm() {
                 {t('naver_login')}
             </button>
 
-            <button
-                onClick={() => signIn("credentials", { action: "guest", callbackUrl: `/${locale}/profile` })}
-                className="w-full flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors border border-gray-200"
-                type="button"
-            >
-                {t('guest_login')}
-            </button>
 
             {/* Divider */}
             <div className="relative flex items-center">

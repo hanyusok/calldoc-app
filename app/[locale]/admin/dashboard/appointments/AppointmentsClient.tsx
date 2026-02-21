@@ -6,6 +6,7 @@ import { Plus, Search, Filter, ChevronLeft, ChevronRight, Stethoscope, Syringe }
 import AppointmentModal from '@/components/admin/appointments/AppointmentModal';
 import AppointmentRow from '@/components/admin/appointments/AppointmentRow';
 import VaccinationReservationRow from '@/components/admin/appointments/VaccinationReservationRow';
+import VaccinationReservationModal from '@/components/admin/appointments/VaccinationReservationModal';
 import PageHeader from '@/components/admin/shared/PageHeader';
 import { useTranslations, useFormatter } from 'next-intl';
 
@@ -40,6 +41,8 @@ export default function AppointmentsClient({
     const [statusFilter, setStatusFilter] = useState(status || 'ALL');
     const [activeTab, setActiveTab] = useState(initialTab);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isVacModalOpen, setIsVacModalOpen] = useState(false);
+    const [selectedVac, setSelectedVac] = useState<any>(null);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(initialPage);
@@ -101,15 +104,22 @@ export default function AppointmentsClient({
         <div className="space-y-6">
             <PageHeader
                 title={t('appointments')}
-                actions={isConsultations ? (
+                actions={
                     <button
-                        onClick={() => setIsCreateModalOpen(true)}
+                        onClick={() => {
+                            if (isConsultations) {
+                                setIsCreateModalOpen(true);
+                            } else {
+                                setSelectedVac(null);
+                                setIsVacModalOpen(true);
+                            }
+                        }}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
                     >
                         <Plus size={20} />
-                        {tDash('new_appointment')}
+                        {isConsultations ? tDash('new_appointment') : 'New Vaccination Res.'}
                     </button>
-                ) : null}
+                }
             />
 
             {/* Tab Switcher */}
@@ -202,7 +212,14 @@ export default function AppointmentsClient({
                                     </tr>
                                 ) : (
                                     initialVacReservations.map((vac: any) => (
-                                        <VaccinationReservationRow key={vac.id} reservation={vac} />
+                                        <VaccinationReservationRow
+                                            key={vac.id}
+                                            reservation={vac}
+                                            onEdit={(v) => {
+                                                setSelectedVac(v);
+                                                setIsVacModalOpen(true);
+                                            }}
+                                        />
                                     ))
                                 )
                             )}
@@ -243,6 +260,15 @@ export default function AppointmentsClient({
             <AppointmentModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
+            />
+
+            <VaccinationReservationModal
+                isOpen={isVacModalOpen}
+                reservation={selectedVac}
+                onClose={() => {
+                    setIsVacModalOpen(false);
+                    setSelectedVac(null);
+                }}
             />
         </div>
     );

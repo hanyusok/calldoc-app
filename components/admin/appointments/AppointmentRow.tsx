@@ -6,7 +6,7 @@ import AppointmentTimeline from './AppointmentTimeline';
 import MeetManager from '@/components/admin/appointments/MeetManager';
 import PrescriptionManager from '@/components/admin/appointments/PrescriptionManager';
 import { ChevronDown, ChevronUp, Clock, CreditCard, CheckCircle2, XCircle, Video, Send, Loader2, DollarSign } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useFormatter } from 'next-intl';
 import { AppointmentStatus } from '@prisma/client';
 import { updateAppointment, completeAppointment } from '@/app/actions/appointment';
 import { useRouter } from 'next/navigation';
@@ -43,6 +43,7 @@ function StatusIcon({ status }: { status: string }) {
 export default function AppointmentRow({ appointment }: { appointment: any }) {
     const tDash = useTranslations('Admin.dashboard');
     const tPrice = useTranslations('Admin.price_manager');
+    const format = useFormatter();
     const router = useRouter();
     const [expanded, setExpanded] = useState(false);
     const [isPending, startTransition] = useTransition();
@@ -92,9 +93,9 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                 </td>
                 <td className="p-4 text-gray-600">
                     <div className="flex flex-col text-xs font-medium">
-                        <span suppressHydrationWarning>{new Date(appointment.date).toLocaleDateString()}</span>
-                        <span className="text-gray-400" suppressHydrationWarning>
-                            {new Date(appointment.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        <span>{format.dateTime(new Date(appointment.date), { dateStyle: 'medium' })}</span>
+                        <span className="text-gray-400">
+                            {format.dateTime(new Date(appointment.date), { hour: '2-digit', minute: '2-digit', hour12: false })}
                         </span>
                     </div>
                 </td>

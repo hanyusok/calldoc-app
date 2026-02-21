@@ -3,14 +3,32 @@
 import { auth, signOut } from "@/auth";
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { createNotification } from "@/app/actions/notification";
+import { z } from "zod";
+
+const phoneRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+
+const ProfileSchema = z.object({
+    age: z.number().nullable(),
+    gender: z.string().nullable(),
+    phoneNumber: z.string().regex(phoneRegex).nullable(),
+    residentNumber: z.string().nullable(),
+});
+
+const FamilyMemberSchema = z.object({
+    name: z.string().min(1),
+    relation: z.string(),
+    age: z.number(),
+    gender: z.string(),
+    residentNumber: z.string().optional().nullable(),
+    phoneNumber: z.string().regex(phoneRegex).optional().nullable().or(z.literal('')),
+});
 
 // Helper to robustly get the current user from DB based on session email
-// This handles cases where the DB was reset but the browser session (cookie) still holds an old User ID.
 async function getAuthenticatedUser() {
     const session = await auth();
     if (!session?.user?.email) throw new Error("Unauthorized");
 
-    // Always fetch latest user by email to ensure we have the correct ID
     const user = await prisma.user.findUnique({
         where: { email: session.user.email }
     });
@@ -21,15 +39,11 @@ async function getAuthenticatedUser() {
 
 export async function updateProfile(data: any) {
     const user = await getAuthenticatedUser();
+    const validated = ProfileSchema.parse(data);
 
     await prisma.user.update({
         where: { id: user.id },
-        data: {
-            age: data.age,
-            gender: data.gender,
-            phoneNumber: data.phoneNumber,
-            residentNumber: data.residentNumber,
-        },
+        data: validated,
     });
     revalidatePath('/profile');
 }
@@ -77,16 +91,12 @@ export async function deleteInsurance() {
 
 export async function addFamilyMember(data: any) {
     const user = await getAuthenticatedUser();
+    const validated = FamilyMemberSchema.parse(data);
 
     await prisma.familyMember.create({
         data: {
             userId: user.id,
-            name: data.name,
-            relation: data.relation,
-            age: data.age,
-            gender: data.gender,
-            residentNumber: data.residentNumber,
-            phoneNumber: data.phoneNumber,
+            ...validated
         },
     });
     revalidatePath('/profile');
@@ -95,7 +105,6 @@ export async function addFamilyMember(data: any) {
 export async function removeFamilyMember(id: string) {
     const user = await getAuthenticatedUser();
 
-    // Ensure the family member belongs to the user
     const member = await prisma.familyMember.findUnique({
         where: { id },
     });
@@ -110,8 +119,8 @@ export async function removeFamilyMember(id: string) {
 
 export async function updateFamilyMember(data: any) {
     const user = await getAuthenticatedUser();
+    const validated = FamilyMemberSchema.parse(data);
 
-    // Verify ownership
     const member = await prisma.familyMember.findUnique({
         where: { id: data.id },
     });
@@ -119,14 +128,7 @@ export async function updateFamilyMember(data: any) {
     if (member?.userId === user.id) {
         await prisma.familyMember.update({
             where: { id: data.id },
-            data: {
-                name: data.name,
-                relation: data.relation,
-                age: data.age,
-                gender: data.gender,
-                residentNumber: data.residentNumber,
-                phoneNumber: data.phoneNumber,
-            },
+            data: validated,
         });
         revalidatePath('/profile');
     }
@@ -136,12 +138,9 @@ export async function logout() {
     await signOut();
 }
 
-import { createNotification } from "@/app/actions/notification";
-
 export async function updatePharmacy(pharmacyId: string) {
     const user = await getAuthenticatedUser();
 
-    // Verify pharmacy exists
     const pharmacy = await prisma.pharmacy.findUnique({
         where: { id: pharmacyId },
     });

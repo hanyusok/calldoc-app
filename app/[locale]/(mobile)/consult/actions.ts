@@ -227,6 +227,8 @@ export async function createAppointment(formData: FormData) {
                 userId: admin.id,
                 type: 'APPOINTMENT_REQUEST',
                 message: `New appointment request from ${appointment.user.name || 'User'}`,
+                key: 'Notifications.appointment_request_admin',
+                params: JSON.stringify({ user: appointment.user.name || 'User' }),
                 link: `/admin/dashboard/appointments?highlight=${appointment.id}`,
             }))
         });

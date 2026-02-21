@@ -54,6 +54,17 @@
         "directions": "Directions",
         "at_front": "Front Pharmacy"
     },
+    "VaccinationCard": {
+        "category_fallback": "Vaccination",
+        "age_label": "Age: {age}+",
+        "target_label": "Target: {disease}",
+        "visit_label": "Rec. Visit: {time}",
+        "free": "Free",
+        "reserved": "Reserved",
+        "reserving": "Reserving...",
+        "reserve_button": "Reserve",
+        "error_message": "An error occurred while reserving."
+    },
     "MyAppointmentPage": {
         "title": "Appointments",
         "action_required": "Action Required",
@@ -128,7 +139,9 @@
         "not_set": "Not set",
         "male": "Male",
         "female": "Female",
-        "select": "Select"
+        "select": "Select",
+        "phone_invalid": "Invalid phone number format (e.g., 010-1234-5678)",
+        "phone_required": "Please enter a phone number"
     },
     "Insurance": {
         "title": "Insurance",
@@ -162,7 +175,9 @@
         "save": "Save",
         "saving": "Saving...",
         "edit_member": "Edit Family Member",
-        "no_members": "No family members registered."
+        "no_members": "No family members registered.",
+        "phone_invalid": "Invalid phone number format (e.g., 010-1234-5678)",
+        "phone_required": "Please enter a phone number"
     },
     "Dashboard": {
         "title": "Dashboard",
@@ -192,8 +207,7 @@
         "or": "OR",
         "kakao_login": "Login with Kakao",
         "google_login": "Login with Google",
-        "naver_login": "Login with Naver",
-        "guest_login": "Sign in as Guest"
+        "naver_login": "Login with Naver"
     },
     "DoctorDetails": {
         "title": "Doctor Profile",
@@ -306,6 +320,8 @@
             "confirm_complete": "Are you sure you want to mark this appointment as completed?",
             "tab_consultations": "Consultations",
             "tab_vaccinations": "Vaccinations",
+            "new_vaccination_reservation": "New Vaccination Res.",
+            "edit_vaccination_reservation": "Edit Vaccination Res.",
             "vaccine": "Vaccine",
             "pagination": {
                 "showing": "Showing",
@@ -711,6 +727,8 @@
         "appointment_modal": {
             "edit_title": "Edit Appointment",
             "new_title": "New Appointment",
+            "edit_vac_title": "Edit Vaccination Res.",
+            "new_vac_title": "New Vaccination Res.",
             "patient": "Patient",
             "select_patient": "Select Patient",
             "doctor": "Doctor",
@@ -811,6 +829,12 @@
         "view_appointments": "View My Appointments",
         "back_to_home": "Back to Home"
     },
+    "VaccinationSuccess": {
+        "title": "Booking Complete!",
+        "description": "Your {name} vaccination has been reserved. Please visit at your scheduled time.",
+        "view_appointments": "View My Appointments",
+        "back_to_home": "Back to Home"
+    },
     "Notifications": {
         "no_notifications": "No new notifications",
         "payment_confirmed_title": "Payment Confirmed",
@@ -832,7 +856,10 @@
         "fax_sent_title": "Fax Sent",
         "fax_sent": "Prescription faxed successfully to {name}",
         "fax_failed_title": "Fax Failed",
-        "fax_failed": "Fax transmission failed. Code: {error}"
+        "fax_failed": "Fax transmission failed. Code: {error}",
+        "appointment_request_title": "New Appointment Request",
+        "appointment_request_admin": "New appointment request from {user}",
+        "payment_confirmed_admin": "Payment confirmed for {user} (Doctor: {doctor})"
     },
     "PaymentSuccess": {
         "title": "Payment Successful!",

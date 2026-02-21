@@ -30,7 +30,7 @@ export default async function RootLayout({
     return (
         <html lang={locale}>
             <body className="antialiased bg-gray-50 text-gray-900 pb-20">
-                <NextIntlClientProvider messages={messages}>
+                <NextIntlClientProvider locale={locale} messages={messages} timeZone="Asia/Seoul">
                     {children}
                 </NextIntlClientProvider>
             </body>

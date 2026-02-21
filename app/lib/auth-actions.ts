@@ -73,7 +73,7 @@ export async function authenticate(
     formData: FormData,
 ) {
     try {
-        await signIn('credentials', { ...Object.fromEntries(formData), redirectTo: `/${locale}/profile` });
+        await signIn('credentials', { ...Object.fromEntries(formData), redirectTo: `/${locale}/auth/callback` });
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {

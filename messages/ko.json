@@ -54,6 +54,17 @@
         "directions": "길찾기",
         "at_front": "문전약국"
     },
+    "VaccinationCard": {
+        "category_fallback": "예방접종",
+        "age_label": "연령: {age}세 이상",
+        "target_label": "대상: {disease}",
+        "visit_label": "권장 방문 시간: {time}",
+        "free": "무료",
+        "reserved": "예약 완료",
+        "reserving": "예약 중...",
+        "reserve_button": "예약하기",
+        "error_message": "예약 중 오류가 발생했습니다."
+    },
     "MyAppointmentPage": {
         "title": "진료예약",
         "action_required": "수납 요청",
@@ -128,7 +139,9 @@
         "not_set": "미설정",
         "male": "남성",
         "female": "여성",
-        "select": "선택"
+        "select": "선택",
+        "phone_invalid": "올바른 전화번호 형식이 아닙니다 (예: 010-1234-5678)",
+        "phone_required": "전화번호를 입력해주세요"
     },
     "Insurance": {
         "title": "보험 정보",
@@ -162,7 +175,9 @@
         "save": "저장하기",
         "saving": "저장 중...",
         "edit_member": "가족 구성원 수정",
-        "no_members": "등록된 가족 구성원이 없습니다."
+        "no_members": "등록된 가족 구성원이 없습니다.",
+        "phone_invalid": "올바른 전화번호 형식이 아닙니다 (예: 010-1234-5678)",
+        "phone_required": "전화번호를 입력해주세요"
     },
     "Dashboard": {
         "title": "대시보드",
@@ -192,8 +207,7 @@
         "or": "또는",
         "kakao_login": "카카오 로그인",
         "google_login": "구글 로그인",
-        "naver_login": "네이버 로그인",
-        "guest_login": "게스트로 시작하기"
+        "naver_login": "네이버 로그인"
     },
     "DoctorDetails": {
         "title": "의사 프로필",
@@ -306,6 +320,8 @@
             "confirm_complete": "이 예약을 완료 처리하시겠습니까?",
             "tab_consultations": "진료 예약",
             "tab_vaccinations": "예방접종 예약",
+            "new_vaccination_reservation": "새 백신 예약",
+            "edit_vaccination_reservation": "백신 예약 수정",
             "vaccine": "백신",
             "pagination": {
                 "showing": "표시 중",
@@ -711,6 +727,8 @@
         "appointment_modal": {
             "edit_title": "예약 수정",
             "new_title": "새 예약",
+            "edit_vac_title": "백신 예약 수정",
+            "new_vac_title": "새 백신 예약",
             "patient": "환자",
             "select_patient": "환자 선택",
             "doctor": "의사",
@@ -811,6 +829,12 @@
         "view_appointments": "내 예약 보기",
         "back_to_home": "홈으로 돌아가기"
     },
+    "VaccinationSuccess": {
+        "title": "예약 완료!",
+        "description": "{name} 예약이 완료되었습니다. 지정된 시간에 방문해 주세요.",
+        "view_appointments": "내 예약 보기",
+        "back_to_home": "홈으로 돌아가기"
+    },
     "Notifications": {
         "no_notifications": "새로운 알림이 없습니다",
         "payment_confirmed_title": "결제 완료",
@@ -832,7 +856,10 @@
         "fax_sent_title": "팩스 전송 완료",
         "fax_sent": "{name}으로 처방전을 성공적으로 전송했습니다.",
         "fax_failed_title": "팩스 전송 실패",
-        "fax_failed": "팩스 전송에 실패했습니다. (오류 코드: {error})"
+        "fax_failed": "팩스 전송에 실패했습니다. (오류 코드: {error})",
+        "appointment_request_title": "새 예약 요청",
+        "appointment_request_admin": "{user}님의 새 예약 요청",
+        "payment_confirmed_admin": "{user}님의 결제가 완료되었습니다. (의사: {doctor})"
     },
     "PaymentSuccess": {
         "title": "결제 성공!",
