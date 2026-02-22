@@ -1,17 +1,18 @@
-import { useTranslations } from 'next-intl';
+import { getSettings } from '@/app/actions/settings';
 import { Link } from '@/i18n/routing';
 
-const HeroBanner = () => {
-    const t = useTranslations('HeroBanner');
+const HeroBanner = async () => {
+    const settings = await getSettings();
+
     return (
         <div className="px-4 py-4">
             <div className="relative w-full h-40 bg-gradient-to-r from-primary-400 to-primary-600 rounded-2xl overflow-hidden shadow-lg flex items-center px-6">
                 <div className="z-10 text-white">
-                    <h2 className="text-xl font-bold mb-1">{t('title')}</h2>
-                    <p className="text-sm opacity-90 mb-3">{t('subtitle')}</p>
+                    <h2 className="text-xl font-bold mb-1">{settings.heroBannerTitle}</h2>
+                    <p className="text-sm opacity-90 mb-3">{settings.heroBannerSubtitle}</p>
                     <Link href="/consult">
                         <button className="bg-white text-primary-600 px-4 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-gray-50 transition-colors">
-                            {t('button')}
+                            진료 예약하기
                         </button>
                     </Link>
                 </div>

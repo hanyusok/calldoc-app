@@ -1,15 +1,17 @@
 "use client";
 
 import { useState, useRef, useTransition } from "react";
-import { Printer, Pencil, Check, X } from "lucide-react";
+import { Printer, Pencil, Check, X, Lock, BadgeCheck } from "lucide-react";
 import { updatePharmacyFax } from "@/app/actions/pharmacy";
 
 interface EditableFaxProps {
     pharmacyId: string;
     initialFax: string | null;
+    faxLocked?: boolean;
+    faxVerified?: boolean;
 }
 
-export default function EditableFax({ pharmacyId, initialFax }: EditableFaxProps) {
+export default function EditableFax({ pharmacyId, initialFax, faxLocked = false, faxVerified = false }: EditableFaxProps) {
     const [fax, setFax] = useState(initialFax || "직접 전화 문의");
     const [editing, setEditing] = useState(false);
     const [inputValue, setInputValue] = useState(fax);
@@ -19,6 +21,7 @@ export default function EditableFax({ pharmacyId, initialFax }: EditableFaxProps
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleEdit = () => {
+        if (faxLocked) return;
         setInputValue(fax);
         setEditing(true);
         setError(null);
@@ -86,18 +89,35 @@ export default function EditableFax({ pharmacyId, initialFax }: EditableFaxProps
         );
     }
 
+    // Locked: show lock icon, no edit cursor
+    if (faxLocked) {
+        return (
+            <span className="flex items-center gap-1 text-sm">
+                <Printer size={14} className="text-gray-400 shrink-0" />
+                <span className={faxVerified ? "text-green-600 font-semibold" : "text-gray-500"}>{fax}</span>
+                {faxVerified && <BadgeCheck size={14} className="text-green-500 shrink-0" aria-label="관리자 확인 완료" />}
+                <Lock size={11} className="text-gray-300 shrink-0 ml-0.5" aria-label="관리자에 의해 잠김" />
+            </span>
+        );
+    }
+
+    // Editable: show pencil hint on hover
     return (
         <button
             onClick={handleEdit}
             title="클릭하여 팩스 번호 수정"
-            className="flex items-center gap-1 text-gray-500 text-sm hover:text-primary-600 group transition-colors"
+            className="flex items-center gap-1 text-sm hover:text-primary-600 group transition-colors"
         >
-            <Printer size={14} className="shrink-0" />
-            <span className={saved ? "text-green-600 font-semibold" : ""}>{fax}</span>
-            <Pencil
-                size={11}
-                className="text-gray-300 group-hover:text-primary-400 transition-colors ml-0.5"
-            />
+            <Printer size={14} className="text-gray-400 shrink-0" />
+            <span className={
+                saved ? "text-green-600 font-semibold" :
+                    faxVerified ? "text-green-600 font-semibold" :
+                        "text-gray-500"
+            }>
+                {fax}
+            </span>
+            {faxVerified && <BadgeCheck size={14} className="text-green-500 shrink-0" aria-label="관리자 확인 완료" />}
+            <Pencil size={11} className="text-gray-300 group-hover:text-primary-400 transition-colors ml-0.5" />
         </button>
     );
 }

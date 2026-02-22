@@ -11,6 +11,8 @@ type Pharmacy = {
     id: string;
     name: string;
     fax: string | null;
+    faxLocked: boolean;
+    faxVerified: boolean;
     address: string | null;
     phone: string | null;
     createdAt: Date;

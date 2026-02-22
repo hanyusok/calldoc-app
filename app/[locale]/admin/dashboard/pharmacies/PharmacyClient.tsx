@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Plus, Trash2, Edit2, Search, ChevronLeft, ChevronRight, X } from "lucide-react";
-import { createPharmacy, deletePharmacy, updatePharmacy } from "@/app/actions/pharmacy";
+import { Plus, Trash2, Edit2, Search, ChevronLeft, ChevronRight, X, Lock, LockOpen, BadgeCheck } from "lucide-react";
+import { createPharmacy, deletePharmacy, updatePharmacy, togglePharmacyFaxLock, togglePharmacyFaxVerified } from "@/app/actions/pharmacy";
 
 interface PharmacyClientProps {
     initialPharmacies: any[];
@@ -130,6 +130,24 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
         }
     };
 
+    const handleToggleLock = async (id: string) => {
+        const result = await togglePharmacyFaxLock(id);
+        if (result.success) {
+            setPharmacies(pharmacies.map(p => p.id === id ? { ...p, faxLocked: result.faxLocked } : p));
+        } else {
+            alert(result.error || "Failed");
+        }
+    };
+
+    const handleToggleVerified = async (id: string) => {
+        const result = await togglePharmacyFaxVerified(id);
+        if (result.success) {
+            setPharmacies(pharmacies.map(p => p.id === id ? { ...p, faxVerified: result.faxVerified } : p));
+        } else {
+            alert(result.error || "Failed");
+        }
+    };
+
 
 
     return (
@@ -223,7 +241,29 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
                                 pharmacies.map(p => (
                                     <tr key={p.id} className="hover:bg-gray-50">
                                         <td className="p-4 font-medium">{p.name} {p.isDefault && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded ml-2">{t('is_default')}</span>}</td>
-                                        <td className="p-4 text-gray-600">{p.fax || "-"}</td>
+                                        <td className="p-4 text-gray-600">
+                                            <div className="flex items-center gap-1">
+                                                <span className={p.faxVerified ? "text-green-600 font-semibold" : ""}>
+                                                    {p.fax || "-"}
+                                                </span>
+                                                {/* Verify toggle */}
+                                                <button
+                                                    onClick={() => handleToggleVerified(p.id)}
+                                                    title={p.faxVerified ? "인증 해제" : "팩스 인증"}
+                                                    className={`p-1 rounded transition-colors ${p.faxVerified ? 'text-green-500 hover:text-green-700' : 'text-gray-300 hover:text-green-500'}`}
+                                                >
+                                                    <BadgeCheck size={15} />
+                                                </button>
+                                                {/* Lock toggle */}
+                                                <button
+                                                    onClick={() => handleToggleLock(p.id)}
+                                                    title={p.faxLocked ? "잠금 해제" : "편집 잠금"}
+                                                    className={`p-1 rounded transition-colors ${p.faxLocked ? 'text-amber-500 hover:text-amber-700' : 'text-gray-300 hover:text-amber-500'}`}
+                                                >
+                                                    {p.faxLocked ? <Lock size={14} /> : <LockOpen size={14} />}
+                                                </button>
+                                            </div>
+                                        </td>
                                         <td className="p-4 text-gray-600">{p.phone || "-"}</td>
                                         <td className="p-4 text-gray-600">{p.address || "-"}</td>
                                         <td className="p-4 text-right flex justify-end gap-2">

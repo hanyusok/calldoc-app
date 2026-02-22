@@ -196,9 +196,11 @@ model Payment {
 model Pharmacy {
   id        String   @id @default(cuid())
   name      String
-  fax       String?
-  phone     String?
-  address   String?
+  fax         String?
+  faxLocked   Boolean  @default(false)
+  faxVerified Boolean  @default(false)
+  phone       String?
+  address     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isDefault Boolean  @default(false)
@@ -234,10 +236,12 @@ model Prescription {
 }
 
 model AppSettings {
-  id              Int     @id @default(1)
-  siteName        String  @default("CallDoc")
-  maintenanceMode Boolean @default(false)
-  homePostsCount  Int     @default(3)
+  id                 Int     @id @default(1)
+  siteName           String  @default("CallDoc")
+  maintenanceMode    Boolean @default(false)
+  homePostsCount     Int     @default(3)
+  heroBannerTitle    String  @default("지금 바로 진료 예약")
+  heroBannerSubtitle String  @default("전문의와 비대면으로 빠르고 편리하게")
 }
 
 model Post {

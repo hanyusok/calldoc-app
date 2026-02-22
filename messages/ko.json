@@ -487,7 +487,10 @@
             "save_changes": "변경사항 저장",
             "home_posts_count": "홈 화면 게시글 수",
             "saved_success": "설정이 저장되었습니다",
-            "saved_error": "설정 저장 실패"
+            "saved_error": "설정 저장 실패",
+            "hero_banner": "헴로 배너",
+            "hero_title": "제목",
+            "hero_subtitle": "부제목"
         },
         "vaccinations": {
             "title": "예방접종 관리",

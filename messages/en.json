@@ -487,7 +487,10 @@
             "save_changes": "Save Changes",
             "home_posts_count": "Home Tab Posts Count",
             "saved_success": "Settings saved successfully",
-            "saved_error": "Failed to save settings"
+            "saved_error": "Failed to save settings",
+            "hero_banner": "Hero Banner",
+            "hero_title": "Title",
+            "hero_subtitle": "Subtitle"
         },
         "vaccinations": {
             "title": "Vaccination Management",

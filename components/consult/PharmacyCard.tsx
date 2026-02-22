@@ -13,6 +13,8 @@ interface PharmacyProps {
         address: string | null;
         phone: string | null;
         fax: string | null;
+        faxLocked: boolean;
+        faxVerified: boolean;
         isDefault: boolean;
         latitude: number;
         longitude: number;
@@ -53,7 +55,12 @@ export default function PharmacyCard({ pharmacy, isFavorited, isLoggedIn }: Phar
                                 {pharmacy.phone || "No phone"}
                             </p>
                             <span className="text-gray-300">|</span>
-                            <EditableFax pharmacyId={pharmacy.id} initialFax={pharmacy.fax} />
+                            <EditableFax
+                                pharmacyId={pharmacy.id}
+                                initialFax={pharmacy.fax}
+                                faxLocked={pharmacy.faxLocked}
+                                faxVerified={pharmacy.faxVerified}
+                            />
                         </div>
                     </div>
                     {/* Favorite button — only shown when user is logged in */}

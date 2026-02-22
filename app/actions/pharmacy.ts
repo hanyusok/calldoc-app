@@ -145,3 +145,39 @@ export async function updatePharmacyFax(pharmacyId: string, fax: string) {
         return { error: "Failed to update fax" };
     }
 }
+
+// Admin-only: lock/unlock fax to prevent client edits
+export async function togglePharmacyFaxLock(pharmacyId: string) {
+    const { auth } = await import("@/auth");
+    const session = await auth();
+    if (session?.user?.role !== "ADMIN") return { error: "Unauthorized" };
+
+    const pharmacy = await prisma.pharmacy.findUnique({ where: { id: pharmacyId }, select: { faxLocked: true } });
+    if (!pharmacy) return { error: "Not found" };
+
+    const updated = await prisma.pharmacy.update({
+        where: { id: pharmacyId },
+        data: { faxLocked: !pharmacy.faxLocked },
+    });
+    revalidatePath('/consult');
+    revalidatePath('/admin/dashboard/pharmacies');
+    return { success: true, faxLocked: updated.faxLocked };
+}
+
+// Admin-only: mark fax as verified/unverified
+export async function togglePharmacyFaxVerified(pharmacyId: string) {
+    const { auth } = await import("@/auth");
+    const session = await auth();
+    if (session?.user?.role !== "ADMIN") return { error: "Unauthorized" };
+
+    const pharmacy = await prisma.pharmacy.findUnique({ where: { id: pharmacyId }, select: { faxVerified: true } });
+    if (!pharmacy) return { error: "Not found" };
+
+    const updated = await prisma.pharmacy.update({
+        where: { id: pharmacyId },
+        data: { faxVerified: !pharmacy.faxVerified },
+    });
+    revalidatePath('/consult');
+    revalidatePath('/admin/dashboard/pharmacies');
+    return { success: true, faxVerified: updated.faxVerified };
+}
