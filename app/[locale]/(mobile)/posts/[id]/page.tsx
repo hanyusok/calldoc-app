@@ -4,10 +4,11 @@ import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import { prisma } from "@/app/lib/prisma";
 import Link from 'next/link';
-import { ChevronLeft, Calendar, User, Tag, Share2, Bookmark } from 'lucide-react';
+import { ChevronLeft, Calendar, User, Tag, Bookmark } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import ShareButton from "@/components/posts/ShareButton";
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -34,9 +35,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
                     </span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <button className="p-2 text-gray-400 hover:text-primary-500 transition-colors">
-                        <Share2 size={20} />
-                    </button>
+                    <ShareButton title={post.title} variant="icon" />
                     <button className="p-2 text-gray-400 hover:text-primary-500 transition-colors">
                         <Bookmark size={20} />
                     </button>
@@ -104,10 +103,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
                                 <h4 className="text-sm font-bold text-gray-900 mb-1">도움이 되셨나요?</h4>
                                 <p className="text-xs text-gray-500">다른 사람들에게도 이 정보를 공유해보세요.</p>
                             </div>
-                            <button className="bg-white text-gray-700 border border-gray-200 px-4 py-2 rounded-xl text-sm font-bold shadow-sm hover:bg-gray-50 transition-colors flex items-center gap-2">
-                                <Share2 size={16} />
-                                공유하기
-                            </button>
+                            <ShareButton title={post.title} text={post.content?.slice(0, 100)} variant="card" />
                         </div>
                     </div>
                 </div>
