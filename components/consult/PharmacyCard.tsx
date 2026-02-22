@@ -1,5 +1,5 @@
 
-import { MapPin, Phone, Star } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
