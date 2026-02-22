@@ -28,7 +28,8 @@ model User {
   insurance               Insurance?
   notifications           Notification[]
   sessions                Session[]
-  pharmacy                Pharmacy?                @relation(fields: [pharmacyId], references: [id])
+  pharmacy                Pharmacy?                @relation("UserPharmacy", fields: [pharmacyId], references: [id])
+  favoritePharmacies      UserFavoritePharmacy[]
   vaccinationReservations VaccinationReservation[]
 }
 
@@ -204,7 +205,18 @@ model Pharmacy {
   latitude  Float    @default(0.0)
   longitude Float    @default(0.0)
   atFront   Boolean  @default(false)
-  users     User[]
+  users     User[]   @relation("UserPharmacy")
+  favoritedBy UserFavoritePharmacy[]
+}
+
+model UserFavoritePharmacy {
+  userId     String
+  pharmacyId String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pharmacy   Pharmacy @relation(fields: [pharmacyId], references: [id], onDelete: Cascade)
+
+  @@id([userId, pharmacyId])
 }
 
 model Prescription {

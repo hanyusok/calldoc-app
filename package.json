@@ -46,5 +46,12 @@
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "glob": "^11.0.0",
+    "minimatch": "^10.2.1",
+    "rollup": "^4.24.0",
+    "rimraf": "^6.0.0",
+    "ajv": "^8.17.1"
   }
 }

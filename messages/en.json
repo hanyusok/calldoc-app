@@ -189,7 +189,7 @@
         "no_notifications": "No new notifications",
         "new_count": "{count} new",
         "view_all": "View All",
-        "nearby_pharmacy": "Select Pharmacy"
+        "nearby_pharmacy": "Favorite Pharmacy"
     },
     "LoginPage": {
         "title": "CallDoc",
@@ -756,6 +756,13 @@
         "search_placeholder": "Search pharmacy...",
         "loading": "Loading...",
         "no_results": "No pharmacies found"
+    },
+    "FavoritePharmacy": {
+        "title": "Favorite Pharmacy",
+        "empty": "No favorited pharmacies yet.",
+        "go_search": "Search Pharmacies",
+        "add_favorite": "Add to Favorites",
+        "remove_favorite": "Remove from Favorites"
     },
     "Clinics": {
         "title": "Clinic Management",

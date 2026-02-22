@@ -8,8 +8,9 @@ import FilterBar from "@/components/consult/FilterBar";
 import { getDoctors, getClinics, getPharmacies, getVaccinations } from "./actions";
 import Link from "next/link";
 import { ChevronLeft, Search } from 'lucide-react';
-
 import { getTranslations } from "next-intl/server";
+import { auth } from "@/auth";
+import { getUserFavoritePharmacyIds } from "@/app/[locale]/(mobile)/profile/actions";
 
 export default async function ConsultPage(props: {
     searchParams: Promise<{ query?: string; category?: string; filter?: string }>
@@ -48,16 +49,22 @@ export default async function ConsultPage(props: {
         query: params.query
     }) : [];
 
+    // Resolve session and favorite pharmacy IDs (only when viewing pharmacies)
+    const session = await auth();
+    const isLoggedIn = !!session?.user;
+    let favoritePharmacyIds: string[] = [];
+    if (isPharmacy && isLoggedIn) {
+        try {
+            favoritePharmacyIds = await getUserFavoritePharmacyIds();
+        } catch {
+            // Not authenticated or error — show without favorites
+        }
+    }
+
     // Map category ID to translated name if it exists...
-    // ... (existing helper logic)
     let title = t('title_default');
     if (params.category) {
-        // Ideally we map category slug back to translation key
-        // For simple Verify, let's keep it simple or try to find a match
-        // The category param is like "lab-test", "telemedicine"
-        const catKey = params.category.replace(/-/g, '_'); // lab-test -> lab_test
-        // We can try to get translation, if strictly types allows it.
-        // For now, just display the param or default
+        const catKey = params.category.replace(/-/g, '_');
         try {
             title = tService(catKey as any);
         } catch (e) {
@@ -111,7 +118,12 @@ export default async function ConsultPage(props: {
                 ) : (
                     <>
                         {isPharmacy && (pharmacies).map(pharmacy => (
-                            <PharmacyCard key={pharmacy.id} pharmacy={pharmacy} />
+                            <PharmacyCard
+                                key={pharmacy.id}
+                                pharmacy={pharmacy}
+                                isFavorited={favoritePharmacyIds.includes(pharmacy.id)}
+                                isLoggedIn={isLoggedIn}
+                            />
                         ))}
 
                         {isVaccination && (vaccinations).map(v => (

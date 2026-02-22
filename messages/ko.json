@@ -189,7 +189,7 @@
         "no_notifications": "새로운 알림이 없습니다",
         "new_count": "{count}개의 새 알림",
         "view_all": "전체 보기",
-        "nearby_pharmacy": "약국 선택하기"
+        "nearby_pharmacy": "즐겨찾기 약국"
     },
     "LoginPage": {
         "title": "콜닥",
@@ -756,6 +756,13 @@
         "search_placeholder": "약국 검색...",
         "loading": "로딩 중...",
         "no_results": "검색된 약국이 없습니다"
+    },
+    "FavoritePharmacy": {
+        "title": "즐겨찾기 약국",
+        "empty": "즐겨찾기한 약국이 없습니다.",
+        "go_search": "약국 검색하기",
+        "add_favorite": "즐겨찾기 추가",
+        "remove_favorite": "즐겨찾기 제거"
     },
     "Clinics": {
         "title": "병원 관리",

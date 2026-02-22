@@ -6,11 +6,9 @@ import { Bell, History, ChevronRight } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
-import PharmacySelector from "@/components/profile/PharmacySelector";
-import { updatePharmacy } from "@/app/[locale]/(mobile)/profile/actions";
-import { prisma } from "@/app/lib/prisma";
 import { getUserNotifications } from "@/app/actions/notification";
 import NotificationList from "@/components/dashboard/NotificationList";
+import FavoritePharmaciesSection from "@/components/dashboard/FavoritePharmaciesSection";
 
 export default async function DashboardPage() {
     const session = await auth();
@@ -20,16 +18,7 @@ export default async function DashboardPage() {
         redirect('/login');
     }
 
-    const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        include: { pharmacy: true }
-    });
-
     const notifications = await getUserNotifications(5); // Fetch latest 5 for dashboard
-
-    if (!user) {
-        redirect('/login');
-    }
 
     return (
         <div className="bg-gray-50 min-h-screen pb-24">
@@ -47,7 +36,6 @@ export default async function DashboardPage() {
 
             <div className="px-4 py-6 space-y-6">
 
-
                 {/* Notifications Section */}
                 <section>
                     <div className="flex items-center justify-between mb-3 px-1">
@@ -55,7 +43,6 @@ export default async function DashboardPage() {
                             <Bell size={16} />
                             {t('notifications')}
                         </h2>
-                        {/* <button className="text-xs font-bold text-primary-600">{t('view_all')}</button> */}
                     </div>
 
                     <NotificationList notifications={notifications} />
@@ -72,19 +59,14 @@ export default async function DashboardPage() {
                         </div>
                         <ChevronRight size={20} className="text-gray-300 group-hover:text-gray-600 transition-colors" />
                     </Link>
-
-
                 </div>
 
-                {/* Nearby Pharmacy Section */}
+                {/* Prescription Fax Pharmacy Section */}
                 <section>
                     <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 px-1">
                         {t('nearby_pharmacy')}
                     </h2>
-                    <PharmacySelector
-                        selectedPharmacy={user.pharmacy}
-                        onSelect={updatePharmacy}
-                    />
+                    <FavoritePharmaciesSection />
                 </section>
             </div>
 

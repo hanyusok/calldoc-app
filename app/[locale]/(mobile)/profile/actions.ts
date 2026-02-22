@@ -164,3 +164,48 @@ export async function updatePharmacy(pharmacyId: string) {
 
     revalidatePath('/profile');
 }
+
+export async function toggleFavoritePharmacy(pharmacyId: string): Promise<{ isFavorited: boolean }> {
+    const user = await getAuthenticatedUser();
+
+    const existing = await prisma.userFavoritePharmacy.findUnique({
+        where: { userId_pharmacyId: { userId: user.id, pharmacyId } },
+    });
+
+    if (existing) {
+        await prisma.userFavoritePharmacy.delete({
+            where: { userId_pharmacyId: { userId: user.id, pharmacyId } },
+        });
+        revalidatePath('/dashboard');
+        return { isFavorited: false };
+    } else {
+        await prisma.userFavoritePharmacy.create({
+            data: { userId: user.id, pharmacyId },
+        });
+        revalidatePath('/dashboard');
+        return { isFavorited: true };
+    }
+}
+
+export async function getUserFavoritePharmacies() {
+    const user = await getAuthenticatedUser();
+
+    const favorites = await prisma.userFavoritePharmacy.findMany({
+        where: { userId: user.id },
+        include: { pharmacy: true },
+        orderBy: { createdAt: 'desc' },
+    });
+
+    return favorites.map(f => f.pharmacy);
+}
+
+export async function getUserFavoritePharmacyIds(): Promise<string[]> {
+    const user = await getAuthenticatedUser();
+
+    const favorites = await prisma.userFavoritePharmacy.findMany({
+        where: { userId: user.id },
+        select: { pharmacyId: true },
+    });
+
+    return favorites.map(f => f.pharmacyId);
+}

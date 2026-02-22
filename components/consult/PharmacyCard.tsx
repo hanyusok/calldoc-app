@@ -3,6 +3,7 @@ import { MapPin, Phone, Star, Printer } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import FavoritePharmacyButton from "./FavoritePharmacyButton";
 
 interface PharmacyProps {
     pharmacy: {
@@ -16,14 +17,14 @@ interface PharmacyProps {
         longitude: number;
         atFront: boolean;
     };
+    isFavorited?: boolean;
+    isLoggedIn?: boolean;
 }
 
-export default function PharmacyCard({ pharmacy }: PharmacyProps) {
+export default function PharmacyCard({ pharmacy, isFavorited, isLoggedIn }: PharmacyProps) {
     const t = useTranslations('ConsultPage');
 
     // Generate Google Maps URL
-    // If coordinates exist, use them: https://www.google.com/maps/search/?api=1&query=lat,lng
-    // Fallback to address: https://www.google.com/maps/search/?api=1&query=address
     const mapsUrl = pharmacy.latitude && pharmacy.longitude
         ? `https://www.google.com/maps/search/?api=1&query=${pharmacy.latitude},${pharmacy.longitude}`
         : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pharmacy.address || '')}`;
@@ -32,7 +33,7 @@ export default function PharmacyCard({ pharmacy }: PharmacyProps) {
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4">
             <div className="flex-1">
                 <div className="flex justify-between items-start">
-                    <div>
+                    <div className="flex-1">
                         <div className="flex items-center gap-2">
                             <h3 className="font-bold text-gray-900 text-lg">{pharmacy.name}</h3>
                             {pharmacy.atFront && (
@@ -61,6 +62,13 @@ export default function PharmacyCard({ pharmacy }: PharmacyProps) {
                             )}
                         </div>
                     </div>
+                    {/* Favorite button — only shown when user is logged in */}
+                    {isLoggedIn && (
+                        <FavoritePharmacyButton
+                            pharmacyId={pharmacy.id}
+                            initialIsFavorited={isFavorited ?? false}
+                        />
+                    )}
                 </div>
 
                 <div className="mt-4 flex gap-2">
