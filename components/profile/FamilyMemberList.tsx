@@ -272,11 +272,17 @@ export default function FamilyMemberList({ members, onAdd, onRemove, onUpdate }:
                     >
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">
-                                {member.name[0]}
+                                {member.name ? member.name[0] : 'F'}
                             </div>
                             <div>
                                 <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
-                                <p className="text-xs text-gray-500 capitalize">{t(`relation_${member.relation}` as any)} • {member.age} • {t(`gender_${member.gender}` as any)}</p>
+                                <p className="text-xs text-gray-500 capitalize">
+                                    {['child', 'parent', 'spouse', 'sibling'].includes(member.relation) ? t(`relation_${member.relation}` as any) : member.relation}
+                                    {' • '}
+                                    {member.age}
+                                    {' • '}
+                                    {['male', 'female'].includes(member.gender) ? t(`gender_${member.gender}` as any) : member.gender}
+                                </p>
                                 {member.phoneNumber && <p className="text-xs text-gray-400">{member.phoneNumber}</p>}
                                 {member.residentNumber && <p className="text-xs text-gray-400 tracking-wider">{member.residentNumber.substring(0, 8)}******</p>}
                             </div>

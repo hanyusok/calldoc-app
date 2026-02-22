@@ -30,16 +30,42 @@ export default async function ProfilePage({
 
     const user = await prisma.user.findUnique({
         where: { email: userEmail as string },
-        include: {
-            pharmacy: true, // Include pharmacy
-            familyMembers: true,
-        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            age: true,
+            gender: true,
+            phoneNumber: true,
+            residentNumber: true,
+            insurance: {
+                select: {
+                    id: true,
+                    provider: true,
+                    policyNumber: true
+                }
+            },
+            familyMembers: {
+                select: {
+                    id: true,
+                    name: true,
+                    relation: true,
+                    age: true,
+                    gender: true,
+                    residentNumber: true,
+                    phoneNumber: true
+                }
+            }
+        }
     });
 
     if (!user) {
         redirect({ href: '/login', locale });
-        return null; // Satisfy TS
+        return null;
     }
+
+    // Since user.insurance could be an empty object or null from selection depending on existence
+    // Prisma select returns the object if it exists.
 
     return (
         <div className="bg-gray-50 min-h-screen pb-24">

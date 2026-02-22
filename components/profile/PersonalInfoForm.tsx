@@ -21,10 +21,10 @@ export default function PersonalInfoForm({ user, onUpdate }: PersonalInfoProps) 
     const t = useTranslations('Profile');
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
-        age: user.age || '',
-        gender: user.gender || '',
-        phoneNumber: user.phoneNumber || '',
-        residentNumber: user.residentNumber || '',
+        age: user?.age || '',
+        gender: user?.gender || '',
+        phoneNumber: user?.phoneNumber || '',
+        residentNumber: user?.residentNumber || '',
     });
     const [loading, setLoading] = useState(false);
 
@@ -257,7 +257,9 @@ export default function PersonalInfoForm({ user, onUpdate }: PersonalInfoProps) 
                             </div>
                             <div>
                                 <p className="text-xs text-gray-500">{t('gender_label')}</p>
-                                <p className="font-medium text-gray-800 capitalize">{user.gender ? t(user.gender as 'male' | 'female') : '-'}</p>
+                                <p className="font-medium text-gray-800 capitalize">
+                                    {(user?.gender === 'male' || user?.gender === 'female') ? t(user.gender) : (user?.gender || '-')}
+                                </p>
                             </div>
                         </div>
                     </div>

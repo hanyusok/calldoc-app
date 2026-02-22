@@ -134,17 +134,24 @@ export default function NotificationWatcher({ initialConfirmedIds = [], messages
     }
 
     // Resolve Message
-    let displayMessage = notification.message;
+    let displayMessage = notification.message || '';
     if (notification.key) {
         try {
-            const params = notification.params ? (typeof notification.params === 'string' ? JSON.parse(notification.params) : notification.params) : {};
+            const params = notification.params ?
+                (typeof notification.params === 'string' ? JSON.parse(notification.params) : notification.params) :
+                {};
+
             let key = notification.key;
             if (key.startsWith('Notifications.')) {
                 key = key.replace('Notifications.', '');
             }
+
+            // Check if key exists in translations to avoid crash
             displayMessage = t(key as any, params);
         } catch (e) {
-            console.error("Failed to parse notification params", e);
+            console.error("Failed to parse notification params or resolve translation", e);
+            // Fallback to message or empty
+            displayMessage = notification.message || '';
         }
     }
 
