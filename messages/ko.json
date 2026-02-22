@@ -866,7 +866,7 @@
         "meet_ready": "화상 진료 준비 완료",
         "meet_ready_msg": "의사가 진료 준비를 마쳤습니다. 화상 진료에 참여해주세요.",
         "pharmacy_updated_title": "약국 정보 업데이트",
-        "pharmacy_updated": "제휴 약국이 {name}(으)로 변경되었습니다.",
+        "pharmacy_updated": "즐겨찾기 약국이 {name}(으)로 변경되었습니다.",
         "fax_sent_title": "팩스 전송 완료",
         "fax_sent": "{name}으로 처방전을 성공적으로 전송했습니다.",
         "fax_failed_title": "팩스 전송 실패",
