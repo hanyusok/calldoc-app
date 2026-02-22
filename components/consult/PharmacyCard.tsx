@@ -1,9 +1,10 @@
 
-import { MapPin, Phone, Star, Printer } from "lucide-react";
+import { MapPin, Phone, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import FavoritePharmacyButton from "./FavoritePharmacyButton";
+import EditableFax from "./EditableFax";
 
 interface PharmacyProps {
     pharmacy: {
@@ -51,15 +52,8 @@ export default function PharmacyCard({ pharmacy, isFavorited, isLoggedIn }: Phar
                                 <Phone size={14} />
                                 {pharmacy.phone || "No phone"}
                             </p>
-                            {pharmacy.fax && (
-                                <>
-                                    <span className="text-gray-300">|</span>
-                                    <p className="flex items-center gap-1">
-                                        <Printer size={14} />
-                                        {pharmacy.fax}
-                                    </p>
-                                </>
-                            )}
+                            <span className="text-gray-300">|</span>
+                            <EditableFax pharmacyId={pharmacy.id} initialFax={pharmacy.fax} />
                         </div>
                     </div>
                     {/* Favorite button — only shown when user is logged in */}

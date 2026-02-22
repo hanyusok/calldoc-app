@@ -128,3 +128,20 @@ export async function setPharmacyDefault(pharmacyId: string) {
         return { error: "Failed to set default pharmacy" };
     }
 }
+
+export async function updatePharmacyFax(pharmacyId: string, fax: string) {
+    const trimmed = fax.trim();
+    if (!trimmed) return { error: "Fax number cannot be empty" };
+
+    try {
+        await prisma.pharmacy.update({
+            where: { id: pharmacyId },
+            data: { fax: trimmed },
+        });
+        revalidatePath('/consult');
+        return { success: true };
+    } catch (error) {
+        console.error(error);
+        return { error: "Failed to update fax" };
+    }
+}
