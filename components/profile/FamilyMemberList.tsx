@@ -34,6 +34,7 @@ export default function FamilyMemberList({ members, onAdd, onRemove, onUpdate }:
         phoneNumber: ''
     });
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<{ phoneNumber?: string }>({});
 
     // ... (calculateAgeAndGender and handleRINChange functions remain same)
 
@@ -105,8 +106,6 @@ export default function FamilyMemberList({ members, onAdd, onRemove, onUpdate }:
             phoneNumber: member.phoneNumber || ''
         });
     };
-
-    const [errors, setErrors] = useState<{ phoneNumber?: string }>({});
 
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let val = e.target.value.replace(/[^0-9]/g, ''); // Only numbers

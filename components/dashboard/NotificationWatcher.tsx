@@ -9,10 +9,9 @@ import { useTranslations } from 'next-intl';
 
 interface NotificationWatcherProps {
     initialConfirmedIds?: string[];
-    messages?: Record<string, string>;
 }
 
-export default function NotificationWatcher({ initialConfirmedIds = [], messages }: NotificationWatcherProps) {
+export default function NotificationWatcher({ initialConfirmedIds = [] }: NotificationWatcherProps) {
     const router = useRouter();
     const t = useTranslations('Notifications');
     const [knownIds, setKnownIds] = useState<string[]>(initialConfirmedIds);
