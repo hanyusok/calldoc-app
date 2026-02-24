@@ -490,7 +490,9 @@
             "saved_error": "Failed to save settings",
             "hero_banner": "Hero Banner",
             "hero_title": "Title",
-            "hero_subtitle": "Subtitle"
+            "hero_subtitle": "Subtitle",
+            "prescription_pdf_path": "Prescription PDF Folder Path",
+            "prescription_pdf_path_desc": "Local absolute path where prescription PDF files will be stored or processed."
         },
         "vaccinations": {
             "title": "Vaccination Management",

@@ -488,9 +488,11 @@
             "home_posts_count": "홈 화면 게시글 수",
             "saved_success": "설정이 저장되었습니다",
             "saved_error": "설정 저장 실패",
-            "hero_banner": "헴로 배너",
-            "hero_title": "제목",
-            "hero_subtitle": "부제목"
+            "hero_banner": "메인 배너 설정",
+            "hero_title": "배너 제목",
+            "hero_subtitle": "배너 부제목",
+            "prescription_pdf_path": "처방전 PDF 폴더 경로",
+            "prescription_pdf_path_desc": "다운로드 또는 처리할 처방전 PDF 파일들이 위치할 로컬 절대 경로입니다."
         },
         "vaccinations": {
             "title": "예방접종 관리",

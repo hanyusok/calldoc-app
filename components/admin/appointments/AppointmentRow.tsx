@@ -205,6 +205,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                                     appointmentId={appointment.id}
                                     prescription={appointment.prescription}
                                     userPharmacy={appointment.user.pharmacy}
+                                    favoritePharmacies={appointment.user.favoritePharmacies?.map((f: any) => f.pharmacy) || []}
                                 />
                             )}
 

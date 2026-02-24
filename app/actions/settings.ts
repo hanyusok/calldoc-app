@@ -19,6 +19,7 @@ export async function getSettings() {
                     homePostsCount: 5,
                     heroBannerTitle: "지금 바로 진료 예약",
                     heroBannerSubtitle: "전문의와 비대면으로 빠르고 편리하게",
+                    prescriptionPdfPath: "C:\\Mts3\\PDF",
                 }
             });
         }
@@ -33,6 +34,7 @@ export async function getSettings() {
             homePostsCount: 5,
             heroBannerTitle: "지금 바로 진료 예약",
             heroBannerSubtitle: "전문의와 비대면으로 빠르고 편리하게",
+            prescriptionPdfPath: "C:\\Mts3\\PDF",
         };
     }
 }
@@ -43,6 +45,7 @@ export async function updateSettings(data: {
     homePostsCount: number;
     heroBannerTitle: string;
     heroBannerSubtitle: string;
+    prescriptionPdfPath: string;
 }) {
     try {
         const homePostsCount = parseInt(data.homePostsCount?.toString()) || 5;
@@ -55,6 +58,7 @@ export async function updateSettings(data: {
                 homePostsCount,
                 heroBannerTitle: data.heroBannerTitle,
                 heroBannerSubtitle: data.heroBannerSubtitle,
+                prescriptionPdfPath: data.prescriptionPdfPath,
             },
             create: {
                 id: 1,
@@ -63,6 +67,7 @@ export async function updateSettings(data: {
                 homePostsCount,
                 heroBannerTitle: data.heroBannerTitle,
                 heroBannerSubtitle: data.heroBannerSubtitle,
+                prescriptionPdfPath: data.prescriptionPdfPath,
             }
         });
 

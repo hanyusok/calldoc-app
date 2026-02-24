@@ -27,7 +27,12 @@ export async function getAppointments(search?: string, status?: AppointmentStatu
                 include: {
                     user: {
                         include: {
-                            pharmacy: true
+                            pharmacy: true,
+                            favoritePharmacies: {
+                                include: {
+                                    pharmacy: true
+                                }
+                            }
                         }
                     },
                     doctor: true,

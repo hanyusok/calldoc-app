@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { sendManualFax } from "@/app/actions/fax";
 import { Loader2, Send, FileText, CheckCircle, AlertCircle } from "lucide-react";
 
-export default function FaxForm() {
+export default function FaxForm({ defaultPdfPath = "" }: { defaultPdfPath?: string }) {
     const t = useTranslations('Admin.fax');
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -74,13 +74,17 @@ export default function FaxForm() {
                         <input
                             type="file"
                             name="file"
+                            title={defaultPdfPath}
                             required
                             accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff"
                             className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 text-sm text-gray-500"
                         />
                         <FileText className="absolute right-3 top-3 h-5 w-5 text-gray-400 pointer-events-none" />
                     </div>
-                    <p className="text-xs text-gray-400 mt-1">{t('supported_formats')}</p>
+                    <div className="flex flex-col mt-1">
+                        <p className="text-xs text-gray-400">{t('supported_formats')}</p>
+                        {defaultPdfPath && <p className="text-xs text-blue-500 font-mono mt-0.5" dir="ltr">Default Path: {defaultPdfPath}</p>}
+                    </div>
                 </div>
 
                 <div className="pt-2">

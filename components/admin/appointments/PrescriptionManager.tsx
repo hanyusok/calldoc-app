@@ -26,16 +26,21 @@ type Pharmacy = {
 export default function PrescriptionManager({
     appointmentId,
     prescription,
-    userPharmacy
+    userPharmacy,
+    favoritePharmacies = []
 }: {
     appointmentId: string;
     prescription?: any;
     userPharmacy?: Pharmacy | null;
+    favoritePharmacies?: Pharmacy[];
 }) {
     const t = useTranslations('Admin.prescription_manager');
     const [step, setStep] = useState<'SELECT' | 'UPLOAD' | 'FAX'>(prescription ? 'UPLOAD' : 'SELECT');
     const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
-    const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(userPharmacy || null);
+    const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(
+        // Default to the user's primary pharmacy, or their first favorite if there's no primary
+        userPharmacy || (favoritePharmacies.length > 0 ? favoritePharmacies[0] : null)
+    );
     const [loading, setLoading] = useState(false);
 
     // For Upload
@@ -53,10 +58,19 @@ export default function PrescriptionManager({
         const res = await getPharmacies(1, 100); // Load enough for demo
         let list = res.pharmacies;
 
-        // Ensure user's pharmacy is in the list if it exists
-        if (userPharmacy && !list.find(p => p.id === userPharmacy.id)) {
-            list = [userPharmacy, ...list];
-        }
+        // Group the user's special pharmacies to ensure they're in the list
+        const priorityPharmacies: Pharmacy[] = [];
+        if (userPharmacy && !priorityPharmacies.find(p => p.id === userPharmacy.id)) priorityPharmacies.push(userPharmacy);
+        favoritePharmacies.forEach(fav => {
+            if (!priorityPharmacies.find(p => p.id === fav.id)) priorityPharmacies.push(fav);
+        });
+
+        // Ensure user's primary/favorites are in the list if they aren't already fetched
+        priorityPharmacies.forEach(p => {
+            if (!list.find(lp => lp.id === p.id)) {
+                list.unshift(p);
+            }
+        });
 
         setPharmacies(list);
     };
@@ -147,9 +161,18 @@ export default function PrescriptionManager({
                     }}
                 >
                     <option value="">{t('select_placeholder')}</option>
-                    {pharmacies.map(p => (
-                        <option key={p.id} value={p.id}>{p.name} {p.fax ? `(Fax: ${p.fax})` : ''}</option>
-                    ))}
+                    {pharmacies.map(p => {
+                        const isPrimary = userPharmacy?.id === p.id;
+                        const isFavorite = favoritePharmacies?.some(f => f.id === p.id);
+
+                        let labelPrefix = '';
+                        if (isPrimary) labelPrefix = '⭐ (Primary) ';
+                        else if (isFavorite) labelPrefix = '⭐ (Favorite) ';
+
+                        return (
+                            <option key={p.id} value={p.id}>{labelPrefix}{p.name} {p.fax ? `(Fax: ${p.fax})` : ''}</option>
+                        );
+                    })}
                 </select>
                 <button
                     onClick={handleRequest}
