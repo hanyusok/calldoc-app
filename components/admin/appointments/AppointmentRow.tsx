@@ -5,10 +5,11 @@ import AppointmentActions from './AppointmentActions';
 import AppointmentTimeline from './AppointmentTimeline';
 import MeetManager from '@/components/admin/appointments/MeetManager';
 import PrescriptionManager from '@/components/admin/appointments/PrescriptionManager';
-import { ChevronDown, ChevronUp, Clock, CreditCard, CheckCircle2, XCircle, Video, Send, Loader2, DollarSign } from 'lucide-react';
+import { ChevronDown, ChevronUp, Clock, CreditCard, CheckCircle2, XCircle, Video, Send, Loader2, DollarSign, UserPlus } from 'lucide-react';
 import { useTranslations, useFormatter } from 'next-intl';
 import { AppointmentStatus } from '@prisma/client';
 import { updateAppointment, completeAppointment } from '@/app/actions/appointment';
+import { registerToClinic } from '@/app/actions/reception';
 import { useRouter } from 'next/navigation';
 
 function StatusIcon({ status }: { status: string }) {
@@ -49,7 +50,32 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
     const [isPending, startTransition] = useTransition();
     const [price, setPrice] = useState(appointment.price || 0);
 
+    const [isRegistering, setIsRegistering] = useState(false);
+
     const toggleExpand = () => setExpanded(!expanded);
+
+    const handleClinicReception = async () => {
+        const { name, residentNumber } = appointment.user;
+        if (!residentNumber) {
+            alert(tDash('no_resident_number'));
+            return;
+        }
+
+        setIsRegistering(true);
+        try {
+            const result = await registerToClinic(name, residentNumber);
+            if (result.success) {
+                alert(tDash('reception_success'));
+            } else {
+                alert(result.error || tDash('reception_failed'));
+            }
+        } catch (error) {
+            console.error(error);
+            alert(tDash('reception_failed'));
+        } finally {
+            setIsRegistering(false);
+        }
+    };
 
     const handleSetPrice = async () => {
         if (!price || price <= 0) return;
@@ -153,6 +179,16 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                                 <span className="hidden sm:inline">{tDash('complete')}</span>
                             </button>
                         )}
+
+                        <button
+                            onClick={handleClinicReception}
+                            disabled={isRegistering || isPending}
+                            className="px-3 py-1.5 bg-purple-50 text-purple-700 text-xs font-bold rounded-lg border border-purple-100 hover:bg-purple-100 transition-colors flex items-center gap-1.5"
+                            title={tDash('clinic_reception')}
+                        >
+                            {isRegistering ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
+                            <span className="hidden sm:inline">{tDash('clinic_reception')}</span>
+                        </button>
 
                         {(appointment.status === AppointmentStatus.CONFIRMED || appointment.status === AppointmentStatus.COMPLETED) && (
                             <button
