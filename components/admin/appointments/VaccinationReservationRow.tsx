@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Syringe, User, Calendar, MapPin, MoreHorizontal, Edit, CheckCircle, XCircle, Trash2 } from 'lucide-react';
+import { Syringe, User, Calendar, MapPin, MoreHorizontal, Edit, CheckCircle, XCircle, Trash2, ChevronDown } from 'lucide-react';
 import { useTranslations, useFormatter } from 'next-intl';
 import { updateVaccinationReservationStatus, deleteVaccinationReservation } from '@/app/actions/vaccination';
 import { useRouter } from 'next/navigation';
@@ -73,6 +73,9 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
                 </div>
             </td>
             <td className="p-4 text-gray-600">
+                <span className="text-sm font-medium tracking-wider">{reservation.user?.residentNumber || '-'}</span>
+            </td>
+            <td className="p-4 text-gray-600">
                 <div className="flex flex-col">
                     {reservation.date ? (
                         <>
@@ -96,6 +99,9 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
                     )}
                 </div>
             </td>
+            <td className="p-4 text-center text-gray-300">
+                -
+            </td>
             <td className="p-4">
                 <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -108,9 +114,23 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
                 </div>
             </td>
             <td className="p-4 text-center">
-                <span className={`px-2.5 py-1 rounded-full text-xs font-bold leading-none ${getStatusStyle(status)}`}>
-                    {tStatus(status)}
-                </span>
+                <div className="relative inline-flex items-center group">
+                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-transparent transition-colors shadow-sm ${getStatusStyle(status)} hover:border-gray-200 relative`}>
+                        <select
+                            value={status}
+                            onChange={(e) => handleStatusUpdate(e.target.value)}
+                            disabled={loading}
+                            className="appearance-none bg-transparent outline-none cursor-pointer text-xs font-bold tracking-tight pr-4 w-full disabled:opacity-50"
+                        >
+                            {['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].map(s => (
+                                <option key={s} value={s} className="text-gray-900 bg-white">
+                                    {tStatus(s)}
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown size={12} className="absolute right-2 opacity-50 pointer-events-none" />
+                    </div>
+                </div>
             </td>
             <td className="p-4 text-right font-bold text-gray-900">
                 -

@@ -2,7 +2,8 @@
 
 import { auth } from "@/auth";
 
-const API_BASE_URL = "http://hanyusok.synology.me:3000";
+// const API_BASE_URL = "http://api.calldoc.co.kr/api";
+const API_BASE_URL = "http://hanyusok.synology.me:3000/api";
 
 export async function registerToClinic(name: string, residentNumber: string) {
     const session = await auth();
@@ -25,7 +26,7 @@ export async function registerToClinic(name: string, residentNumber: string) {
     const mm = birthPart.substring(2, 4);
     const dd = birthPart.substring(4, 6);
     const year = yy <= new Date().getFullYear() % 100 ? 2000 + yy : 1900 + yy;
-    const pbirth = `${year}-${mm}-${dd}`;
+    const pbirth = `${year}${mm}${dd}`;
 
     try {
         // Step 1: Search for person
@@ -54,10 +55,9 @@ export async function registerToClinic(name: string, residentNumber: string) {
             return { success: false, error: "Invalid person data received from clinic." };
         }
 
-        // Format today's date for VISIDATE (YYYY-MM-DD)
+        // Format today's date for VISIDATE (YYYYMMDD)
         const today = new Date();
         const visidateFormatted = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
-        const visidateDisplay = today.toISOString().split('T')[0];
 
         // Ensure not already registered
         try {
@@ -82,7 +82,7 @@ export async function registerToClinic(name: string, residentNumber: string) {
         // Step 2: Register to Waitlist
         const registerBody = {
             PCODE: pcode,
-            VISIDATE: visidateDisplay
+            VISIDATE: visidateFormatted
         };
 
         const registerRes = await fetch(`${API_BASE_URL}/mtswait`, {
@@ -101,7 +101,7 @@ export async function registerToClinic(name: string, residentNumber: string) {
         return { success: true };
 
     } catch (error: any) {
-        console.error("Clinic Reception API Error:", error);
-        return { success: false, error: "Internal server error occurred while contacting clinic API." };
+        console.error("Clinic Reception API Error details:", error.message || error, error.cause);
+        return { success: false, error: `Internal server error occurred while contacting clinic API: ${error.message || "Unknown error"}` };
     }
 }

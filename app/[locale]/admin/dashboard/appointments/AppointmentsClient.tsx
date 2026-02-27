@@ -183,7 +183,9 @@ export default function AppointmentsClient({
                         <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-100">
                             <tr>
                                 <th className="p-4">{tDash('table.patient')}</th>
+                                <th className="p-4">{tDash('table.resident_number')}</th>
                                 <th className="p-4">{tDash('table.date')}</th>
+                                <th className="p-4">{tDash('table.symptoms')}</th>
                                 <th className="p-4">{isConsultations ? tDash('table.doctor') : tDash('vaccine')}</th>
                                 <th className="p-4 text-center">{tDash('table.status')}</th>
                                 <th className="p-4 text-right">{tDash('table.price')}</th>
@@ -194,7 +196,7 @@ export default function AppointmentsClient({
                             {isConsultations ? (
                                 initialAppointments.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="p-8 text-center text-gray-400">
+                                        <td colSpan={8} className="p-8 text-center text-gray-400">
                                             {tDash('empty_state')}
                                         </td>
                                     </tr>
@@ -206,7 +208,7 @@ export default function AppointmentsClient({
                             ) : (
                                 initialVacReservations.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="p-8 text-center text-gray-400">
+                                        <td colSpan={8} className="p-8 text-center text-gray-400">
                                             {tDash('empty_state')}
                                         </td>
                                     </tr>

@@ -293,7 +293,9 @@
             "empty_state": "No appointments found.",
             "table": {
                 "patient": "Patient",
+                "resident_number": "Resident No.",
                 "date": "Date",
+                "symptoms": "Symptom",
                 "doctor": "Doctor",
                 "status": "Status",
                 "price": "Price",

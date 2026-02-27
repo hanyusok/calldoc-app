@@ -293,7 +293,9 @@
             "empty_state": "예약이 없습니다.",
             "table": {
                 "patient": "환자",
+                "resident_number": "주민등록번호",
                 "date": "날짜",
+                "symptoms": "증상",
                 "doctor": "의사",
                 "status": "상태",
                 "price": "가격",
@@ -393,7 +395,8 @@
             "select_preset": "프리셋 선택...",
             "send_preset_link": "프리셋 링크 전송",
             "set_default": "기본으로 설정",
-            "delete": "삭제"
+            "delete": "삭제",
+            "meet_link_ready": "화상 진료 링크가 준비되었습니다."
         },
         "price_manager": {
             "title": "진료비 설정",

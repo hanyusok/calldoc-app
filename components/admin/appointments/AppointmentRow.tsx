@@ -9,33 +9,55 @@ import { ChevronDown, ChevronUp, Clock, CreditCard, CheckCircle2, XCircle, Video
 import { useTranslations, useFormatter } from 'next-intl';
 import { AppointmentStatus } from '@prisma/client';
 import { updateAppointment, completeAppointment } from '@/app/actions/appointment';
-import { registerToClinic } from '@/app/actions/reception';
 import { useRouter } from 'next/navigation';
 
-function StatusIcon({ status }: { status: string }) {
+function StatusDropdown({ appointment, isPending, startTransition, router }: any) {
     const t = useTranslations('Admin.status');
     const icons: Record<string, { icon: any, color: string, bg: string }> = {
-        [AppointmentStatus.PENDING]: { icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50' },
-        [AppointmentStatus.AWAITING_PAYMENT]: { icon: CreditCard, color: 'text-blue-500', bg: 'bg-blue-50' },
-        [AppointmentStatus.CONFIRMED]: { icon: Video, color: 'text-green-500', bg: 'bg-green-50' },
-        [AppointmentStatus.COMPLETED]: { icon: CheckCircle2, color: 'text-gray-400', bg: 'bg-gray-50' },
-        [AppointmentStatus.CANCELLED]: { icon: XCircle, color: 'text-red-500', bg: 'bg-red-50' },
+        [AppointmentStatus.PENDING]: { icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
+        [AppointmentStatus.AWAITING_PAYMENT]: { icon: CreditCard, color: 'text-blue-600', bg: 'bg-blue-50' },
+        [AppointmentStatus.CONFIRMED]: { icon: Video, color: 'text-green-600', bg: 'bg-green-50' },
+        [AppointmentStatus.COMPLETED]: { icon: CheckCircle2, color: 'text-gray-600', bg: 'bg-gray-50' },
+        [AppointmentStatus.CANCELLED]: { icon: XCircle, color: 'text-red-600', bg: 'bg-red-50' },
     };
 
+    const status = appointment.status;
     const config = icons[status] || icons[AppointmentStatus.PENDING];
     const Icon = config.icon;
-    const label = Object.values(AppointmentStatus).includes(status as AppointmentStatus)
-        ? t(status as any)
-        : status;
+
+    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newStatus = e.target.value as AppointmentStatus;
+        if (newStatus === status) return;
+
+        startTransition(async () => {
+            try {
+                await updateAppointment(appointment.id, { status: newStatus });
+                router.refresh();
+            } catch (error) {
+                console.error(error);
+                alert("Failed to update status");
+            }
+        });
+    };
 
     return (
-        <div className="flex flex-col items-center gap-1 group relative">
-            <div className={`${config.bg} ${config.color} p-2 rounded-full transition-transform group-hover:scale-110 shadow-sm`}>
-                <Icon size={18} />
+        <div className="relative inline-flex items-center group">
+            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-transparent transition-colors shadow-sm ${config.bg} ${config.color} hover:border-gray-200 relative`}>
+                <Icon size={14} className="flex-shrink-0" />
+                <select
+                    value={status}
+                    onChange={handleStatusChange}
+                    disabled={isPending}
+                    className="appearance-none bg-transparent outline-none cursor-pointer text-xs font-bold uppercase tracking-tighter pr-4 w-full disabled:opacity-50"
+                >
+                    {Object.values(AppointmentStatus).map(s => (
+                        <option key={s} value={s} className="text-gray-900 bg-white">
+                            {t(s as any)}
+                        </option>
+                    ))}
+                </select>
+                <ChevronDown size={12} className="absolute right-2 opacity-50 pointer-events-none" />
             </div>
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">
-                {label}
-            </span>
         </div>
     );
 }
@@ -50,32 +72,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
     const [isPending, startTransition] = useTransition();
     const [price, setPrice] = useState(appointment.price || 0);
 
-    const [isRegistering, setIsRegistering] = useState(false);
-
     const toggleExpand = () => setExpanded(!expanded);
-
-    const handleClinicReception = async () => {
-        const { name, residentNumber } = appointment.user;
-        if (!residentNumber) {
-            alert(tDash('no_resident_number'));
-            return;
-        }
-
-        setIsRegistering(true);
-        try {
-            const result = await registerToClinic(name, residentNumber);
-            if (result.success) {
-                alert(tDash('reception_success'));
-            } else {
-                alert(result.error || tDash('reception_failed'));
-            }
-        } catch (error) {
-            console.error(error);
-            alert(tDash('reception_failed'));
-        } finally {
-            setIsRegistering(false);
-        }
-    };
 
     const handleSetPrice = async () => {
         if (!price || price <= 0) return;
@@ -118,11 +115,19 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                     </div>
                 </td>
                 <td className="p-4 text-gray-600">
+                    <span className="text-sm font-medium tracking-wider">{appointment.user.residentNumber || '-'}</span>
+                </td>
+                <td className="p-4 text-gray-600">
                     <div className="flex flex-col text-xs font-medium">
                         <span>{format.dateTime(new Date(appointment.date), { dateStyle: 'medium' })}</span>
                         <span className="text-gray-400">
                             {format.dateTime(new Date(appointment.date), { hour: '2-digit', minute: '2-digit', hour12: false })}
                         </span>
+                    </div>
+                </td>
+                <td className="p-4 text-gray-700 max-w-[200px]">
+                    <div className="text-sm line-clamp-2" title={appointment.symptoms}>
+                        {appointment.symptoms || <span className="text-gray-300 italic">-</span>}
                     </div>
                 </td>
                 <td className="p-4 text-gray-600">
@@ -132,7 +137,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                     </div>
                 </td>
                 <td className="p-4 text-center">
-                    <StatusIcon status={appointment.status} />
+                    <StatusDropdown appointment={appointment} isPending={isPending} startTransition={startTransition} router={router} />
                 </td>
                 <td className="p-4">
                     {appointment.status === AppointmentStatus.PENDING ? (
@@ -180,15 +185,7 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                             </button>
                         )}
 
-                        <button
-                            onClick={handleClinicReception}
-                            disabled={isRegistering || isPending}
-                            className="px-3 py-1.5 bg-purple-50 text-purple-700 text-xs font-bold rounded-lg border border-purple-100 hover:bg-purple-100 transition-colors flex items-center gap-1.5"
-                            title={tDash('clinic_reception')}
-                        >
-                            {isRegistering ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
-                            <span className="hidden sm:inline">{tDash('clinic_reception')}</span>
-                        </button>
+
 
                         {(appointment.status === AppointmentStatus.CONFIRMED || appointment.status === AppointmentStatus.COMPLETED) && (
                             <button

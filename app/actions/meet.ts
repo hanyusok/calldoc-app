@@ -68,6 +68,7 @@ export async function createMeeting({
 
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { createNotification } from "@/app/actions/notification";
 
 export async function generateAndSaveMeetingLink(params: {
     appointmentId: string;
@@ -79,10 +80,21 @@ export async function generateAndSaveMeetingLink(params: {
     const link = await createMeeting(params);
 
     if (link) {
-        await prisma.appointment.update({
+        const appointment = await prisma.appointment.update({
             where: { id: params.appointmentId },
-            data: { meetingLink: link }
+            data: { meetingLink: link },
+            select: { userId: true, doctor: { select: { name: true } } }
         });
+
+        if (appointment.userId) {
+            await createNotification({
+                userId: appointment.userId,
+                type: 'SYSTEM',
+                message: `Your video consultation link with ${appointment.doctor.name} is ready.`,
+                key: 'Notifications.meet_ready_msg',
+                link: `/myappointment`
+            });
+        }
 
         revalidatePath('/myappointment');
         revalidatePath('/admin/dashboard/appointments');
@@ -93,10 +105,21 @@ export async function generateAndSaveMeetingLink(params: {
 }
 export async function saveMeetingLink(appointmentId: string, link: string) {
     try {
-        await prisma.appointment.update({
+        const appointment = await prisma.appointment.update({
             where: { id: appointmentId },
-            data: { meetingLink: link }
+            data: { meetingLink: link },
+            select: { userId: true, doctor: { select: { name: true } } }
         });
+
+        if (appointment.userId) {
+            await createNotification({
+                userId: appointment.userId,
+                type: 'SYSTEM',
+                message: `Your video consultation link with ${appointment.doctor.name} is ready.`,
+                key: 'Notifications.meet_ready_msg',
+                link: `/myappointment`
+            });
+        }
 
         revalidatePath('/myappointment');
         revalidatePath('/admin/dashboard/appointments');
