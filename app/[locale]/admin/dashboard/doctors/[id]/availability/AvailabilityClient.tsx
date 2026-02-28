@@ -40,6 +40,7 @@ export default function AvailabilityClient({
             startTime: '09:00',
             endTime: '17:00',
             slotDuration: 30,
+            capacity: 5,
             breakStartTime: '',
             breakEndTime: '',
             isActive: false
@@ -65,6 +66,7 @@ export default function AvailabilityClient({
                 startTime: schedule.startTime,
                 endTime: schedule.endTime,
                 slotDuration: parseInt(schedule.slotDuration),
+                capacity: parseInt(schedule.capacity || 5),
                 breakStartTime: schedule.breakStartTime || undefined,
                 breakEndTime: schedule.breakEndTime || undefined,
                 isActive: schedule.isActive
@@ -167,7 +169,7 @@ export default function AvailabilityClient({
 
                         return (
                             <div key={day} className="p-3 bg-gray-50 rounded-lg space-y-2">
-                                <div className="grid grid-cols-6 gap-3 items-center">
+                                <div className="grid grid-cols-7 gap-3 items-center">
                                     <div className="font-medium text-sm">
                                         {t(`days.${dayKey}`)}
                                     </div>
@@ -199,6 +201,16 @@ export default function AvailabilityClient({
                                         step="15"
                                         className="px-2 py-1 border rounded text-sm disabled:bg-gray-100"
                                         placeholder={t('slot_duration')}
+                                    />
+                                    <input
+                                        type="number"
+                                        value={schedule.capacity || 5}
+                                        onChange={(e) => handleScheduleLocalChange(day, 'capacity', e.target.value)}
+                                        onBlur={() => handleScheduleSave(day)}
+                                        disabled={!schedule.isActive}
+                                        min="1"
+                                        className="px-2 py-1 border rounded text-sm disabled:bg-gray-100"
+                                        placeholder={t('slot_capacity')}
                                     />
                                     <label className="flex items-center gap-2 text-sm col-span-2">
                                         <input
@@ -398,7 +410,7 @@ export default function AvailabilityClient({
                         disabled={!previewDate || loading}
                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
                     >
-                        Preview
+                        {t('preview_button')}
                     </button>
                 </div>
 

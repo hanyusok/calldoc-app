@@ -46,12 +46,27 @@ export const authConfig = {
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user;
+            const userRole = auth?.user?.role;
             const isProtectedRoute =
                 nextUrl.pathname.startsWith('/profile') ||
                 nextUrl.pathname.startsWith('/dashboard') ||
                 nextUrl.pathname.startsWith('/myappointment');
 
-            if (isProtectedRoute) {
+            // Admin Dashboard access control for STAFF role
+            // Locale could be part of the URL, so check for '/admin/dashboard'
+            const isAdminRoute = nextUrl.pathname.match(/\/(ko|en)\/admin\/dashboard/);
+            if (isAdminRoute && userRole === 'STAFF') {
+                const isAppointmentsRoute = nextUrl.pathname.includes('/admin/dashboard/appointments');
+                const isMeetRoute = nextUrl.pathname.includes('/admin/dashboard/meet'); // if they need meet access? The prompt says "only access /admin/dashboard/appointments module ui". I'll restrict strictly.
+
+                if (!isAppointmentsRoute) {
+                    // Redirect STAFF to the appointments page
+                    const locale = nextUrl.pathname.split('/')[1]; // typically 'ko' or 'en'
+                    return Response.redirect(new URL(`/${locale}/admin/dashboard/appointments`, nextUrl));
+                }
+            }
+
+            if (isProtectedRoute || isAdminRoute) {
                 if (isLoggedIn) return true;
                 return false; // Redirect unauthenticated users to login page
             }

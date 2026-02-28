@@ -134,6 +134,7 @@ model DoctorSchedule {
   startTime      String
   endTime        String
   slotDuration   Int      @default(30)
+  capacity       Int      @default(5)
   breakStartTime String?
   breakEndTime   String?
   isActive       Boolean  @default(true)

@@ -9,15 +9,16 @@ import NotificationBell from "@/components/admin/NotificationBell";
 interface AdminSidebarProps {
     isCollapsed: boolean;
     toggleSidebar: () => void;
+    role?: string;
 }
 
-export default function AdminSidebar({ isCollapsed, toggleSidebar }: AdminSidebarProps) {
+export default function AdminSidebar({ isCollapsed, toggleSidebar, role }: AdminSidebarProps) {
     const t = useTranslations('Admin.nav');
     const pathname = usePathname();
 
     const isActive = (path: string) => pathname?.includes(path);
 
-    const navItems = [
+    const allNavItems = [
         { href: "/admin/dashboard", label: t('dashboard'), icon: LayoutDashboard },
         { type: 'divider' },
         { href: "/admin/dashboard/appointments", label: t('appointments'), icon: Calendar },
@@ -35,6 +36,22 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar }: AdminSideba
         { type: 'divider' },
         { href: "/admin/dashboard/settings", label: t('settings'), icon: Settings },
     ];
+
+    const navItems = role === 'STAFF'
+        ? allNavItems.filter(item =>
+            // Keep dividers or the appointments link
+            (item as any).type === 'divider' || (item as any).href === "/admin/dashboard/appointments"
+        ).filter((item, index, array) => {
+            // Clean up consecutive dividers
+            if ((item as any).type === 'divider') {
+                const isFirst = index === 0;
+                const isLast = index === array.length - 1;
+                const isConsecutive = index > 0 && (array[index - 1] as any).type === 'divider';
+                return !isFirst && !isLast && !isConsecutive;
+            }
+            return true;
+        })
+        : allNavItems;
 
     return (
         <aside

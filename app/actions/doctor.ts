@@ -144,6 +144,7 @@ export async function updateDoctorSchedule(
         startTime: string;
         endTime: string;
         slotDuration: number;
+        capacity: number;
         breakStartTime?: string;
         breakEndTime?: string;
         isActive: boolean;
@@ -364,13 +365,20 @@ export async function getAvailableSlots(doctorId: string, dateInput: Date | stri
             }
         });
 
-        // Filter out booked slots
-        // Convert DB UTC times to KST "HH:mm" to match the generated slots
-        const bookedTimes = new Set(
-            appointments.map(apt => formatKSTTime(apt.date))
-        );
+        // Group booked appointments by their time slot and count them
+        const bookedCounts = new Map<string, number>();
+        appointments.forEach(apt => {
+            const timeSlot = formatKSTTime(apt.date);
+            bookedCounts.set(timeSlot, (bookedCounts.get(timeSlot) || 0) + 1);
+        });
 
-        const availableSlots = slots.filter(slot => !bookedTimes.has(slot));
+        const capacity = schedule.capacity || 5;
+
+        // Filter out fully booked slots
+        const availableSlots = slots.filter(slot => {
+            const count = bookedCounts.get(slot) || 0;
+            return count < capacity;
+        });
 
         return { success: true, slots: availableSlots };
     } catch (error) {

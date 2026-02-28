@@ -328,6 +328,8 @@
             "close": "닫기",
             "complete": "진료 완료",
             "confirm_complete": "이 예약을 완료 처리하시겠습니까?",
+            "delete": "삭제",
+            "confirm_delete": "정말 삭제하시겠습니까?",
             "tab_consultations": "진료 예약",
             "tab_vaccinations": "예방접종 예약",
             "new_vaccination_reservation": "새 백신 예약",
@@ -415,6 +417,8 @@
             "fax_label": "팩스 번호",
             "upload_rx": "처방전 업로드",
             "issue_ready": "발급 및 팩스 준비",
+            "hand_over": "직접 전달",
+            "hand_over_completed": "직접 전달 완료",
             "send_fax": "팩스 전송",
             "send_via_barobill": "바로빌로 팩스 전송",
             "pharmacy_label": "약국"
@@ -668,7 +672,8 @@
                 },
                 "start_time": "시작 시간",
                 "end_time": "종료 시간",
-                "slot_duration": "예약 간격 (분)",
+                "slot_duration": "진료 시간(분)",
+                "slot_capacity": "슬롯당 예약 수",
                 "break_time": "휴게 시간",
                 "break_start": "휴게 시작",
                 "break_end": "휴게 종료",
@@ -688,6 +693,7 @@
                 "exception_success": "예외가 추가되었습니다",
                 "exception_error": "예외 추가에 실패했습니다",
                 "preview_title": "예약 시간 미리보기",
+                "preview_button": "미리보기",
                 "select_date": "날짜를 선택하세요",
                 "no_slots": "예약 가능한 시간이 없습니다"
             }

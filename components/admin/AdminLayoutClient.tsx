@@ -9,8 +9,10 @@ import NotificationToast from "@/components/admin/NotificationToast";
 
 export default function AdminLayoutClient({
     children,
+    role,
 }: {
     children: React.ReactNode;
+    role?: string;
 }) {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -18,7 +20,7 @@ export default function AdminLayoutClient({
         <div className="min-h-screen bg-gray-50 flex">
             <AdminNotificationWatcher />
             <NotificationToast />
-            <AdminSidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+            <AdminSidebar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} role={role} />
             <main
                 className={`flex-1 p-8 transition-all duration-300 ease-in-out ${isCollapsed ? "ml-20" : "ml-64"
                     }`}

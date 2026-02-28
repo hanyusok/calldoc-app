@@ -35,13 +35,14 @@ export default function PrescriptionManager({
     favoritePharmacies?: Pharmacy[];
 }) {
     const t = useTranslations('Admin.prescription_manager');
-    const [step, setStep] = useState<'SELECT' | 'UPLOAD' | 'FAX'>(prescription ? 'UPLOAD' : 'SELECT');
+    const [step, setStep] = useState<'SELECT' | 'UPLOAD' | 'FAX' | 'HANDED_OVER'>(prescription ? 'UPLOAD' : 'SELECT');
     const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
     const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(
         // Default to the user's primary pharmacy, or their first favorite if there's no primary
         userPharmacy || (favoritePharmacies.length > 0 ? favoritePharmacies[0] : null)
     );
     const [loading, setLoading] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     // For Upload
     const [file, setFile] = useState<File | null>(null);
@@ -52,6 +53,8 @@ export default function PrescriptionManager({
         } else if (prescription.status === 'ISSUED') {
             setStep('FAX');
         }
+        // If there's an existing HANDED_OVER status in DB, we'd handle it here. 
+        // For now this demo treats ISSUED -> FAX or HANDED_OVER locally.
     }, [prescription]);
 
     const loadPharmacies = async () => {
@@ -109,6 +112,21 @@ export default function PrescriptionManager({
             // To make "Send Fax" work immediately with the file, we might pass the file to the next step
         } catch (e) {
             alert("Failed to issue prescription");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleHandOver = async () => {
+        setLoading(true);
+        try {
+            // Issuing prescription logically bypasses fax routing
+            const mockUrl = `https://example.com/rx/${appointmentId}-handover.pdf`;
+            await issueRx(prescription?.id || "", mockUrl);
+            setStep('HANDED_OVER');
+            setDropdownOpen(false);
+        } catch (e) {
+            alert("Failed to issue prescription (hand-over)");
         } finally {
             setLoading(false);
         }
@@ -185,9 +203,17 @@ export default function PrescriptionManager({
         );
     }
 
+    if (step === 'HANDED_OVER') {
+        return (
+            <div className="p-4 border border-green-200 rounded-lg bg-green-50 shadow-sm mt-4 text-center">
+                <h3 className="font-bold text-green-700">{t('hand_over_completed')}</h3>
+            </div>
+        );
+    }
+
     if (step === 'UPLOAD') {
         return (
-            <div className="p-4 border rounded-lg bg-white shadow-sm mt-4">
+            <div className="p-4 border rounded-lg bg-white shadow-sm mt-4 relative">
                 <h3 className="font-semibold mb-2">{t('upload_rx')}</h3>
                 <input
                     type="file"
@@ -195,14 +221,36 @@ export default function PrescriptionManager({
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                     className="mb-2"
                 />
-                {/* Note: This button effectively "Issues" it */}
-                <button
-                    onClick={handleUpload}
-                    disabled={!file || loading}
-                    className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50"
-                >
-                    {loading ? t('issuing') : t('issue_ready')}
-                </button>
+                <div className="flex">
+                    <button
+                        onClick={handleUpload}
+                        disabled={!file || loading}
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-l disabled:opacity-50"
+                    >
+                        {loading ? t('issuing') : t('issue_ready')}
+                    </button>
+                    <div className="relative">
+                        <button
+                            onClick={() => setDropdownOpen(!dropdownOpen)}
+                            disabled={!file || loading}
+                            className="bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-r border-l border-green-700 disabled:opacity-50 h-full flex items-center"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        {dropdownOpen && !loading && file && (
+                            <div className="absolute right-0 mt-1 w-32 bg-white border border-gray-200 rounded shadow-md z-10">
+                                <button
+                                    onClick={handleHandOver}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                                >
+                                    {t('hand_over')}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         );
     }

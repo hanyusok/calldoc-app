@@ -1,12 +1,15 @@
 import AdminLayoutClient from "@/components/admin/AdminLayoutClient";
+import { auth } from "@/auth";
 
-export default function AdminLayout({
+export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const session = await auth();
+    const role = session?.user?.role;
     return (
-        <AdminLayoutClient>
+        <AdminLayoutClient role={role as string}>
             {children}
         </AdminLayoutClient>
     );

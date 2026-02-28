@@ -14,7 +14,7 @@ export default async function AuthCallbackPage({
     }
 
     // Redirect based on role
-    if (session?.user?.role === 'ADMIN') {
+    if (session?.user?.role === 'ADMIN' || session?.user?.role === 'STAFF') {
         redirect({ href: '/admin/dashboard', locale });
     } else {
         redirect({ href: '/profile', locale });
