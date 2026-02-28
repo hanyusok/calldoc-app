@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { MapPin, Phone, Star, Building2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';

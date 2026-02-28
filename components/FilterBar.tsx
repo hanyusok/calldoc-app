@@ -1,6 +1,7 @@
+"use client";
+
 import React from 'react';
 import { SlidersHorizontal } from 'lucide-react';
-
 import { useTranslations } from 'next-intl';
 
 const filters = ["nearest", "top_rated", "available_now", "female_doctor", "price"];

@@ -55,16 +55,16 @@ export default function AdminNotificationWatcher() {
         return () => clearInterval(interval);
     }, [knownPaymentIds, router]);
 
-    if (!notification) return null;
-
     // Resolve Style & Title
     let title = t('notification');
-    if (notification.type === 'PAYMENT_CONFIRMED') title = t('payment_confirmed_title');
-    else if (notification.type === 'APPOINTMENT_REQUEST') title = t('appointment_request_title');
+    if (notification) {
+        if (notification.type === 'PAYMENT_CONFIRMED') title = t('payment_confirmed_title');
+        else if (notification.type === 'APPOINTMENT_REQUEST') title = t('appointment_request_title');
+    }
 
     // Resolve Message
-    let displayMessage = notification.message;
-    if (notification.key) {
+    let displayMessage = notification?.message || '';
+    if (notification?.key) {
         try {
             const params = notification.params ? (typeof notification.params === 'string' ? JSON.parse(notification.params) : notification.params) : {};
             let key = notification.key;
@@ -76,6 +76,8 @@ export default function AdminNotificationWatcher() {
             console.error("Failed to parse admin notification params", e);
         }
     }
+
+    if (!notification) return null;
 
     return (
         <div className="fixed bottom-4 right-4 z-50 animate-in slide-in-from-bottom-2 fade-in duration-300">

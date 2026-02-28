@@ -1,42 +1,37 @@
-import Header from "@/components/Header";
-import BottomNav from "@/components/BottomNav";
-
 export default function ProfileLoading() {
     return (
-        <div className="bg-gray-50 min-h-screen pb-24">
-            <Header />
-
-            {/* Profile Header Skeleton */}
-            <div className="bg-white px-5 pt-4 pb-6 mb-2">
-                <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-gray-200 animate-pulse" />
-                    <div className="space-y-2">
-                        <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
-                        <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
-                    </div>
-                </div>
+        <div className="min-h-screen bg-gray-50 pb-20 p-4">
+            {/* Simple skeleton matching profile layout */}
+            <div className="flex flex-col items-center pt-8 pb-6">
+                <div className="w-20 h-20 rounded-full bg-gray-200 animate-pulse mb-3" />
+                <div className="h-6 w-32 bg-gray-200 rounded animate-pulse mb-1" />
+                <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
             </div>
 
-            <div className="px-5 space-y-5">
-                {/* Personal Info Form Skeleton */}
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-                    <div className="h-6 w-1/3 bg-gray-200 rounded animate-pulse mb-4" />
-                    {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="space-y-2">
-                            <div className="h-4 w-1/4 bg-gray-200 rounded animate-pulse" />
-                            <div className="h-12 w-full bg-gray-200 rounded-xl animate-pulse" />
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
+                <div className="h-5 w-24 bg-gray-200 rounded animate-pulse mb-6" />
+                <div className="space-y-4">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="flex justify-between items-center">
+                            <div className="h-4 w-20 bg-gray-100 rounded animate-pulse" />
+                            <div className="h-4 w-40 bg-gray-100 rounded animate-pulse" />
                         </div>
                     ))}
                 </div>
-
-                {/* Insurance Card Skeleton */}
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 h-40 animate-pulse" />
-
-                {/* Family List Skeleton */}
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 h-40 animate-pulse" />
             </div>
 
-            <BottomNav />
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <div className="h-5 w-32 bg-gray-200 rounded animate-pulse mb-4" />
+                {[1, 2].map(i => (
+                    <div key={i} className="flex gap-3 mb-4 last:mb-0">
+                        <div className="w-10 h-10 rounded-full bg-gray-100 animate-pulse" />
+                        <div className="flex-1 space-y-2">
+                            <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
+                            <div className="h-3 w-40 bg-gray-100 rounded animate-pulse" />
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

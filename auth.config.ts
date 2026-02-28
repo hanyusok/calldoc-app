@@ -1,5 +1,6 @@
 import Kakao from "next-auth/providers/kakao"
 import type { NextAuthConfig } from "next-auth"
+import { routing } from "./i18n/routing"
 
 export const authConfig = {
     providers: [
@@ -47,14 +48,26 @@ export const authConfig = {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user;
             const userRole = auth?.user?.role;
-            const isProtectedRoute =
-                nextUrl.pathname.startsWith('/profile') ||
-                nextUrl.pathname.startsWith('/dashboard') ||
-                nextUrl.pathname.startsWith('/myappointment');
+            const pathname = nextUrl.pathname;
 
-            // Admin Dashboard access control for STAFF role
-            // Locale could be part of the URL, so check for '/admin/dashboard'
-            const isAdminRoute = nextUrl.pathname.match(/\/(ko|en)\/admin\/dashboard/);
+            // Helper to check if a path (ignoring locale) matches a base path
+            const matchesPath = (base: string) =>
+                pathname === `/${base}` ||
+                pathname.startsWith(`/${base}/`) ||
+                routing.locales.some(locale =>
+                    pathname === `/${locale}/${base}` ||
+                    pathname.startsWith(`/${locale}/${base}/`)
+                );
+
+            const isProtectedRoute =
+                matchesPath('profile') ||
+                matchesPath('dashboard') ||
+                matchesPath('myappointment');
+
+            console.log('Path:', pathname, 'isProtectedRoute:', isProtectedRoute, 'isLoggedIn:', isLoggedIn);
+
+            // Admin Dashboard access control
+            const isAdminRoute = matchesPath('admin/dashboard');
             if (isAdminRoute && userRole === 'STAFF') {
                 const isAppointmentsRoute = nextUrl.pathname.includes('/admin/dashboard/appointments');
                 const isMeetRoute = nextUrl.pathname.includes('/admin/dashboard/meet'); // if they need meet access? The prompt says "only access /admin/dashboard/appointments module ui". I'll restrict strictly.
@@ -68,6 +81,7 @@ export const authConfig = {
 
             if (isProtectedRoute || isAdminRoute) {
                 if (isLoggedIn) return true;
+                console.log('Unauthorized access to:', pathname, 'Redirecting to login');
                 return false; // Redirect unauthenticated users to login page
             }
             return true;

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { getPharmacies } from "@/app/actions/pharmacy";
 // cleaned up imports

@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Syringe, MapPin, Calendar } from 'lucide-react';
 import { useTranslations } from 'next-intl';

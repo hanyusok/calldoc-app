@@ -67,92 +67,97 @@ export default function NotificationWatcher({ initialConfirmedIds = [] }: Notifi
         return () => clearInterval(interval);
     }, [knownIds, router]);
 
-    if (!notification) return null;
-
     // Determine styles based on type
     let borderColor = 'border-blue-500';
     let iconBg = 'bg-blue-50 text-blue-500';
     let Icon = Bell;
     let title = t('notification'); // Default title
 
-    switch (notification.type) {
-        case 'PAYMENT_REQUIRED':
-        case 'PAYMENT_CONFIRMED':
-            borderColor = 'border-blue-500';
-            iconBg = 'bg-blue-50 text-blue-500';
-            Icon = Bell;
-            title = t('payment_confirmed_title');
-            break;
-        case 'PAYMENT_CANCELLED':
-        case 'CANCELLED':
-            borderColor = 'border-red-500';
-            iconBg = 'bg-red-50 text-red-500';
-            Icon = CreditCard;
-            title = t('payment_cancelled_title');
-            break;
-        case 'MEET_READY':
-            borderColor = 'border-green-500';
-            iconBg = 'bg-green-50 text-green-500';
-            Icon = Video;
-            title = t('meet_ready');
-            break;
-        case 'APPOINTMENT_CONFIRMED':
-            borderColor = 'border-green-500';
-            iconBg = 'bg-green-50 text-green-500';
-            Icon = Bell;
-            title = t('payment_confirmed_title');
-            break;
-        case 'APPOINTMENT_COMPLETED':
-            borderColor = 'border-gray-500';
-            iconBg = 'bg-gray-50 text-gray-500';
-            Icon = FileText;
-            title = t('appointment_completed_title');
-            break;
-        case 'PHARMACY_UPDATED':
-            borderColor = 'border-purple-500';
-            iconBg = 'bg-purple-50 text-purple-500';
-            Icon = Building2;
-            title = t('pharmacy_updated_title');
-            break;
-        case 'FAX_SENT':
-            borderColor = 'border-indigo-500';
-            iconBg = 'bg-indigo-50 text-indigo-500';
-            Icon = Send;
-            title = t('fax_sent_title');
-            break;
-        case 'FAX_FAILED':
-            borderColor = 'border-red-500';
-            iconBg = 'bg-red-50 text-red-500';
-            Icon = AlertCircle;
-            title = t('fax_failed_title');
-            break;
-        default:
-            borderColor = 'border-blue-500';
-            iconBg = 'bg-blue-50 text-blue-500';
-            Icon = Bell;
+    if (notification) {
+        switch (notification.type) {
+            case 'PAYMENT_REQUIRED':
+            case 'PAYMENT_CONFIRMED':
+                borderColor = 'border-blue-500';
+                iconBg = 'bg-blue-50 text-blue-500';
+                Icon = Bell;
+                title = t('payment_confirmed_title');
+                break;
+            case 'PAYMENT_CANCELLED':
+            case 'CANCELLED':
+                borderColor = 'border-red-500';
+                iconBg = 'bg-red-50 text-red-500';
+                Icon = CreditCard;
+                title = t('payment_cancelled_title');
+                break;
+            case 'MEET_READY':
+                borderColor = 'border-green-500';
+                iconBg = 'bg-green-50 text-green-500';
+                Icon = Video;
+                title = t('meet_ready');
+                break;
+            case 'APPOINTMENT_CONFIRMED':
+                borderColor = 'border-green-500';
+                iconBg = 'bg-green-50 text-green-500';
+                Icon = Bell;
+                title = t('payment_confirmed_title');
+                break;
+            case 'APPOINTMENT_COMPLETED':
+                borderColor = 'border-gray-500';
+                iconBg = 'bg-gray-50 text-gray-500';
+                Icon = FileText;
+                title = t('appointment_completed_title');
+                break;
+            case 'PHARMACY_UPDATED':
+                borderColor = 'border-purple-500';
+                iconBg = 'bg-purple-50 text-purple-500';
+                Icon = Building2;
+                title = t('pharmacy_updated_title');
+                break;
+            case 'FAX_SENT':
+                borderColor = 'border-indigo-500';
+                iconBg = 'bg-indigo-50 text-indigo-500';
+                Icon = Send;
+                title = t('fax_sent_title');
+                break;
+            case 'FAX_FAILED':
+                borderColor = 'border-red-500';
+                iconBg = 'bg-red-50 text-red-500';
+                Icon = AlertCircle;
+                title = t('fax_failed_title');
+                break;
+            default:
+                borderColor = 'border-blue-500';
+                iconBg = 'bg-blue-50 text-blue-500';
+                Icon = Bell;
+        }
     }
 
     // Resolve Message
-    let displayMessage = notification.message || '';
-    if (notification.key) {
-        try {
-            const params = notification.params ?
-                (typeof notification.params === 'string' ? JSON.parse(notification.params) : notification.params) :
-                {};
+    let displayMessage = '';
+    if (notification) {
+        displayMessage = notification.message || '';
+        if (notification.key) {
+            try {
+                const params = notification.params ?
+                    (typeof notification.params === 'string' ? JSON.parse(notification.params) : notification.params) :
+                    {};
 
-            let key = notification.key;
-            if (key.startsWith('Notifications.')) {
-                key = key.replace('Notifications.', '');
+                let key = notification.key;
+                if (key.startsWith('Notifications.')) {
+                    key = key.replace('Notifications.', '');
+                }
+
+                // Check if key exists in translations to avoid crash
+                displayMessage = t(key as any, params);
+            } catch (e) {
+                console.error("Failed to parse notification params or resolve translation", e);
+                // Fallback to message or empty
+                displayMessage = notification.message || '';
             }
-
-            // Check if key exists in translations to avoid crash
-            displayMessage = t(key as any, params);
-        } catch (e) {
-            console.error("Failed to parse notification params or resolve translation", e);
-            // Fallback to message or empty
-            displayMessage = notification.message || '';
         }
     }
+
+    if (!notification) return null;
 
     return (
         <div className="fixed top-4 left-4 right-4 z-50 animate-in slide-in-from-top-2 fade-in duration-300">

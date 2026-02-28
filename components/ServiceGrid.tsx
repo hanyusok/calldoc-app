@@ -1,5 +1,7 @@
+"use client";
+
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { Video, Stethoscope, Pill, Building2, Ticket, Activity, Syringe, FlaskConical } from 'lucide-react';
 
 
