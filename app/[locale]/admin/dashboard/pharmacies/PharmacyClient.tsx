@@ -45,8 +45,36 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
         router.push(`?${params.toString()}`);
     };
 
-    // Auto-search removed to reduce API calls
-    // Search is now triggered only by "Enter" key or "Search" button
+    // Sync props to state when URL changes (e.g., from server re-render or back navigation)
+    useEffect(() => {
+        setPharmacies(initialPharmacies);
+        setTotal(initialTotal);
+        setCurrentPage(initialPage);
+        setFilter(initialFilter || "");
+        if (search !== undefined && search !== searchTerm) {
+            setSearchTerm(search);
+        }
+    }, [initialPharmacies, initialTotal, initialPage, initialFilter, search]);
+
+    // Debounce search (300ms) to improve responsiveness, consistent with Doctors search
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            const params = new URLSearchParams(searchParams.toString());
+            const currentQ = params.get('q') || '';
+
+            if (currentQ !== searchTerm) {
+                if (searchTerm) {
+                    params.set('q', searchTerm);
+                } else {
+                    params.delete('q');
+                }
+                params.set('page', '1');
+                router.push(`?${params.toString()}`);
+            }
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchTerm, searchParams, router]);
 
     const handleFilterChange = (newFilter: string) => {
         setFilter(newFilter);
@@ -190,24 +218,16 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-                    <div className="flex w-full md:max-w-md gap-2">
-                        <div className="relative w-full">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                            <input
-                                type="text"
-                                placeholder={t('search_placeholder') || "Search..."}
-                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && triggerSearch()}
-                            />
-                        </div>
-                        <button
-                            onClick={triggerSearch}
-                            className="bg-gray-100 text-gray-700 px-8 py-2 rounded-lg hover:bg-gray-200 transition font-medium whitespace-nowrap shrink-0"
-                        >
-                            {t('search') || "Search"}
-                        </button>
+                    <div className="relative w-full md:max-w-md">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <input
+                            type="text"
+                            placeholder={t('search_placeholder') || "Search..."}
+                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && triggerSearch()}
+                        />
                     </div>
                     <button
                         onClick={() => openModal()}
