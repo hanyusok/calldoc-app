@@ -51,7 +51,7 @@ export async function kiwoomCancelPayment(params: {
 }) {
     const KIWOOM_MID = process.env.NEXT_PUBLIC_KIWOOM_MID;
     const AUTH_KEY = process.env.KIWOOM_AUTH_KEY;
-    const urlReady = "https://apitest.kiwoompay.co.kr/pay/ready";
+    const urlReady = "https://api.kiwoompay.co.kr/pay/ready";
 
     const payload = {
         CPID: KIWOOM_MID,
