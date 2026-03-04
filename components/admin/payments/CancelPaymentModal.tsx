@@ -78,9 +78,16 @@ export default function CancelPaymentModal({
                 onClose();
             } else {
                 const isErrorCode = /^[A-Z_]+$/.test(result.error || "");
-                const errorMessage = isErrorCode
-                    ? t(`errors.${result.error}`)
-                    : (result.error || t('error'));
+                let errorMessage: string;
+                if (isErrorCode) {
+                    errorMessage = t(`errors.${result.error}`);
+                } else if (result.error) {
+                    // Check for garbled text (mojibake) - replacement chars or high-byte garbage
+                    const isGarbled = /\uFFFD|[\u0080-\u009F]/.test(result.error);
+                    errorMessage = isGarbled ? t('error') : result.error;
+                } else {
+                    errorMessage = t('error');
+                }
 
                 alert(t('cancelFailed') + ": " + errorMessage);
             }

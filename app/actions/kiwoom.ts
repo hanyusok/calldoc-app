@@ -1,5 +1,7 @@
 "use server";
 
+import iconv from 'iconv-lite';
+
 export async function getKiwoomHash(params: {
     CPID: string;
     PAYMETHOD: string;
@@ -63,9 +65,8 @@ export async function kiwoomCancelPayment(params: {
         TAXFREEAMT: "0"
     };
 
-    const iconv = require('iconv-lite');
     const jsonPayload = JSON.stringify(payload);
-    const eucKrPayload = iconv.encode(jsonPayload, 'euc-kr');
+    const eucKrPayload = new Uint8Array(iconv.encode(jsonPayload, 'euc-kr'));
 
     try {
         // Step 1: Ready
@@ -102,9 +103,13 @@ export async function kiwoomCancelPayment(params: {
         const finalBuffer = await finalRes.arrayBuffer();
         const finalData = JSON.parse(iconv.decode(Buffer.from(finalBuffer), 'euc-kr'));
 
+        if (finalData.RESULTCODE !== "0000") {
+            console.error(`Kiwoom Cancel Failed [${finalData.RESULTCODE}]: ${finalData.ERRORMESSAGE}`);
+        }
+
         return {
             success: finalData.RESULTCODE === "0000",
-            error: finalData.RESULTCODE !== "0000" ? finalData.ERRORMESSAGE : undefined,
+            error: finalData.RESULTCODE !== "0000" ? (finalData.ERRORMESSAGE || `Error code: ${finalData.RESULTCODE}`) : undefined,
             data: finalData
         };
 
