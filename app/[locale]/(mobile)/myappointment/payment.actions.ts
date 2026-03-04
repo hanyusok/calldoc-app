@@ -57,6 +57,7 @@ export async function getPaymentLink(appointmentId: string) {
         SIGNATURE: hash,
         PAYMETHOD: 'CARD', // Must match the hash param
         TYPE: 'P',         // Must match the hash param
+        TAXFREECD: '01',   // 00: Taxable (과세), 01: Tax-free (면세), 02: Combined (복합과세)
         // Use the configured notification/callback URL if available
         RETURN_URL: process.env.NEXT_PUBLIC_KIWOOM_NOTIFICATION_URL || "https://calldoc.co.kr/api/payment/callback"
     });

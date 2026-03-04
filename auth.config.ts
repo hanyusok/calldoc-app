@@ -64,7 +64,7 @@ export const authConfig = {
                 matchesPath('dashboard') ||
                 matchesPath('myappointment');
 
-            console.log('Path:', pathname, 'isProtectedRoute:', isProtectedRoute, 'isLoggedIn:', isLoggedIn);
+            // console.log('Path:', pathname, 'isProtectedRoute:', isProtectedRoute, 'isLoggedIn:', isLoggedIn);
 
             // Admin Dashboard access control
             const isAdminRoute = matchesPath('admin/dashboard');
