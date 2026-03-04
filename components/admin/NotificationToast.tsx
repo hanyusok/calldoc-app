@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { getUnreadNotifications, markNotificationAsRead } from '@/app/actions/notification';
+import { useState, useEffect } from 'react';
+import { checkNewNotifications, markNotificationAsRead } from '@/app/actions/notification';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Bell, X, CheckCircle, ExternalLink } from 'lucide-react';
@@ -28,31 +28,22 @@ export default function NotificationToast() {
 
     const fetchNotifications = async () => {
         try {
-            const data = await getUnreadNotifications();
+            // checkNewNotifications returns ONLY newly unread items and marks them read.
+            // On first load it returns the current unread batch; subsequent polls only return
+            // items that arrived since the last poll, so no extra "known IDs" tracking needed.
+            const data = await checkNewNotifications();
 
-            // On first load, just record the IDs so we don't popup for old stuff
             if (!isInitialized) {
-                const ids = new Set(data.map(n => n.id));
-                setKnownIds(ids);
+                // Silently absorb the first batch — don't toast for history
                 setIsInitialized(true);
                 return;
             }
 
-            // Check for new IDs
-            const newItems = data.filter(n => !knownIds.has(n.id));
-
-            if (newItems.length > 0) {
-                // Show the most recent new one
-                const latest = newItems[0];
-                setCurrentNotification(latest);
+            if (data.length > 0) {
+                const latest = data[0];
+                setCurrentNotification(latest as any);
                 setVisible(true);
 
-                // Update known IDs
-                const updatedIds = new Set(knownIds);
-                newItems.forEach(n => updatedIds.add(n.id));
-                setKnownIds(updatedIds);
-
-                // Auto hide after 6 seconds
                 setTimeout(() => {
                     setVisible(false);
                 }, 6000);

@@ -3,26 +3,8 @@
 import { prisma } from "@/app/lib/prisma";
 import { auth } from "@/auth";
 
-export async function getUnreadNotifications() {
-    const session = await auth();
-    if (!session?.user?.email) return [];
-
-    const user = await prisma.user.findUnique({
-        where: { email: session.user.email }
-    });
-
-    if (!user) return [];
-
-    return await prisma.notification.findMany({
-        where: {
-            userId: user.id,
-            isRead: false
-        },
-        orderBy: {
-            createdAt: 'desc'
-        }
-    });
-}
+// NOTE: getUnreadNotifications was removed — it was a weaker duplicate of checkNewNotifications.
+// Use checkNewNotifications (marks as read on fetch) or getUserNotifications (read-only history).
 
 export async function checkNewNotifications() {
     const session = await auth();
@@ -38,7 +20,6 @@ export async function checkNewNotifications() {
     });
 
     // Mark as read immediately to avoid re-notifying in this simple polling setup
-    // In a more complex app, we might wait for explicit dismissal
     if (unread.length > 0) {
         await prisma.notification.updateMany({
             where: { id: { in: unread.map(n => n.id) } },
@@ -57,6 +38,7 @@ export async function checkNewNotifications() {
         createdAt: n.createdAt
     }));
 }
+
 export async function getUserNotifications(limit = 20) {
     const session = await auth();
     if (!session?.user?.id) return [];
@@ -95,9 +77,6 @@ export async function createNotification({
     params?: any;
     link?: string;
 }) {
-    // If no session, internal system action (allowed)
-    // or verify admin if needed. For now, open internal usage.
-
     return await prisma.notification.create({
         data: {
             userId,

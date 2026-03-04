@@ -78,29 +78,10 @@ export async function generateAndSaveMeetingLink(params: {
     patientName?: string;
 }) {
     const link = await createMeeting(params);
-
     if (link) {
-        const appointment = await prisma.appointment.update({
-            where: { id: params.appointmentId },
-            data: { meetingLink: link },
-            select: { userId: true, doctor: { select: { name: true } } }
-        });
-
-        if (appointment.userId) {
-            await createNotification({
-                userId: appointment.userId,
-                type: 'SYSTEM',
-                message: `Your video consultation link with ${appointment.doctor.name} is ready.`,
-                key: 'Notifications.meet_ready_msg',
-                link: `/myappointment`
-            });
-        }
-
-        revalidatePath('/myappointment');
-        revalidatePath('/admin/dashboard/appointments');
+        await saveMeetingLink(params.appointmentId, link);
         return link;
     }
-
     return null;
 }
 export async function saveMeetingLink(appointmentId: string, link: string) {
@@ -122,8 +103,8 @@ export async function saveMeetingLink(appointmentId: string, link: string) {
         }
 
         revalidatePath('/myappointment');
-        revalidatePath('/admin/dashboard/appointments');
         revalidatePath('/[locale]/myappointment');
+        revalidatePath('/admin/dashboard/appointments');
         return true;
     } catch (error) {
         console.error("Error saving meeting link:", error);

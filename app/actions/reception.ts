@@ -2,8 +2,8 @@
 
 import { auth } from "@/auth";
 
-// const API_BASE_URL = "http://api.calldoc.co.kr/api";
-const API_BASE_URL = "http://hanyusok.synology.me:3000/api";
+// Clinic reception API — configure via CLINIC_API_URL env var
+const API_BASE_URL = process.env.CLINIC_API_URL || "http://hanyusok.synology.me:3000/api";
 
 export async function registerToClinic(name: string, residentNumber: string) {
     const session = await auth();

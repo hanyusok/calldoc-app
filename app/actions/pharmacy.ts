@@ -2,6 +2,7 @@
 
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 import { z } from "zod";
 
 const pharmacySchema = z.object({
@@ -11,9 +12,17 @@ const pharmacySchema = z.object({
     address: z.string().optional(),
 });
 
-export async function getPharmacies(page: number = 1, limit: number = 10, query: string = "", filter: string = "") {
-    // No auth check for listing in this demo/context, or add if needed
+// ─── Auth helper ─────────────────────────────────────────────────────────────
+async function requireAdmin(): Promise<{ error: string } | null> {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== 'ADMIN') {
+        return { error: "Unauthorized" };
+    }
+    return null;
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
+export async function getPharmacies(page: number = 1, limit: number = 10, query: string = "", filter: string = "") {
     const skip = (page - 1) * limit;
 
     const where: any = {};
@@ -59,7 +68,9 @@ export async function getPharmacies(page: number = 1, limit: number = 10, query:
 }
 
 export async function createPharmacy(data: z.infer<typeof pharmacySchema>) {
-    // TODO: Add Auth check (Admin only)
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const validated = pharmacySchema.safeParse(data);
     if (!validated.success) return { error: "Invalid data" };
 
@@ -76,7 +87,9 @@ export async function createPharmacy(data: z.infer<typeof pharmacySchema>) {
 }
 
 export async function updatePharmacy(id: string, data: z.infer<typeof pharmacySchema>) {
-    // TODO: Auth check
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     const validated = pharmacySchema.safeParse(data);
     if (!validated.success) return { error: "Invalid data" };
 
@@ -94,7 +107,9 @@ export async function updatePharmacy(id: string, data: z.infer<typeof pharmacySc
 }
 
 export async function deletePharmacy(id: string) {
-    // TODO: Auth check
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     try {
         await prisma.pharmacy.delete({
             where: { id }
@@ -108,7 +123,9 @@ export async function deletePharmacy(id: string) {
 }
 
 export async function setPharmacyDefault(pharmacyId: string) {
-    // TODO: Add Auth check (Admin only)
+    const authError = await requireAdmin();
+    if (authError) return authError;
+
     try {
         await prisma.$transaction([
             prisma.pharmacy.updateMany({

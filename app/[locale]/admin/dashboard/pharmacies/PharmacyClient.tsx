@@ -120,23 +120,21 @@ export default function PharmacyClient({ initialPharmacies, initialTotal, initia
         try {
             if (isEditing && currentId) {
                 const res = await updatePharmacy(currentId, formData);
-                if (res.success) {
-                    // Optimistic update or refresh
+                if ('error' in res) {
+                    alert(res.error);
+                } else if (res.success) {
                     router.refresh();
-                    // Locally update for immediate feedback (optional, but good)
                     setPharmacies(pharmacies.map(p => p.id === currentId ? { ...p, ...formData } : p));
                     setIsModalOpen(false);
-                } else {
-                    alert("Failed to update pharmacy");
                 }
             } else {
                 const res = await createPharmacy(formData);
-                if (res.pharmacy) {
+                if ('error' in res) {
+                    alert(res.error);
+                } else if ('pharmacy' in res && res.pharmacy) {
                     setPharmacies([res.pharmacy, ...pharmacies]);
                     setIsModalOpen(false);
                     router.refresh();
-                } else {
-                    alert("Failed to create pharmacy");
                 }
             }
         } catch (e) {

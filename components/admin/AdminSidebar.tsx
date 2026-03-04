@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LayoutDashboard, Calendar, Building2, Settings, LogOut, Users, FileText, ChevronLeft, ChevronRight, Syringe, CreditCard, Video, Stethoscope, Printer } from "lucide-react";
 import NotificationBell from "@/components/admin/NotificationBell";
+import { signOut } from "next-auth/react";
 
 interface AdminSidebarProps {
     isCollapsed: boolean;
@@ -15,6 +16,12 @@ interface AdminSidebarProps {
 export default function AdminSidebar({ isCollapsed, toggleSidebar, role }: AdminSidebarProps) {
     const t = useTranslations('Admin.nav');
     const pathname = usePathname();
+    const params = useParams();
+    const locale = (params?.locale as string) || 'ko';
+
+    const handleLogout = () => {
+        signOut({ callbackUrl: `/${locale}/login` });
+    };
 
     const isActive = (path: string) => pathname?.includes(path);
 
@@ -109,6 +116,7 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar, role }: Admin
 
             <div className="p-4 border-t border-gray-200">
                 <button
+                    onClick={handleLogout}
                     className={`flex w-full items-center px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors ${isCollapsed ? "justify-center px-2" : ""
                         }`}
                     title={isCollapsed ? t('logout') : undefined}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Bell } from 'lucide-react';
-import { getUnreadNotifications, markNotificationAsRead } from '@/app/actions/notification';
+import { getUserNotifications, markNotificationAsRead } from '@/app/actions/notification';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -39,8 +39,9 @@ export default function NotificationBell() {
 
     const fetchNotifications = async () => {
         try {
-            const data = await getUnreadNotifications();
-            setNotifications(data);
+            const data = await getUserNotifications(20);
+            // Only show unread ones in the dropdown
+            setNotifications(data.filter((n: any) => !n.isRead));
         } catch (error) {
             console.error("Failed to fetch notifications:", error);
         }

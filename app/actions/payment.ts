@@ -2,9 +2,8 @@
 
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { auth, config as authOptions } from "@/auth";
+import { auth } from "@/auth";
 import { AppointmentStatus } from "@prisma/client";
-// import { getServerSession } from "next-auth"; // Not available in v5 (beta)
 
 import { createMeeting } from "./meet";
 import { createNotification } from "./notification";
@@ -213,8 +212,6 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
         revalidatePath('/dashboard');
         revalidatePath('/myappointment');
         revalidatePath('/[locale]/myappointment');
-        revalidatePath('/ko/myappointment'); // Explicitly needed sometimes
-        revalidatePath('/en/myappointment');
         revalidatePath('/admin/dashboard');
 
         return { success: true };
@@ -317,15 +314,6 @@ export async function processCancellationSuccess(paymentId: string, paymentKey?:
 export async function cancelPayment(paymentId: string, reason: string, cancelAmount?: number) {
     const session = await auth();
     console.log("cancelPayment session (auth()):", JSON.stringify(session, null, 2));
-
-    // let sessionV4 = null;
-    // try {
-    //     // Attempt to use getServerSession if available/compatible
-    //     // sessionV4 = await getServerSession(authOptions);
-    //     console.log("getServerSession skipped (not available in v5)");
-    // } catch (e) {
-    //     console.log("getServerSession failed or not available:", e);
-    // }
 
     if (!session?.user || (session.user as any).role !== 'ADMIN') {
         console.log("cancelPayment Unauthorized: Role is", (session?.user as any)?.role);

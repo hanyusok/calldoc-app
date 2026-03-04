@@ -4,9 +4,7 @@ export const KST_OFFSET = 9 * 60; // 9 hours in minutes
  * Returns the current time in KST
  */
 export function getKSTDate(): Date {
-    const now = new Date();
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    return new Date(utc + (3600000 * 9));
+    return toKST(new Date());
 }
 
 /**

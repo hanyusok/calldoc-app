@@ -3,6 +3,7 @@
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { AppointmentStatus } from "@prisma/client";
+import { createNotification } from "./notification";
 
 export async function getAppointments(search?: string, status?: AppointmentStatus | 'ALL', page = 1, limit = 10) {
     try {
@@ -122,9 +123,6 @@ export async function deleteAppointment(id: string) {
         throw new Error("Failed to delete appointment");
     }
 }
-
-import { createNotification } from "./notification";
-import { getTranslations } from "next-intl/server";
 
 export async function completeAppointment(id: string) {
     try {

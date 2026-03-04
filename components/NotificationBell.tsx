@@ -3,15 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import { Bell } from 'lucide-react';
 import { Link } from '@/i18n/routing';
-import { getUnreadNotifications } from '@/app/actions/notification';
+import { getUserNotifications } from '@/app/actions/notification';
 
 export default function NotificationBell() {
     const [unreadCount, setUnreadCount] = useState(0);
 
     const fetchNotifications = async () => {
         try {
-            const notifications = await getUnreadNotifications();
-            setUnreadCount(notifications.length);
+            const notifications = await getUserNotifications(50);
+            setUnreadCount(notifications.filter((n: any) => !n.isRead).length);
         } catch (error) {
             console.error("Failed to fetch notifications:", error);
         }

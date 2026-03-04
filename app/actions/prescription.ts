@@ -2,6 +2,7 @@
 
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 
 // Patient requests a prescription transfer
 export async function requestPrescription(
@@ -13,7 +14,9 @@ export async function requestPrescription(
         address?: string;
     }
 ) {
-    // TODO: Auth check (Session)
+    const session = await auth();
+    if (!session?.user?.id) return { error: "Unauthorized" };
+
     try {
         const appointment = await prisma.appointment.findUnique({
             where: { id: appointmentId },
@@ -56,6 +59,9 @@ export async function issuePrescription(
     prescriptionId: string,
     fileUrl: string
 ) {
+    const session = await auth();
+    if (!session?.user || (session.user as any).role !== 'ADMIN') return { error: "Unauthorized" };
+
     try {
         const updatedPrescription = await prisma.prescription.update({
             where: { id: prescriptionId },

@@ -18,6 +18,66 @@ const FTP_HOST = process.env.BAROBILL_FTP_HOST || "testftp.barobill.co.kr";
 const FTP_USER = process.env.BAROBILL_FTP_USER || BAROBILL_USER_ID;
 const FTP_PASSWORD = process.env.BAROBILL_FTP_PASSWORD || "";
 
+// ─── Shared helper ───────────────────────────────────────────────────────────
+// Uploads a file buffer to BaroBill FTP, then triggers SendFaxFromFTP via SOAP.
+// Returns the raw SOAP result code string, or throws on network failure.
+async function uploadAndSendFax(
+    buffer: Buffer,
+    fileName: string,
+    receiverFax: string,
+    receiverName: string
+): Promise<string> {
+    const ftpPort = parseInt(process.env.BAROBILL_FTP_PORT || "9030");
+
+    // 1. Upload to FTP
+    console.log(`[Fax] Uploading ${fileName} to FTP (${FTP_HOST}:${ftpPort})...`);
+    const ftp = new FtpClient(30000);
+
+    try {
+        await ftp.access({
+            host: FTP_HOST,
+            user: FTP_USER,
+            password: FTP_PASSWORD,
+            port: ftpPort,
+            secure: false,
+        });
+
+        const source = Readable.from(buffer);
+        await ftp.uploadFrom(source, fileName);
+        console.log("[Fax] FTP Upload Successful");
+    } catch (ftpError) {
+        console.error("[Fax] FTP Error:", ftpError);
+        throw new Error(`FTP Upload Failed: ${(ftpError as Error).message}`);
+    } finally {
+        ftp.close();
+    }
+
+    // 2. Send via SOAP
+    console.log("[Fax] Connecting to BaroBill SOAP Service...");
+    const client = await soap.createClientAsync(BAROBILL_WSDL);
+
+    const sendArgs = {
+        CERTKEY: BAROBILL_CERT_KEY,
+        CorpNum: BAROBILL_CORP_NUM,
+        SenderID: BAROBILL_USER_ID,
+        FileName: fileName,
+        FromNumber: BAROBILL_SENDER_NUMBER,
+        ToNumber: receiverFax,
+        ReceiveCorp: receiverName,
+        ReceiveName: receiverName,
+        SendDT: "",
+        RefKey: ""
+    };
+
+    console.log(`[Fax] Sending fax to ${receiverName} (${receiverFax})...`);
+    const sendResponse = await client.SendFaxFromFTPAsync(sendArgs);
+    const result = sendResponse[0].SendFaxFromFTPResult;
+    console.log(`[Fax] SendFaxFromFTP Result: ${result}`);
+
+    return result;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 export async function sendFax(formData: FormData) {
     const session = await auth();
     if (!session?.user?.id) {
@@ -53,65 +113,15 @@ export async function sendFax(formData: FormData) {
             return { error: "Pharmacy fax number is missing" };
         }
 
-        const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`; // Sanitize filename
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+        const buffer = Buffer.from(await file.arrayBuffer());
 
         console.log(`[Fax] Starting process for Prescription ${prescriptionId}`);
         console.log(`[Fax] Receiver: ${receiverName} (${receiverFax})`);
 
-        // 1. Upload to FTP
-        const ftpPort = parseInt(process.env.BAROBILL_FTP_PORT || "9030");
-        console.log(`[Fax] Uploading ${fileName} to FTP (${FTP_HOST}:${ftpPort})...`);
-        const ftp = new FtpClient(30000); // Set timeout to 30s
+        const result = await uploadAndSendFax(buffer, fileName, receiverFax, receiverName);
 
-        try {
-            await ftp.access({
-                host: FTP_HOST,
-                user: FTP_USER,
-                password: FTP_PASSWORD,
-                port: ftpPort,
-                secure: false,
-            });
-
-            const source = Readable.from(buffer);
-            await ftp.uploadFrom(source, fileName);
-            console.log("[Fax] FTP Upload Successful");
-
-        } catch (ftpError) {
-            console.error("[Fax] FTP Error:", ftpError);
-            return { error: `FTP Upload Failed: ${(ftpError as Error).message}` };
-        } finally {
-            ftp.close();
-        }
-
-        // 2. Call SendFaxFromFTP
-        console.log("[Fax] Connecting to BaroBill SOAP Service...");
-        const client = await soap.createClientAsync(BAROBILL_WSDL);
-
-        console.log("[Fax] Sending Fax via FTP reference...");
-        console.log(`[Fax] Params: SenderID=${BAROBILL_USER_ID}, From=${BAROBILL_SENDER_NUMBER}, To=${receiverFax}`);
-
-        const sendArgs = {
-            CERTKEY: BAROBILL_CERT_KEY,
-            CorpNum: BAROBILL_CORP_NUM,
-            SenderID: BAROBILL_USER_ID,
-            FileName: fileName,
-            FromNumber: BAROBILL_SENDER_NUMBER,
-            ToNumber: receiverFax,
-            ReceiveCorp: receiverName,
-            ReceiveName: receiverName,
-            SendDT: "",
-            RefKey: ""
-        };
-
-        const sendResponse = await client.SendFaxFromFTPAsync(sendArgs);
-        const result = sendResponse[0].SendFaxFromFTPResult;
-
-        console.log(`[Fax] SendFaxFromFTP Result: ${result}`);
-
-        if (!result || (parseInt(result) < 0)) {
-            // Notify Failure
+        if (!result || parseInt(result) < 0) {
             await createNotification({
                 userId: prescription.appointment.userId,
                 type: 'FAX_FAILED',
@@ -125,7 +135,7 @@ export async function sendFax(formData: FormData) {
         // Update Prescription Status
         await prisma.prescription.update({
             where: { id: prescriptionId },
-            data: { status: 'ISSUED' } // or 'SENT' if added to enum. Using ISSUED for now as it means "Done"
+            data: { status: 'ISSUED' }
         });
 
         // Notify Success
@@ -141,7 +151,7 @@ export async function sendFax(formData: FormData) {
 
     } catch (error) {
         console.error("Fax Error:", error);
-        return { error: "Internal Server Error during Fax sending" };
+        return { error: `Internal Server Error during Fax sending: ${(error as Error).message}` };
     }
 }
 
@@ -164,67 +174,20 @@ export async function sendManualFax(formData: FormData) {
         }
 
         const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        const buffer = Buffer.from(await file.arrayBuffer());
 
         console.log(`[Fax] Starting manual fax to ${receiverName} (${receiverFax})`);
 
-        // 1. Upload to FTP
-        const ftpPort = parseInt(process.env.BAROBILL_FTP_PORT || "9030");
-        console.log(`[Fax] Uploading ${fileName} to FTP...`);
-        const ftp = new FtpClient(30000);
+        const result = await uploadAndSendFax(buffer, fileName, receiverFax, receiverName);
 
-        try {
-            await ftp.access({
-                host: FTP_HOST,
-                user: FTP_USER,
-                password: FTP_PASSWORD,
-                port: ftpPort,
-                secure: false,
-            });
-
-            const source = Readable.from(buffer);
-            await ftp.uploadFrom(source, fileName);
-            console.log("[Fax] FTP Upload Successful");
-
-        } catch (ftpError) {
-            console.error("[Fax] FTP Error:", ftpError);
-            return { error: `FTP Upload Failed: ${(ftpError as Error).message}` };
-        } finally {
-            ftp.close();
-        }
-
-        // 2. Call SendFaxFromFTP
-        console.log("[Fax] Connecting to BaroBill SOAP Service...");
-        const client = await soap.createClientAsync(BAROBILL_WSDL);
-
-        const sendArgs = {
-            CERTKEY: BAROBILL_CERT_KEY,
-            CorpNum: BAROBILL_CORP_NUM,
-            SenderID: BAROBILL_USER_ID,
-            FileName: fileName,
-            FromNumber: BAROBILL_SENDER_NUMBER,
-            ToNumber: receiverFax,
-            ReceiveCorp: receiverName,
-            ReceiveName: receiverName,
-            SendDT: "",
-            RefKey: ""
-        };
-
-        const sendResponse = await client.SendFaxFromFTPAsync(sendArgs);
-        const result = sendResponse[0].SendFaxFromFTPResult;
-
-        console.log(`[Fax] Manual SendFaxFromFTP Result: ${result}`);
-
-        if (!result || (parseInt(result) < 0)) {
+        if (!result || parseInt(result) < 0) {
             return { error: `Fax Failed with Code: ${result}` };
         }
 
-        // Return success (Notification can be added here if we want Admin logs)
         return { success: true, result };
 
     } catch (error) {
         console.error("Manual Fax Error:", error);
-        return { error: "Internal Server Error during manual fax sending" };
+        return { error: `Internal Server Error during manual fax sending: ${(error as Error).message}` };
     }
 }
