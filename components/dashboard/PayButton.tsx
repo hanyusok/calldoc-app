@@ -76,6 +76,7 @@ export default function PayButton({ appointmentId, price }: PayButtonProps) {
             addField("TYPE", hashParams.TYPE);
             addField("AMOUNT", hashParams.AMOUNT);
             addField("KIWOOM_ENC", hashResult.KIWOOM_ENC);
+            addField("TAXFREECD", "01"); // 00: Taxable (과세), Required field
 
             // Additional required fields
             addField("PRODUCTNAME", initResult.productName || "진료 상담");
@@ -112,42 +113,7 @@ export default function PayButton({ appointmentId, price }: PayButtonProps) {
         }
     };
 
-    // DEBUG: Force Success Button (Keep existing dev tool)
-    const handleSimulateSuccess = async () => {
-        if (!confirm("Simulate successful payment for testing?")) return;
 
-        setLoading(true);
-        try {
-            // Initiate first to ensure record exists
-            const init = await initiatePayment(appointmentId);
-            if (!init.success) throw new Error(init.error);
-
-            const res = await fetch('/api/payment/callback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ORDERNO: init.paymentId!,
-                    AMOUNT: (init.amount || 0).toString(),
-                    RES_CD: '0000',
-                    PAYMETHOD: 'CARD',
-                    AUTHNO: 'SIMULATED_AUTH',
-                    DAOUTRX: `SIM-${Date.now()}`
-                })
-            });
-
-            if (res.ok) {
-                alert("Payment Confirmed (Simulated)");
-                router.refresh();
-            } else {
-                alert("Simulation failed");
-            }
-        } catch (e) {
-            console.error(e);
-            alert("Simulation Error");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="flex gap-2">
@@ -160,15 +126,7 @@ export default function PayButton({ appointmentId, price }: PayButtonProps) {
                 <span>{t('card.pay_now')}</span>
             </button>
 
-            {process.env.NODE_ENV === 'development' && (
-                <button
-                    onClick={handleSimulateSuccess}
-                    className="px-2 py-1 text-[10px] text-gray-300 hover:text-green-600 border border-transparent hover:border-green-200 rounded"
-                    title="Simulate Success (Dev Mode)"
-                >
-                    [Dev]
-                </button>
-            )}
+
         </div>
     );
 }
