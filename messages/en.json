@@ -241,7 +241,8 @@
         "step_1_of_3": "Step 1 of 3",
         "continue_to_patient_details": "Continue to Patient Details",
         "available_time": "Available Time",
-        "select_date_prompt": "Please select a date above to see available times"
+        "select_date_prompt": "Please select a date above to see available times",
+        "no_available_slots": "No available slots for this date"
     },
     "Admin": {
         "toast": {

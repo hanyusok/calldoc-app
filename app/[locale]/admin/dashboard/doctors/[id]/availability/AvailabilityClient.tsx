@@ -57,8 +57,8 @@ export default function AvailabilityClient({
         setSchedules(newSchedules);
     };
 
-    const handleScheduleSave = async (dayOfWeek: number) => {
-        const schedule = getDaySchedule(dayOfWeek);
+    const handleScheduleSave = async (dayOfWeek: number, overrideSchedule?: any) => {
+        const schedule = overrideSchedule || getDaySchedule(dayOfWeek);
 
         setLoading(true);
         try {
@@ -142,7 +142,9 @@ export default function AvailabilityClient({
 
         setLoading(true);
         try {
-            const result = await getAvailableSlots(doctorId, new Date(previewDate));
+            const dateObj = new Date(previewDate);
+            const kstDate = new Date(dateObj.getTime() + (9 * 60 * 60 * 1000));
+            const result = await getAvailableSlots(doctorId, kstDate);
             if (result.success) {
                 setPreviewSlots(result.slots || []);
             }
@@ -217,8 +219,9 @@ export default function AvailabilityClient({
                                             type="checkbox"
                                             checked={schedule.isActive}
                                             onChange={(e) => {
-                                                handleScheduleLocalChange(day, 'isActive', e.target.checked);
-                                                handleScheduleSave(day);
+                                                const newIsActive = e.target.checked;
+                                                handleScheduleLocalChange(day, 'isActive', newIsActive);
+                                                handleScheduleSave(day, { ...schedule, isActive: newIsActive });
                                             }}
                                             className="rounded"
                                         />

@@ -33,7 +33,10 @@ export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
         const fetchSlots = async () => {
             setLoadingSlots(true);
             try {
-                const result = await getAvailableSlots(doctorId, selectedDate);
+                // Shift the local browser KST date to simulate standard UTC payload.
+                const kstDate = new Date(selectedDate.getTime() + (9 * 60 * 60 * 1000));
+
+                const result = await getAvailableSlots(doctorId, kstDate);
                 if (result.success) {
                     setTimeSlots(result.slots || []);
                 } else {
@@ -188,7 +191,7 @@ export default function DateTimeSelection({ doctorId }: { doctorId: string }) {
                         </div>
                     ) : (
                         <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-400 text-sm">
-                            No available slots for this date
+                            {t('no_available_slots')}
                         </div>
                     )
                 ) : (

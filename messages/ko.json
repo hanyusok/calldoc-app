@@ -241,7 +241,8 @@
         "step_1_of_3": "1 / 3 단계",
         "continue_to_patient_details": "다음: 환자 정보 입력",
         "available_time": "진료 가능 시간",
-        "select_date_prompt": "위 달력에서 날짜를 선택해주세요"
+        "select_date_prompt": "위 달력에서 날짜를 선택해주세요",
+        "no_available_slots": "해당 날짜에는 예약 가능한 시간이 없습니다"
     },
     "Admin": {
         "toast": {
