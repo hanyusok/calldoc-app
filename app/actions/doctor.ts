@@ -413,9 +413,12 @@ function generateTimeSlots(
     }
 
     while (currentMinutes + duration <= endMinutes) {
-        // Skip if slot falls within break time
+        // Skip if slot overlaps with break time
         if (breakStartMinutes !== null && breakEndMinutes !== null) {
-            if (currentMinutes >= breakStartMinutes && currentMinutes < breakEndMinutes) {
+            const slotEndMinutes = currentMinutes + duration;
+            // Check if slot and break overlap
+            // They overlap if: slot doesn't end before break starts AND slot doesn't start after break ends
+            if (!(slotEndMinutes <= breakStartMinutes || currentMinutes >= breakEndMinutes)) {
                 currentMinutes += duration;
                 continue;
             }

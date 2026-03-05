@@ -13,8 +13,8 @@ export function getKSTDate(): Date {
  * Be careful when using this with methods that use local timezone.
  */
 export function toKST(date: Date): Date {
-    const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
-    return new Date(utc + (3600000 * 9));
+    // KST is UTC+9, so add 9 hours to UTC time
+    return new Date(date.getTime() + (9 * 60 * 60 * 1000));
 }
 
 /**
@@ -31,18 +31,15 @@ export function formatKSTDate(date: Date): string {
 /**
  * Constructs a UTC Date object from a KST Date string and Time string.
  * Example: dateStr="2026-02-15", timeStr="14:30" (KST)
- * Returns: Date object representing 2026-02-15 05:30:00 UTC
+ * Returns: Date object representing 2026-02-14 05:30:00 UTC (14:30 KST = 05:30 UTC)
  */
 export function createKSTDate(dateStr: string, timeStr: string): Date {
     const [year, month, day] = dateStr.split('-').map(Number);
     const [hours, minutes] = timeStr.split(':').map(Number);
 
-    // Create a date object in UTC with the KST time components
-    // Then subtract 9 hours to get the actual UTC time
-    const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, 0));
-    date.setHours(date.getHours() - 9);
-
-    return date;
+    // KST is UTC+9, so to convert KST to UTC, subtract 9 hours
+    // Date.UTC handles month overflow correctly
+    return new Date(Date.UTC(year, month - 1, day, hours - 9, minutes, 0));
 }
 
 /**
@@ -54,12 +51,10 @@ export function getKSTDayRangeInUTC(dateStr: string) {
 
     // Start of day KST (00:00:00) -> UTC (-9 hours)
     // Example: 2026-02-15 00:00:00 KST -> 2026-02-14 15:00:00 UTC
-    const start = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
-    start.setHours(start.getHours() - 9);
+    const start = new Date(Date.UTC(year, month - 1, day, 0 - 9, 0, 0));
 
     // End of day KST (23:59:59.999) -> UTC (-9 hours)
-    const end = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
-    end.setHours(end.getHours() - 9);
+    const end = new Date(Date.UTC(year, month - 1, day, 23 - 9, 59, 59, 999));
 
     return { start, end };
 }
@@ -68,13 +63,9 @@ export function getKSTDayRangeInUTC(dateStr: string) {
  * Converts a UTC Date from DB to KST Time string (HH:mm)
  */
 export function formatKSTTime(date: Date): string {
-    const kstDate = toKST(date);
-    const hours = String(kstDate.getUTCHours()).padStart(2, '0'); // using utc methods on shifted date gives correct "local" components if we consider it utc-anchored
-    // Actually, toKST shifts the epoch. 
-    // Let's rely on explicit calculation for safety or use toLocaleString if environment supports it reliably.
-    // Better approach manually:
-    const kst = new Date(date.getTime() + (3600000 * 9));
-    const h = kst.getUTCHours();
-    const m = kst.getUTCMinutes();
+    // Convert UTC to KST by adding 9 hours, then extract time components
+    const kstTime = new Date(date.getTime() + (9 * 60 * 60 * 1000));
+    const h = kstTime.getUTCHours();
+    const m = kstTime.getUTCMinutes();
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
