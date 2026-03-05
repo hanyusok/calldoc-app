@@ -22,9 +22,9 @@ export function toKST(date: Date): Date {
  */
 export function formatKSTDate(date: Date): string {
     const kstDate = toKST(date);
-    const year = kstDate.getFullYear();
-    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
-    const day = String(kstDate.getDate()).padStart(2, '0');
+    const year = kstDate.getUTCFullYear();
+    const month = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(kstDate.getUTCDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
 

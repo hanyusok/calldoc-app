@@ -275,26 +275,25 @@ export async function deleteDoctorException(exceptionId: string) {
 
 export async function getAvailableSlots(doctorId: string, dateInput: Date | string) {
     try {
-        // Ensure we work with a Date object for dayOfWeek
-        const dateObj = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-        const dayOfWeek = dateObj.getDay();
-
-        // If it's a date object from client, it might be in local time (UTC if serialized)
-        // We want the YYYY-MM-DD string representation that the user SELECTED.
+        // Extract the YYYY-MM-DD string first
+        // We want the string representation that the user SELECTED.
         // If passed as string "2026-02-15", use it.
-        // If passed as Date, convert to KST string or ISO date string part carefully.
         let dateStr: string;
         if (typeof dateInput === 'string') {
             // Expecting "YYYY-MM-DD" or ISO
             dateStr = dateInput.split('T')[0];
         } else {
-            // It's a Date object. Assuming the client sends a date that represents 00:00 local time
-            // We need to be careful. The safest is if the client sends YYYY-MM-DD string.
-            const year = dateInput.getFullYear();
-            const month = String(dateInput.getMonth() + 1).padStart(2, '0');
-            const day = String(dateInput.getDate()).padStart(2, '0');
+            // Using UTC methods avoids timezone shift since client likely sends UTC date
+            const year = dateInput.getUTCFullYear();
+            const month = String(dateInput.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(dateInput.getUTCDate()).padStart(2, '0');
             dateStr = `${year}-${month}-${day}`;
         }
+
+        const [strYear, strMonth, strDay] = dateStr.split('-').map(Number);
+        // Using Date.UTC to prevent server timezone from shifting the day of week
+        const dayOfWeek = new Date(Date.UTC(strYear, strMonth - 1, strDay)).getUTCDay();
+
 
         // Check for exception on this date (KST Date)
         // Use the KST date string to query exceptions if you store them as YYYY-MM-DD or specific Dates

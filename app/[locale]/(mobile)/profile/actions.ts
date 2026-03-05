@@ -58,36 +58,7 @@ export async function updateName(name: string) {
     revalidatePath('/profile');
 }
 
-export async function updateInsurance(data: any) {
-    const user = await getAuthenticatedUser();
 
-    await prisma.insurance.upsert({
-        where: { userId: user.id },
-        update: {
-            provider: data.provider,
-            policyNumber: data.policyNumber,
-        },
-        create: {
-            userId: user.id,
-            provider: data.provider,
-            policyNumber: data.policyNumber,
-        },
-    });
-    revalidatePath('/profile');
-}
-
-export async function deleteInsurance() {
-    const user = await getAuthenticatedUser();
-
-    try {
-        await prisma.insurance.delete({
-            where: { userId: user.id },
-        });
-        revalidatePath('/profile');
-    } catch (error) {
-        // Ignore if not found
-    }
-}
 
 export async function addFamilyMember(data: any) {
     const user = await getAuthenticatedUser();

@@ -38,13 +38,7 @@ export default async function ProfilePage({
             gender: true,
             phoneNumber: true,
             residentNumber: true,
-            insurance: {
-                select: {
-                    id: true,
-                    provider: true,
-                    policyNumber: true
-                }
-            },
+
             familyMembers: {
                 select: {
                     id: true,
