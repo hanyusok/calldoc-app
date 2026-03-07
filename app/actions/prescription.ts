@@ -3,6 +3,7 @@
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
+import { createNotification } from "@/app/actions/notification";
 
 // Patient requests a prescription transfer
 export async function requestPrescription(
@@ -65,11 +66,21 @@ export async function issuePrescription(
     try {
         const updatedPrescription = await prisma.prescription.update({
             where: { id: prescriptionId },
+            include: { appointment: true },
             data: {
                 status: 'ISSUED',
                 fileUrl
             }
         });
+
+        if (fileUrl.includes('-handover')) {
+            await createNotification({
+                userId: updatedPrescription.appointment.userId,
+                type: 'RX_HANDED_OVER',
+                message: 'Prescription has been handed over directly.',
+                key: 'Notifications.hand_over_msg'
+            });
+        }
 
         revalidatePath('/admin/dashboard/appointments');
         revalidatePath('/dashboard');

@@ -53,10 +53,12 @@ export default function PrescriptionManager({
         if (!prescription) {
             loadPharmacies();
         } else if (prescription.status === 'ISSUED') {
-            setStep('FAX');
+            if (prescription.fileUrl?.includes('-handover')) {
+                setStep('HANDED_OVER');
+            } else {
+                setStep('FAX');
+            }
         }
-        // If there's an existing HANDED_OVER status in DB, we'd handle it here. 
-        // For now this demo treats ISSUED -> FAX or HANDED_OVER locally.
     }, [prescription]);
 
     const loadPharmacies = async () => {

@@ -889,6 +889,8 @@
         "pharmacy_updated": "즐겨찾기 약국이 {name}(으)로 변경되었습니다.",
         "fax_sent_title": "팩스 전송 완료",
         "fax_sent": "{name}으로 처방전을 성공적으로 전송했습니다.",
+        "hand_over_title": "처방전 직접 전달 완료",
+        "hand_over_msg": "의사가 처방전을 직접 전달(또는 수기 발급)하였습니다.",
         "fax_failed_title": "팩스 전송 실패",
         "fax_failed": "팩스 전송에 실패했습니다. (오류 코드: {error})",
         "appointment_request_title": "새 예약 요청",

@@ -887,6 +887,8 @@
         "pharmacy_updated": "Pharmacy has been updated to {name}",
         "fax_sent_title": "Fax Sent",
         "fax_sent": "Prescription faxed successfully to {name}",
+        "hand_over_title": "Prescription Handed Over",
+        "hand_over_msg": "The doctor has handed over the prescription locally.",
         "fax_failed_title": "Fax Failed",
         "fax_failed": "Fax transmission failed. Code: {error}",
         "appointment_request_title": "New Appointment Request",
