@@ -832,7 +832,12 @@
         "no_family": "No family members found.",
         "symptoms_memo": "Symptoms / Reason for visit",
         "symptoms_placeholder": "Please describe your symptoms or reason for visit...",
-        "review_confirm": "Review & Confirm"
+        "review_confirm": "Review & Confirm",
+        "relation_child": "Child",
+        "relation_parent": "Parent",
+        "relation_spouse": "Spouse",
+        "relation_sibling": "Sibling",
+        "age_yrs": "{age} Yrs"
     },
     "BookingReview": {
         "title": "Review & Confirm",

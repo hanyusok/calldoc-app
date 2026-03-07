@@ -124,7 +124,9 @@ export default function PatientSelection({ user, doctorId }: PatientSelectionPro
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-gray-900 text-sm">{member.name}</h3>
-                                    <p className="text-xs text-gray-500 capitalize">{member.relation} • {member.age} yrs</p>
+                                    <p className="text-xs text-gray-500 capitalize">
+                                        {['child', 'parent', 'spouse', 'sibling'].includes(member.relation) ? t(`relation_${member.relation}` as any) : member.relation} • {t('age_yrs', { age: member.age })}
+                                    </p>
                                 </div>
                             </div>
                             <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${patientType === 'family' && selectedPatientId === member.id ? 'border-primary-500 bg-primary-600 text-white' : 'border-gray-300'}`}>

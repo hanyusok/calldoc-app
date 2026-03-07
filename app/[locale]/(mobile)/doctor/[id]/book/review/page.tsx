@@ -5,7 +5,7 @@ import { prisma } from "@/app/lib/prisma";
 import { redirect } from 'next/navigation';
 import { ChevronLeft, Calendar, User, Clock, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
 
 export default async function BookingReviewPage({
     params,
@@ -19,6 +19,7 @@ export default async function BookingReviewPage({
     const doctor = await getDoctorById(id);
     const session = await auth();
     const t = await getTranslations('BookingReview');
+    const locale = await getLocale();
 
     if (!doctor || !date || !time || !patientId || !session?.user?.email) {
         redirect(`/doctor/${id}/book`); // Redirect back if missing data
@@ -32,7 +33,7 @@ export default async function BookingReviewPage({
         redirect('/login');
     }
 
-    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+    const formattedDate = new Date(date).toLocaleDateString(locale, {
         weekday: 'long',
         year: 'numeric',
         month: 'long',

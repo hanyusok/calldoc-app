@@ -834,7 +834,12 @@
         "no_family": "등록된 가족이 없습니다.",
         "symptoms_memo": "증상 / 방문 사유",
         "symptoms_placeholder": "증상이나 방문 사유를 자세히 적어주세요...",
-        "review_confirm": "예약 확인"
+        "review_confirm": "예약 확인",
+        "relation_child": "자녀",
+        "relation_parent": "부모",
+        "relation_spouse": "배우자",
+        "relation_sibling": "형제/자매",
+        "age_yrs": "{age}세"
     },
     "BookingReview": {
         "title": "예약 확인",

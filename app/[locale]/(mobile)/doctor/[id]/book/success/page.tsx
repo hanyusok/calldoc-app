@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Check, Calendar, Home } from 'lucide-react';
 import { prisma } from "@/app/lib/prisma";
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
 
 export default async function BookingSuccessPage({
     params,
@@ -14,6 +14,7 @@ export default async function BookingSuccessPage({
     const { id } = await params;
     const { appointmentId } = await searchParams;
     const t = await getTranslations('BookingSuccess');
+    const locale = await getLocale();
 
     if (!appointmentId) {
         return <div>Invalid Request</div>;
@@ -28,12 +29,12 @@ export default async function BookingSuccessPage({
         return <div>Appointment not found</div>;
     }
 
-    const formattedDate = new Date(appointment.date).toLocaleDateString('en-US', {
+    const formattedDate = new Date(appointment.date).toLocaleDateString(locale, {
         weekday: 'short',
         month: 'long',
         day: 'numeric',
     });
-    const formattedTime = new Date(appointment.date).toLocaleTimeString('en-US', {
+    const formattedTime = new Date(appointment.date).toLocaleTimeString(locale, {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false
