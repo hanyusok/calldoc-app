@@ -12,7 +12,8 @@ interface EditableFaxProps {
 }
 
 export default function EditableFax({ pharmacyId, initialFax, faxLocked = false, faxVerified = false }: EditableFaxProps) {
-    const [fax, setFax] = useState(initialFax || "직접 전화 문의");
+    const formattedInitialFax = initialFax === "수정/입력" ? "업데이트" : initialFax;
+    const [fax, setFax] = useState(formattedInitialFax || "직접 전화 문의");
     const [editing, setEditing] = useState(false);
     const [inputValue, setInputValue] = useState(fax);
     const [saved, setSaved] = useState(false);
