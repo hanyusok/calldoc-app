@@ -8,6 +8,14 @@ const withNextIntl = createNextIntlPlugin(
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     experimental: {
+    },
+    async rewrites() {
+        return [
+            {
+                source: '/images/posts/:path*',
+                destination: '/api/images/posts/:path*'
+            }
+        ];
     }
 };
 
