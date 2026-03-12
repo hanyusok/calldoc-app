@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Plus, Search, Edit, Trash, Globe } from 'lucide-react';
-import { deletePost, createPost, updatePost, togglePostStatus } from '@/app/actions/post';
+import { Plus, Search, Edit, Trash, Globe, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { deletePost, createPost, updatePost, togglePostStatus, uploadPostImage } from '@/app/actions/post';
 import { useTranslations } from 'next-intl';
 
 interface Post {
@@ -25,6 +25,9 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
     const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || "");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingPost, setEditingPost] = useState<Post | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
     const t = useTranslations('Admin.posts');
 
     const currentLocaleFilter = searchParams.get('locale') || 'all';
@@ -89,6 +92,52 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
         setIsModalOpen(false);
         setEditingPost(null);
         router.refresh(); // Refresh to show new data
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        setIsUploading(true);
+        const textarea = contentTextareaRef.current;
+        let markdownToAdd = "\n";
+
+        try {
+            for (let i = 0; i < files.length; i++) {
+                const formData = new FormData();
+                formData.append('file', files[i]);
+                const imageUrl = await uploadPostImage(formData);
+                markdownToAdd += `![image](${imageUrl})\n`;
+            }
+
+            if (textarea) {
+                const startPos = textarea.selectionStart;
+                const endPos = textarea.selectionEnd;
+                const text = textarea.value;
+                
+                textarea.value = text.substring(0, startPos) + markdownToAdd + text.substring(endPos);
+                
+                // Keep the state of cursor position
+                textarea.selectionStart = startPos + markdownToAdd.length;
+                textarea.selectionEnd = startPos + markdownToAdd.length;
+                
+                // Focus back on the textarea
+                textarea.focus();
+            }
+            
+        } catch (error) {
+            console.error("Failed to upload image", error);
+            alert("Failed to upload image. Please try again.");
+        } finally {
+            setIsUploading(false);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+        }
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current?.click();
     };
 
     const openCreateModal = () => {
@@ -282,13 +331,37 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.content_label')}</label>
+                                    <div className="flex items-center justify-between mb-1">
+                                        <label className="block text-sm font-medium text-gray-700">{t('modal.content_label')}</label>
+                                        <button
+                                            type="button"
+                                            onClick={triggerFileInput}
+                                            disabled={isUploading}
+                                            className="flex items-center gap-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {isUploading ? (
+                                                <Loader2 size={14} className="animate-spin" />
+                                            ) : (
+                                                <ImageIcon size={14} />
+                                            )}
+                                            {isUploading ? "Uploading..." : "Insert Image(s)"}
+                                        </button>
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            onChange={handleImageUpload}
+                                            accept="image/*"
+                                            multiple
+                                            className="hidden"
+                                        />
+                                    </div>
                                     <textarea
                                         name="content"
+                                        ref={contentTextareaRef}
                                         defaultValue={editingPost?.content}
                                         required
-                                        rows={6}
-                                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        rows={12}
+                                        className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-mono text-sm"
                                     />
                                 </div>
                                 <div className="flex items-center">
@@ -307,14 +380,16 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                             <button
                                 type="button"
                                 onClick={() => setIsModalOpen(false)}
-                                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                                disabled={isUploading}
+                                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {t('modal.cancel')}
                             </button>
                             <button
                                 type="submit"
                                 form="post-form"
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                disabled={isUploading}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {editingPost ? t('modal.save') : t('modal.create')}
                             </button>

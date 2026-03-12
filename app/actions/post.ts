@@ -43,9 +43,14 @@ export async function createPost(formData: FormData) {
     const content = formData.get('content') as string;
     const category = formData.get('category') as string;
     const author = formData.get('author') as string;
-    const imageUrl = formData.get('imageUrl') as string; // Ideally handle file upload, but string for now
+    let imageUrl = formData.get('imageUrl') as string; // Ideally handle file upload, but string for now
     const published = formData.get('published') === 'true';
     const locale = (formData.get('locale') as string) || 'ko';
+
+    // Sanitize image URL if the admin pasted a local absolute path
+    if (imageUrl && imageUrl.includes('/home/han/calldoc-app/public')) {
+        imageUrl = imageUrl.replace('/home/han/calldoc-app/public', '');
+    }
 
     await prisma.post.create({
         data: {
@@ -68,9 +73,14 @@ export async function updatePost(id: string, formData: FormData) {
     const content = formData.get('content') as string;
     const category = formData.get('category') as string;
     const author = formData.get('author') as string;
-    const imageUrl = formData.get('imageUrl') as string;
+    let imageUrl = formData.get('imageUrl') as string;
     const published = formData.get('published') === 'true';
     const locale = (formData.get('locale') as string) || 'ko';
+
+    // Sanitize image URL if the admin pasted a local absolute path
+    if (imageUrl && imageUrl.includes('/home/han/calldoc-app/public')) {
+        imageUrl = imageUrl.replace('/home/han/calldoc-app/public', '');
+    }
 
     await prisma.post.update({
         where: { id },
@@ -103,4 +113,26 @@ export async function togglePostStatus(id: string, published: boolean) {
     revalidatePath('/admin/dashboard/posts');
     revalidatePath('/');
     revalidatePath('/[locale]/(mobile)/posts');
+}
+
+import { writeFile } from 'fs/promises';
+import { join } from 'path';
+
+export async function uploadPostImage(formData: FormData) {
+    const file = formData.get('file') as File;
+    if (!file) {
+        throw new Error('No file uploaded');
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // Save to /public/images/posts with a current timestamp to prevent naming collisions
+    const uniqueFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    const filePath = join(process.cwd(), 'public/images/posts', uniqueFileName);
+    
+    await writeFile(filePath, buffer);
+
+    // Return the relative public URL path
+    return `/images/posts/${uniqueFileName}`;
 }
