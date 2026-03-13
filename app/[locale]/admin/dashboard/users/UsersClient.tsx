@@ -198,6 +198,7 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
                             <tr>
                                 <th className="p-4">{t('table.name')}</th>
                                 <th className="p-4">{t('table.email')}</th>
+                                <th className="p-4">{t('form.phone')}</th>
                                 <th className="p-4">{t('table.role')}</th>
                                 <th className="p-4">{t('table.created_at')}</th>
                                 <th className="p-4 text-right">{t('table.actions')}</th>
@@ -206,7 +207,7 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
                         <tbody className="divide-y divide-gray-100">
                             {users.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="p-8 text-center text-gray-400">
+                                    <td colSpan={6} className="p-8 text-center text-gray-400">
                                         {t('no_users')}
                                     </td>
                                 </tr>
@@ -215,6 +216,7 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
                                     <tr key={user.id} className="hover:bg-gray-50">
                                         <td className="p-4 font-medium text-gray-900">{user.name || "N/A"}</td>
                                         <td className="p-4 text-gray-600">{user.email}</td>
+                                        <td className="p-4 text-gray-600">{user.phoneNumber || "-"}</td>
                                         <td className="p-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium 
                                                 ${user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' :

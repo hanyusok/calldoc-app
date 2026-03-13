@@ -183,6 +183,7 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                             <tr>
                                 <th className="p-4">{t('table.name')}</th>
                                 <th className="p-4">{t('table.email')}</th>
+                                <th className="p-4">{tUsers('form.phone')}</th>
                                 <th className="p-4">{t('table.joined_at')}</th>
                                 <th className="p-4 text-center">{t('table.appointments')}</th>
                                 <th className="p-4 text-right">{t('table.actions')}</th>
@@ -191,7 +192,7 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                         <tbody className="divide-y divide-gray-100">
                             {users.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="p-8 text-center text-gray-400">
+                                    <td colSpan={6} className="p-8 text-center text-gray-400">
                                         No patients found.
                                     </td>
                                 </tr>
@@ -200,6 +201,7 @@ export default function PatientsClient({ initialUsers, initialTotal, initialPage
                                     <tr key={user.id} className="hover:bg-gray-50">
                                         <td className="p-4 font-medium text-gray-900">{user.name || "N/A"}</td>
                                         <td className="p-4 text-gray-600">{user.email}</td>
+                                        <td className="p-4 text-gray-600">{user.phoneNumber || "-"}</td>
                                         <td className="p-4 text-gray-500">
                                             {format.dateTime(new Date(user.createdAt), {
                                                 year: 'numeric',
