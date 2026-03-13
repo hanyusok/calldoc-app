@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getMeetPresets, createMeetPreset, deleteMeetPreset, toggleDefaultPreset } from "@/app/actions/meet";
-import { Plus, Trash2, Star, Link as LinkIcon, ExternalLink } from "lucide-react";
+import { getMeetPresets, createMeetPreset, deleteMeetPreset, toggleDefaultPreset, updateMeetPreset } from "@/app/actions/meet";
+import { Plus, Trash2, Star, Link as LinkIcon, ExternalLink, Edit } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export default function MeetPresetsPage() {
@@ -16,6 +16,7 @@ export default function MeetPresetsPage() {
         description: "",
         isDefault: false
     });
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     useEffect(() => {
         loadPresets();
@@ -27,24 +28,56 @@ export default function MeetPresetsPage() {
         setLoading(false);
     };
 
-    const handleCreate = async (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsCreating(true);
         try {
-            const res = await createMeetPreset(formData);
-            if (res.success) {
-                setFormData({ name: "", link: "", description: "", isDefault: false });
-                loadPresets();
-                alert(t('preset_created'));
+            if (editingId) {
+                const res = await updateMeetPreset(editingId, {
+                    name: formData.name,
+                    link: formData.link,
+                    description: formData.description
+                });
+                if (res.success) {
+                    setFormData({ name: "", link: "", description: "", isDefault: false });
+                    setEditingId(null);
+                    loadPresets();
+                    alert(t('preset_updated'));
+                } else {
+                    alert(t('error_update'));
+                }
             } else {
-                alert(t('error_create'));
+                const res = await createMeetPreset(formData);
+                if (res.success) {
+                    setFormData({ name: "", link: "", description: "", isDefault: false });
+                    loadPresets();
+                    alert(t('preset_created'));
+                } else {
+                    alert(t('error_create'));
+                }
             }
         } catch (error) {
             console.error(error);
-            alert(t('error_create'));
+            alert(editingId ? t('error_update') : t('error_create'));
         } finally {
             setIsCreating(false);
         }
+    };
+
+    const startEditing = (preset: any) => {
+        setEditingId(preset.id);
+        setFormData({
+            name: preset.name,
+            link: preset.link,
+            description: preset.description || "",
+            isDefault: preset.isDefault
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const cancelEditing = () => {
+        setEditingId(null);
+        setFormData({ name: "", link: "", description: "", isDefault: false });
     };
 
     const handleDelete = async (id: string) => {
@@ -73,12 +106,22 @@ export default function MeetPresetsPage() {
             <h1 className="text-2xl font-bold text-gray-900">{t('manage_presets')}</h1>
 
             {/* Create Form */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <Plus size={20} className="text-blue-600" />
-                    {t('add_new_preset')}
+            <div className={`p-6 rounded-xl shadow-sm border transition-all ${editingId ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-100'}`}>
+                <h2 className="text-lg font-semibold mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        {editingId ? <Edit className="text-blue-600" size={20} /> : <Plus size={20} className="text-blue-600" />}
+                        {editingId ? t('edit_preset') : t('add_new_preset')}
+                    </div>
+                    {editingId && (
+                        <button 
+                            onClick={cancelEditing}
+                            className="text-sm font-medium text-gray-500 hover:text-gray-700 underline"
+                        >
+                            {t('cancel')}
+                        </button>
+                    )}
                 </h2>
-                <form onSubmit={handleCreate} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 items-end">
+                <form onSubmit={handleSave} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 items-end">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">{t('preset_name')}</label>
                         <input
@@ -105,9 +148,9 @@ export default function MeetPresetsPage() {
                         <button
                             type="submit"
                             disabled={isCreating}
-                            className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                            className={`w-full text-white p-2 rounded-lg transition flex items-center justify-center gap-2 ${editingId ? 'bg-blue-700 hover:bg-blue-800' : 'bg-blue-600 hover:bg-blue-700'}`}
                         >
-                            {isCreating ? t('saving') : t('save_preset')}
+                            {isCreating ? t('saving') : (editingId ? t('update_preset') : t('save_preset'))}
                         </button>
                     </div>
                 </form>
@@ -153,7 +196,14 @@ export default function MeetPresetsPage() {
                                                 <Star size={20} fill={preset.isDefault ? "currentColor" : "none"} />
                                             </button>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-6 py-4 text-right space-x-2">
+                                            <button
+                                                onClick={() => startEditing(preset)}
+                                                className="text-blue-600 hover:text-blue-800 p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                                                title={t('edit_preset')}
+                                            >
+                                                <Edit size={18} />
+                                            </button>
                                             <button
                                                 onClick={() => handleDelete(preset.id)}
                                                 className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors"

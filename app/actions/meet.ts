@@ -186,3 +186,22 @@ export async function toggleDefaultPreset(id: string) {
         return { success: false, error: "Failed to update default" };
     }
 }
+
+export async function updateMeetPreset(id: string, data: {
+    name: string;
+    link: string;
+    description?: string;
+}) {
+    try {
+        const preset = await prisma.meetPreset.update({
+            where: { id },
+            data
+        });
+
+        revalidatePath('/admin/dashboard/meet');
+        return { success: true, preset };
+    } catch (error) {
+        console.error("Error updating meet preset:", error);
+        return { success: false, error: "Failed to update preset" };
+    }
+}
