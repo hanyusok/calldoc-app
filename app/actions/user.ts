@@ -19,6 +19,7 @@ export async function getUsers(page = 1, limit = 10, search = "", role?: Role | 
             where.OR = [
                 { name: { contains: search, mode: 'insensitive' } },
                 { email: { contains: search, mode: 'insensitive' } },
+                { phoneNumber: { contains: search, mode: 'insensitive' } },
             ];
         }
 
@@ -32,6 +33,7 @@ export async function getUsers(page = 1, limit = 10, search = "", role?: Role | 
                     id: true,
                     name: true,
                     email: true,
+                    phoneNumber: true,
                     role: true,
                     createdAt: true,
                     _count: {

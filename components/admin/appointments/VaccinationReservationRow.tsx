@@ -76,6 +76,9 @@ export default function VaccinationReservationRow({ reservation, onEdit }: Vacci
                 <span className="text-sm font-medium tracking-wider">{reservation.user?.residentNumber || '-'}</span>
             </td>
             <td className="p-4 text-gray-600">
+                <span className="text-sm font-medium tracking-wider">{reservation.user?.phoneNumber || '-'}</span>
+            </td>
+            <td className="p-4 text-gray-600">
                 <div className="flex flex-col">
                     {reservation.date ? (
                         <>

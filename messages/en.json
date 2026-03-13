@@ -295,6 +295,7 @@
             "table": {
                 "patient": "Patient",
                 "resident_number": "Resident No.",
+                "phone": "Phone Number",
                 "date": "Date",
                 "symptoms": "Symptom",
                 "doctor": "Doctor",

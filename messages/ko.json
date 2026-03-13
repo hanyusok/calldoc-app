@@ -295,6 +295,7 @@
             "table": {
                 "patient": "환자",
                 "resident_number": "주민등록번호",
+                "phone": "전화번호",
                 "date": "날짜",
                 "symptoms": "증상",
                 "doctor": "의사",

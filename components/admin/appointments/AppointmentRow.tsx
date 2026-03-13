@@ -118,6 +118,9 @@ export default function AppointmentRow({ appointment }: { appointment: any }) {
                     <span className="text-sm font-medium tracking-wider">{appointment.user.residentNumber || '-'}</span>
                 </td>
                 <td className="p-4 text-gray-600">
+                    <span className="text-sm font-medium tracking-wider">{appointment.user.phoneNumber || '-'}</span>
+                </td>
+                <td className="p-4 text-gray-600">
                     <div className="flex flex-col text-xs font-medium">
                         <span>{format.dateTime(new Date(appointment.date), { dateStyle: 'medium' })}</span>
                         <span className="text-gray-400">
