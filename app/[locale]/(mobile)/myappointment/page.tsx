@@ -181,17 +181,22 @@ export default async function MyAppointmentPage() {
                                                 href={apt.meetingLink}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex-1 py-2 rounded-lg bg-green-50 text-green-700 text-xs font-bold hover:bg-green-100 transition-colors flex items-center justify-center gap-2"
+                                                className="flex-1 py-3 px-4 rounded-xl bg-green-600 text-white text-sm font-black hover:bg-green-700 transition-all shadow-lg shadow-green-200 flex items-center justify-center gap-2 animate-pulse-subtle"
                                             >
-                                                {t('card.enter_room')} <ArrowRight size={14} />
+                                                <span className="relative flex h-2 w-2">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                                                </span>
+                                                {t('card.enter_room')}
+                                                <ArrowRight size={16} strokeWidth={3} />
                                             </a>
                                         ) : (
-                                            <button disabled className="flex-1 py-2 rounded-lg bg-gray-50 text-gray-400 text-xs font-bold cursor-not-allowed">
-                                                {t('card.enter_room')} (Not Ready)
+                                            <button disabled className="flex-1 py-3 px-4 rounded-xl bg-gray-100 text-gray-400 text-sm font-bold cursor-not-allowed border border-gray-200">
+                                                {t('card.enter_room')}
                                             </button>
                                         )}
 
-                                        <button className="px-3 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-bold hover:bg-gray-100 transition-colors">
+                                        <button className="px-5 py-3 rounded-xl bg-gray-50 text-gray-600 text-sm font-bold hover:bg-gray-100 transition-colors border border-gray-100">
                                             {t('card.details')}
                                         </button>
                                     </div>
