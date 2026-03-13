@@ -251,6 +251,21 @@
             "view_details": "View Details",
             "message_appointment_request": "New appointment request from {name}"
         },
+        "shared": {
+            "favorites": {
+                "title": "Manage Favorite Pharmacies",
+                "subtitle": "Pharmacy list for {name}",
+                "current_favorites": "Current Favorites",
+                "no_favorites": "No favorite pharmacies selected yet.",
+                "add_favorite": "Add New Favorite",
+                "search_placeholder": "Search by name or address...",
+                "search": "Search",
+                "already_added": "Already Added",
+                "add": "Add",
+                "remove_confirm": "Are you sure you want to remove this pharmacy from favorites?",
+                "close": "Close"
+            }
+        },
         "nav": {
             "dashboard": "Dashboard",
             "users": "Users",

@@ -134,12 +134,12 @@ model DoctorSchedule {
   startTime      String
   endTime        String
   slotDuration   Int      @default(30)
-  capacity       Int      @default(5)
   breakStartTime String?
   breakEndTime   String?
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  capacity       Int      @default(5)
   doctor         Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 
   @@unique([doctorId, dayOfWeek])
@@ -195,20 +195,20 @@ model Payment {
 }
 
 model Pharmacy {
-  id        String   @id @default(cuid())
-  name      String
+  id          String                 @id @default(cuid())
+  name        String
   fax         String?
-  faxLocked   Boolean  @default(false)
-  faxVerified Boolean  @default(false)
   phone       String?
   address     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isDefault Boolean  @default(false)
-  latitude  Float    @default(0.0)
-  longitude Float    @default(0.0)
-  atFront   Boolean  @default(false)
-  users     User[]   @relation("UserPharmacy")
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  isDefault   Boolean                @default(false)
+  latitude    Float                  @default(0.0)
+  longitude   Float                  @default(0.0)
+  atFront     Boolean                @default(false)
+  faxLocked   Boolean                @default(false)
+  faxVerified Boolean                @default(false)
+  users       User[]                 @relation("UserPharmacy")
   favoritedBy UserFavoritePharmacy[]
 }
 
@@ -216,8 +216,8 @@ model UserFavoritePharmacy {
   userId     String
   pharmacyId String
   createdAt  DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   pharmacy   Pharmacy @relation(fields: [pharmacyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, pharmacyId])
 }
@@ -237,13 +237,13 @@ model Prescription {
 }
 
 model AppSettings {
-  id                 Int     @id @default(1)
-  siteName           String  @default("CallDoc")
-  maintenanceMode    Boolean @default(false)
-  homePostsCount     Int     @default(3)
-  heroBannerTitle    String  @default("지금 바로 진료 예약")
-  heroBannerSubtitle String  @default("전문의와 비대면으로 빠르고 편리하게")
-  prescriptionPdfPath String @default("C:\\Mts3\\PDF")
+  id                  Int     @id @default(1)
+  siteName            String  @default("CallDoc")
+  maintenanceMode     Boolean @default(false)
+  homePostsCount      Int     @default(3)
+  heroBannerSubtitle  String  @default("전문의와 비대면으로 빠르고 편리하게")
+  heroBannerTitle     String  @default("지금 바로 진료 예약")
+  prescriptionPdfPath String  @default("C:\\Mts3\\PDF")
 }
 
 model Post {

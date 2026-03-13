@@ -3,13 +3,15 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useFormatter } from "next-intl";
-import { Search, Trash2, ChevronLeft, ChevronRight, Plus, Edit, X } from "lucide-react";
+import { Search, Trash2, ChevronLeft, ChevronRight, Plus, Edit, X, Star } from "lucide-react";
 import { deleteUser, createUser, updateUser } from "@/app/actions/user";
 import { Role } from "@prisma/client";
+import ManageFavoritesModal from "@/components/admin/patients/ManageFavoritesModal";
 import PageHeader from "@/components/admin/shared/PageHeader";
 
 export default function UsersClient({ initialUsers, initialTotal, initialPage }: { initialUsers: any[], initialTotal: number, initialPage: number }) {
     const t = useTranslations('Admin.users');
+    const tShared = useTranslations('Admin.shared');
     const format = useFormatter();
     const [users, setUsers] = useState(initialUsers);
     const [search, setSearch] = useState("");
@@ -49,6 +51,7 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentUser, setCurrentUser] = useState<any>(null);
+    const [isFavModalOpen, setIsFavModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -86,6 +89,12 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
         setIsModalOpen(false);
         setIsEditing(false);
         setCurrentUser(null);
+        setIsFavModalOpen(false);
+    };
+
+    const openFavModal = (user: any) => {
+        setCurrentUser(user);
+        setIsFavModalOpen(true);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -235,6 +244,13 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
                                         </td>
                                         <td className="p-4 text-right flex justify-end gap-2">
                                             <button
+                                                onClick={() => openFavModal(user)}
+                                                className="text-yellow-500 hover:bg-yellow-50 p-2 rounded transition-colors"
+                                                title={tShared('favorites.title')}
+                                            >
+                                                <Star size={16} />
+                                            </button>
+                                            <button
                                                 onClick={() => openModal(user)}
                                                 className="text-blue-500 hover:bg-blue-50 p-2 rounded transition-colors"
                                                 title={t('edit')}
@@ -372,6 +388,14 @@ export default function UsersClient({ initialUsers, initialTotal, initialPage }:
                         </form>
                     </div>
                 </div>
+            )}
+            {isFavModalOpen && currentUser && (
+                <ManageFavoritesModal
+                    isOpen={isFavModalOpen}
+                    onClose={closeModal}
+                    userId={currentUser.id}
+                    userName={currentUser.name || currentUser.email}
+                />
             )}
         </div>
     );

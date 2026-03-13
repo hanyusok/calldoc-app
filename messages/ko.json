@@ -251,6 +251,21 @@
             "view_details": "상세 보기",
             "message_appointment_request": "{name}님의 새 예약 요청"
         },
+        "shared": {
+            "favorites": {
+                "title": "즐겨찾기 약국 관리",
+                "subtitle": "{name}님의 약국 목록",
+                "current_favorites": "현재 즐겨찾기",
+                "no_favorites": "즐겨찾기한 약국이 없습니다.",
+                "add_favorite": "새 즐겨찾기 추가",
+                "search_placeholder": "이름 또는 주소로 검색...",
+                "search": "검색",
+                "already_added": "이미 추가됨",
+                "add": "추가",
+                "remove_confirm": "이 약국을 즐겨찾기에서 삭제하시겠습니까?",
+                "close": "닫기"
+            }
+        },
         "nav": {
             "dashboard": "대시보드",
             "users": "회원 관리",
