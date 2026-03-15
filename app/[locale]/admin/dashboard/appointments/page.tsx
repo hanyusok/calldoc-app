@@ -12,11 +12,13 @@ export default async function AppointmentsPage({
     const params = await searchParams;
     const page = Number(params?.page) || 1;
     const search = params?.q || "";
-    const status = params?.status || "ALL";
     const tab = params?.tab || "consultations";
 
+    // History tab always fetches only COMPLETED/CANCELLED regardless of status filter
+    const status = tab === 'history' ? 'HISTORY' : (params?.status || "ALL");
+
     const [consultData, vacData] = await Promise.all([
-        getAppointments(search, status as AppointmentStatus | "ALL", page, 10),
+        getAppointments(search, status as AppointmentStatus | "ALL" | "HISTORY", page, 10),
         getVaccinationReservations(search, status, page, 10)
     ]);
 
@@ -29,7 +31,7 @@ export default async function AppointmentsPage({
                 initialVacTotal={vacData.total}
                 initialPage={page}
                 search={search}
-                status={status}
+                status={params?.status || "ALL"}
                 initialTab={tab}
             />
         </PageContainer>

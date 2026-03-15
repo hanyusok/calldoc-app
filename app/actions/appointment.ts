@@ -5,13 +5,19 @@ import { revalidatePath } from "next/cache";
 import { AppointmentStatus } from "@prisma/client";
 import { createNotification } from "./notification";
 
-export async function getAppointments(search?: string, status?: AppointmentStatus | 'ALL', page = 1, limit = 10) {
+export async function getAppointments(search?: string, status?: AppointmentStatus | 'ALL' | 'HISTORY', page = 1, limit = 10) {
     try {
         const skip = (page - 1) * limit;
         const whereClause: any = {};
 
-        if (status && status !== 'ALL') {
+        if (status === 'HISTORY') {
+            // History tab: only completed or cancelled
+            whereClause.status = { in: [AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED] };
+        } else if (status && status !== 'ALL') {
             whereClause.status = status;
+        } else {
+            // Default (ALL active): exclude completed and cancelled
+            whereClause.status = { notIn: [AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED] };
         }
 
         if (search) {

@@ -221,8 +221,14 @@ export async function getVaccinationReservations(search?: string, status?: strin
         const skip = (page - 1) * limit;
         const whereClause: any = {};
 
-        if (status && status !== 'ALL') {
+        if (status === 'HISTORY') {
+            // History tab: only completed or cancelled
+            whereClause.status = { in: ['COMPLETED', 'CANCELLED'] };
+        } else if (status && status !== 'ALL') {
             whereClause.status = status;
+        } else {
+            // Default (ALL active): exclude completed and cancelled
+            whereClause.status = { notIn: ['COMPLETED', 'CANCELLED'] };
         }
 
         if (search) {

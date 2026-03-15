@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Plus, Search, Filter, ChevronLeft, ChevronRight, Stethoscope, Syringe } from 'lucide-react';
+import { Plus, Search, Filter, ChevronLeft, ChevronRight, Stethoscope, Syringe, History } from 'lucide-react';
 import AppointmentModal from '@/components/admin/appointments/AppointmentModal';
 import AppointmentRow from '@/components/admin/appointments/AppointmentRow';
 import VaccinationReservationRow from '@/components/admin/appointments/VaccinationReservationRow';
 import VaccinationReservationModal from '@/components/admin/appointments/VaccinationReservationModal';
 import PageHeader from '@/components/admin/shared/PageHeader';
-import { useTranslations, useFormatter } from 'next-intl';
+import { useTranslations } from 'next-intl';
 
 interface AppointmentsClientProps {
     initialAppointments: any[];
@@ -53,8 +53,8 @@ export default function AppointmentsClient({
         ? Math.ceil(consultTotal / itemsPerPage)
         : Math.ceil(vacTotal / itemsPerPage);
 
-    // Aliases for compatibility with existing code
-    const appointments = initialAppointments || [];
+    const isConsultations = activeTab === 'consultations';
+    const isHistory = activeTab === 'history';
 
     // Debounce search/filter updates
     useEffect(() => {
@@ -89,6 +89,13 @@ export default function AppointmentsClient({
         return () => clearTimeout(timeoutId);
     }, [searchTerm, statusFilter, activeTab]);
 
+    // Reset status filter to ALL when switching to history tab
+    useEffect(() => {
+        if (isHistory) {
+            setStatusFilter('ALL');
+        }
+    }, [activeTab]);
+
     const handlePageChange = (newPage: number) => {
         if (newPage < 1 || newPage > totalPages) return;
 
@@ -98,27 +105,27 @@ export default function AppointmentsClient({
         setCurrentPage(newPage);
     };
 
-    const isConsultations = activeTab === 'consultations';
-
     return (
         <div className="space-y-6">
             <PageHeader
                 title={t('appointments')}
                 actions={
-                    <button
-                        onClick={() => {
-                            if (isConsultations) {
-                                setIsCreateModalOpen(true);
-                            } else {
-                                setSelectedVac(null);
-                                setIsVacModalOpen(true);
-                            }
-                        }}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
-                    >
-                        <Plus size={20} />
-                        {isConsultations ? tDash('new_appointment') : tDash('new_vaccination_reservation')}
-                    </button>
+                    !isHistory ? (
+                        <button
+                            onClick={() => {
+                                if (isConsultations) {
+                                    setIsCreateModalOpen(true);
+                                } else {
+                                    setSelectedVac(null);
+                                    setIsVacModalOpen(true);
+                                }
+                            }}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
+                        >
+                            <Plus size={20} />
+                            {isConsultations ? tDash('new_appointment') : tDash('new_vaccination_reservation')}
+                        </button>
+                    ) : undefined
                 }
             />
 
@@ -136,13 +143,23 @@ export default function AppointmentsClient({
                 </button>
                 <button
                     onClick={() => setActiveTab('vaccinations')}
-                    className={`px-6 py-3 text-sm font-bold flex items-center gap-2 transition-colors border-b-2 ${!isConsultations
+                    className={`px-6 py-3 text-sm font-bold flex items-center gap-2 transition-colors border-b-2 ${activeTab === 'vaccinations'
                         ? 'border-blue-600 text-blue-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
                         }`}
                 >
                     <Syringe size={18} />
                     {tDash('tab_vaccinations')}
+                </button>
+                <button
+                    onClick={() => setActiveTab('history')}
+                    className={`px-6 py-3 text-sm font-bold flex items-center gap-2 transition-colors border-b-2 ${isHistory
+                        ? 'border-gray-500 text-gray-600'
+                        : 'border-transparent text-gray-400 hover:text-gray-600'
+                        }`}
+                >
+                    <History size={18} />
+                    {tDash('tab_history')}
                 </button>
             </div>
 
@@ -158,22 +175,22 @@ export default function AppointmentsClient({
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <div className="relative">
-                        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                        <select
-                            className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                            <option value="ALL">{tDash('all_status')}</option>
-                            <option value="PENDING">{tStatus('PENDING')}</option>
-                            {!isConsultations && <option value="CONFIRMED">{tStatus('CONFIRMED')}</option>}
-                            {isConsultations && <option value="AWAITING_PAYMENT">{tStatus('AWAITING_PAYMENT')}</option>}
-                            {isConsultations && <option value="CONFIRMED">{tStatus('CONFIRMED')}</option>}
-                            <option value="COMPLETED">{tStatus('COMPLETED')}</option>
-                            <option value="CANCELLED">{tStatus('CANCELLED')}</option>
-                        </select>
-                    </div>
+                    {!isHistory && (
+                        <div className="relative">
+                            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                            <select
+                                className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                            >
+                                <option value="ALL">{tDash('all_status')}</option>
+                                <option value="PENDING">{tStatus('PENDING')}</option>
+                                {!isConsultations && <option value="CONFIRMED">{tStatus('CONFIRMED')}</option>}
+                                {isConsultations && <option value="AWAITING_PAYMENT">{tStatus('AWAITING_PAYMENT')}</option>}
+                                {isConsultations && <option value="CONFIRMED">{tStatus('CONFIRMED')}</option>}
+                            </select>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -187,18 +204,18 @@ export default function AppointmentsClient({
                                 <th className="p-4">{tDash('table.phone')}</th>
                                 <th className="p-4">{tDash('table.date')}</th>
                                 <th className="p-4">{tDash('table.symptoms')}</th>
-                                <th className="p-4">{isConsultations ? tDash('table.doctor') : tDash('vaccine')}</th>
+                                <th className="p-4">{isConsultations || isHistory ? tDash('table.doctor') : tDash('vaccine')}</th>
                                 <th className="p-4 text-center">{tDash('table.status')}</th>
                                 <th className="p-4 text-right">{tDash('table.price')}</th>
                                 <th className="p-4 text-center">{tDash('table.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {isConsultations ? (
+                            {isConsultations || isHistory ? (
                                 initialAppointments.length === 0 ? (
                                     <tr>
                                         <td colSpan={9} className="p-8 text-center text-gray-400">
-                                            {tDash('empty_state')}
+                                            {isHistory ? tDash('history_empty_state') : tDash('empty_state')}
                                         </td>
                                     </tr>
                                 ) : (
@@ -233,7 +250,7 @@ export default function AppointmentsClient({
                 {totalPages > 1 && (
                     <div className="flex items-center justify-between bg-white px-6 py-4 border-t border-gray-100">
                         <div className="text-sm text-gray-600">
-                            {tDash('pagination.showing')} {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, activeTab === 'consultations' ? consultTotal : vacTotal)} {tDash('pagination.of')} {activeTab === 'consultations' ? consultTotal : vacTotal}
+                            {tDash('pagination.showing')} {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, isConsultations || isHistory ? consultTotal : vacTotal)} {tDash('pagination.of')} {isConsultations || isHistory ? consultTotal : vacTotal}
                         </div>
                         <div className="flex items-center gap-2">
                             <button

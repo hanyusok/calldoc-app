@@ -345,6 +345,8 @@
             "confirm_delete": "Are you sure you want to delete this?",
             "tab_consultations": "Consultations",
             "tab_vaccinations": "Vaccinations",
+            "tab_history": "History",
+            "history_empty_state": "No historical appointments found.",
             "new_vaccination_reservation": "New Vaccination Res.",
             "edit_vaccination_reservation": "Edit Vaccination Res.",
             "vaccine": "Vaccine",
