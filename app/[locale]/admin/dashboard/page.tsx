@@ -19,7 +19,13 @@ export default async function AdminDashboardPage() {
 
     // Fetch simple stats
     const [totalAppointments, pendingAppointments, todayAppointments] = await Promise.all([
-        prisma.appointment.count(),
+        prisma.appointment.count({
+            where: {
+                status: {
+                    notIn: [AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED]
+                }
+            }
+        }),
         prisma.appointment.count({ where: { status: AppointmentStatus.PENDING } }),
         prisma.appointment.count({
             where: {
