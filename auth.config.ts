@@ -72,8 +72,9 @@ export const authConfig = {
                 const isAppointmentsRoute = nextUrl.pathname.includes('/admin/dashboard/appointments');
                 const isMeetRoute = nextUrl.pathname.includes('/admin/dashboard/meet'); // if they need meet access? The prompt says "only access /admin/dashboard/appointments module ui". I'll restrict strictly.
                 const isPharmaciesRoute = nextUrl.pathname.includes('/admin/dashboard/pharmacies');
+                const isPatientsRoute = nextUrl.pathname.includes('/admin/dashboard/patients');
 
-                if (!isAppointmentsRoute && !isPharmaciesRoute) {
+                if (!isAppointmentsRoute && !isPharmaciesRoute && !isPatientsRoute) {
                     // Redirect STAFF to the appointments page
                     const locale = nextUrl.pathname.split('/')[1]; // typically 'ko' or 'en'
                     return Response.redirect(new URL(`/${locale}/admin/dashboard/appointments`, nextUrl));

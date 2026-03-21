@@ -116,7 +116,8 @@ export async function updateUser(userId: string, data: any) {
 export async function deleteUser(userId: string) {
     try {
         const session = await auth();
-        if (session?.user?.role !== "ADMIN") {
+        const role = session?.user?.role;
+        if (role !== "ADMIN" && role !== "STAFF") {
             return { success: false, error: "Unauthorized" };
         }
 
@@ -155,7 +156,8 @@ export async function getUserWithFavorites(userId: string) {
 export async function addFavoritePharmacy(userId: string, pharmacyId: string) {
     try {
         const session = await auth();
-        if (session?.user?.role !== "ADMIN") {
+        const role = session?.user?.role;
+        if (role !== "ADMIN" && role !== "STAFF") {
             return { success: false, error: "Unauthorized" };
         }
 
@@ -185,7 +187,8 @@ export async function addFavoritePharmacy(userId: string, pharmacyId: string) {
 export async function removeFavoritePharmacy(userId: string, pharmacyId: string) {
     try {
         const session = await auth();
-        if (session?.user?.role !== "ADMIN") {
+        const role = session?.user?.role;
+        if (role !== "ADMIN" && role !== "STAFF") {
             return { success: false, error: "Unauthorized" };
         }
 
