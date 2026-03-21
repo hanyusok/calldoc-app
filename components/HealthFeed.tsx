@@ -12,6 +12,7 @@ interface Post {
     category: string | null;
     createdAt: Date;
     imageUrl: string | null;
+    readTime: number;
 }
 
 const HealthFeed = ({ posts }: { posts: Post[] }) => {
@@ -43,7 +44,7 @@ const HealthFeed = ({ posts }: { posts: Post[] }) => {
                                     </span>
                                     <h4 className="font-bold text-sm mt-1 leading-tight line-clamp-2">{post.title}</h4>
                                 </div>
-                                <p className="text-xs text-gray-400">{t('min_read', { minutes: 5 })}</p>
+                                <p className="text-xs text-gray-400">{t('min_read', { minutes: post.readTime })}</p>
                             </div>
                         </div>
                     </Link>

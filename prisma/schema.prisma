@@ -255,6 +255,7 @@ model Post {
   category  String?  @default("Health")
   published Boolean  @default(true)
   locale    String   @default("ko")
+  readTime  Int      @default(5)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -749,6 +749,7 @@
                 "image_placeholder": "/images/placeholder.jpg",
                 "content_label": "Content",
                 "published_label": "Published",
+                "read_time_label": "Read Time (minutes)",
                 "cancel": "Cancel",
                 "save": "Save Changes",
                 "create": "Create Article"

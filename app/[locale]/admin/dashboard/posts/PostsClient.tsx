@@ -16,6 +16,7 @@ interface Post {
     imageUrl: string | null;
     locale: string;
     createdAt: Date;
+    readTime: number;
 }
 
 export default function PostsClient({ initialPosts, totalPages }: { initialPosts: any[], totalPages: number }) {
@@ -303,7 +304,7 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                         className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.category_label')}</label>
                                         <input
@@ -317,6 +318,17 @@ export default function PostsClient({ initialPosts, totalPages }: { initialPosts
                                         <input
                                             name="author"
                                             defaultValue={editingPost?.author || "Admin"}
+                                            className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.read_time_label')}</label>
+                                        <input
+                                            name="readTime"
+                                            type="number"
+                                            min="1"
+                                            defaultValue={editingPost?.readTime || 5}
+                                            required
                                             className="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                         />
                                     </div>

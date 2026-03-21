@@ -751,6 +751,7 @@
                 "image_placeholder": "/images/placeholder.jpg",
                 "content_label": "내용",
                 "published_label": "공개 여부",
+                "read_time_label": "읽기 소요 시간 (분)",
                 "cancel": "취소",
                 "save": "변경사항 저장",
                 "create": "게시글 생성"

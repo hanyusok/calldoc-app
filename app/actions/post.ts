@@ -46,6 +46,7 @@ export async function createPost(formData: FormData) {
     let imageUrl = formData.get('imageUrl') as string; // Ideally handle file upload, but string for now
     const published = formData.get('published') === 'true';
     const locale = (formData.get('locale') as string) || 'ko';
+    const readTime = parseInt(formData.get('readTime') as string) || 5;
 
     // Sanitize image URL if the admin pasted a local absolute path
     if (imageUrl && imageUrl.includes('/home/han/calldoc-app/public')) {
@@ -60,7 +61,8 @@ export async function createPost(formData: FormData) {
             author,
             imageUrl,
             published,
-            locale
+            locale,
+            readTime
         }
     });
 
@@ -76,6 +78,7 @@ export async function updatePost(id: string, formData: FormData) {
     let imageUrl = formData.get('imageUrl') as string;
     const published = formData.get('published') === 'true';
     const locale = (formData.get('locale') as string) || 'ko';
+    const readTime = parseInt(formData.get('readTime') as string) || 5;
 
     // Sanitize image URL if the admin pasted a local absolute path
     if (imageUrl && imageUrl.includes('/home/han/calldoc-app/public')) {
@@ -91,7 +94,8 @@ export async function updatePost(id: string, formData: FormData) {
             author,
             imageUrl,
             published,
-            locale
+            locale,
+            readTime
         }
     });
 
