@@ -39,7 +39,7 @@ export default async function PostsPage() {
                                     </span>
                                     <h4 className="font-bold text-sm mt-1 leading-tight line-clamp-2">{post.title}</h4>
                                 </div>
-                                <p className="text-xs text-gray-400">5 min read</p>
+                                <p className="text-xs text-gray-400">{t('min_read', { minutes: 5 })}</p>
                             </div>
                         </div>
                     </Link>

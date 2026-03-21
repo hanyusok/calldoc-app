@@ -36,7 +36,8 @@
         "view_all": "전체 보기",
         "health_tip": "건강 팁",
         "article_title": "환절기 독감, 효과적으로 예방하는 방법은?",
-        "read_time": "3분 분량"
+        "read_time": "3분 분량",
+        "min_read": "{minutes}분 분량"
     },
     "LocaleSwitcher": {
         "label": "언어",

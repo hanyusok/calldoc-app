@@ -36,7 +36,8 @@
         "view_all": "View All",
         "health_tip": "HEALTH TIP",
         "article_title": "How to prevent seasonal flu effectively?",
-        "read_time": "Read in 3 mins"
+        "read_time": "Read in 3 mins",
+        "min_read": "{minutes} min read"
     },
     "LocaleSwitcher": {
         "label": "Language",
