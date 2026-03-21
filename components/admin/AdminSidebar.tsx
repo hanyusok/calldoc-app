@@ -47,7 +47,9 @@ export default function AdminSidebar({ isCollapsed, toggleSidebar, role }: Admin
     const navItems = role === 'STAFF'
         ? allNavItems.filter(item =>
             // Keep dividers or the appointments link
-            (item as any).type === 'divider' || (item as any).href === "/admin/dashboard/appointments"
+            (item as any).type === 'divider' || 
+            (item as any).href === "/admin/dashboard/appointments" ||
+            (item as any).href === "/admin/dashboard/pharmacies"
         ).filter((item, index, array) => {
             // Clean up consecutive dividers
             if ((item as any).type === 'divider') {

@@ -13,9 +13,10 @@ const pharmacySchema = z.object({
 });
 
 // ─── Auth helper ─────────────────────────────────────────────────────────────
-async function requireAdmin(): Promise<{ error: string } | null> {
+async function requireAdminOrStaff(): Promise<{ error: string } | null> {
     const session = await auth();
-    if (!session?.user || (session.user as any).role !== 'ADMIN') {
+    const role = (session?.user as any)?.role;
+    if (!session?.user || (role !== 'ADMIN' && role !== 'STAFF')) {
         return { error: "Unauthorized" };
     }
     return null;
@@ -68,7 +69,7 @@ export async function getPharmacies(page: number = 1, limit: number = 10, query:
 }
 
 export async function createPharmacy(data: z.infer<typeof pharmacySchema>) {
-    const authError = await requireAdmin();
+    const authError = await requireAdminOrStaff();
     if (authError) return authError;
 
     const validated = pharmacySchema.safeParse(data);
@@ -87,7 +88,7 @@ export async function createPharmacy(data: z.infer<typeof pharmacySchema>) {
 }
 
 export async function updatePharmacy(id: string, data: z.infer<typeof pharmacySchema>) {
-    const authError = await requireAdmin();
+    const authError = await requireAdminOrStaff();
     if (authError) return authError;
 
     const validated = pharmacySchema.safeParse(data);
@@ -107,7 +108,7 @@ export async function updatePharmacy(id: string, data: z.infer<typeof pharmacySc
 }
 
 export async function deletePharmacy(id: string) {
-    const authError = await requireAdmin();
+    const authError = await requireAdminOrStaff();
     if (authError) return authError;
 
     try {
@@ -123,7 +124,7 @@ export async function deletePharmacy(id: string) {
 }
 
 export async function setPharmacyDefault(pharmacyId: string) {
-    const authError = await requireAdmin();
+    const authError = await requireAdminOrStaff();
     if (authError) return authError;
 
     try {
@@ -167,7 +168,8 @@ export async function updatePharmacyFax(pharmacyId: string, fax: string) {
 export async function togglePharmacyFaxLock(pharmacyId: string) {
     const { auth } = await import("@/auth");
     const session = await auth();
-    if (session?.user?.role !== "ADMIN") return { error: "Unauthorized" };
+    const role = session?.user?.role;
+    if (role !== "ADMIN" && role !== "STAFF") return { error: "Unauthorized" };
 
     const pharmacy = await prisma.pharmacy.findUnique({ where: { id: pharmacyId }, select: { faxLocked: true } });
     if (!pharmacy) return { error: "Not found" };
@@ -185,7 +187,8 @@ export async function togglePharmacyFaxLock(pharmacyId: string) {
 export async function togglePharmacyFaxVerified(pharmacyId: string) {
     const { auth } = await import("@/auth");
     const session = await auth();
-    if (session?.user?.role !== "ADMIN") return { error: "Unauthorized" };
+    const role = session?.user?.role;
+    if (role !== "ADMIN" && role !== "STAFF") return { error: "Unauthorized" };
 
     const pharmacy = await prisma.pharmacy.findUnique({ where: { id: pharmacyId }, select: { faxVerified: true } });
     if (!pharmacy) return { error: "Not found" };
